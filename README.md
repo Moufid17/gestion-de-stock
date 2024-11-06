@@ -14,7 +14,7 @@ Ce projet est une application de gestion de stock conçue pour aider les entrepr
 
 1. Clonez le dépôt : `git clone https://github.com/Moufid17/gestion-de-stock.git`
 2. Accédez au répertoire du projet : `cd gestion-de-stock`
-3. Installez les dépendances : `npm install`
+3. Installez les dépendances : `make install`
 
 ## Utilisation
 
