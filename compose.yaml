@@ -1,0 +1,41 @@
+services:
+  gstock-jdk-server:
+    image: openjdk:17-jdk-alpine
+    container_name: 'gstock-jdk-server'
+    working_dir: /app
+    command: ["java", "-jar", "/app/gestion-de-stock-0.0.1-SNAPSHOT.jar"]
+    ports:
+      - "8089:8080"
+    volumes:
+      - ./target/gestion-de-stock-0.0.1-SNAPSHOT.jar:/app/gestion-de-stock-0.0.1-SNAPSHOT.jar
+    depends_on:
+      gstock-db-mysql :
+        condition: service_healthy
+        restart: true
+    environment:
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_USER=${MYSQL_USER}
+
+  gstock-db-mysql:
+    container_name: 'gstock-db-mysql'
+    image: 'mysql:latest'
+    environment:
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_USER=${MYSQL_USER}
+    ports:
+      - '3306:3306'
+    volumes:
+      - db-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -p$MYSQL_ROOT_PASSWORD"]
+      interval: 15s
+      retries: 10
+      start_period: 60s
+      timeout: 10s
+
+volumes:
+  db-data:

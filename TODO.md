@@ -1,0 +1,6 @@
+### Initailize project :
+- [x] Setting up a new container for `openjdk:17-jdk-alpine` and build then run with docker compose.
+- [x] Setting up a new container for `mysql:latest` and build then run with docker compose.
+
+### Features
+- [ ] Define the entities
