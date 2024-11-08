@@ -13,10 +13,11 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 
+
 @Data // Génère les méthodes getter, setter, toString, equals, et hashCode
-@EqualsAndHashCode(callSuper = true) // Inclut les champs de la classe parente dans equals et hashCode
-@NoArgsConstructor // Génère un constructeur sans arguments
-@AllArgsConstructor // Génère un constructeur avec tous les arguments
+@EqualsAndHashCode(callSuper = true)
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "client")
 public class Client extends AbstractEntity {
@@ -36,13 +37,12 @@ public class Client extends AbstractEntity {
     @Embedded // Permet d'indiquer que l'objet est un objet imbriqué (composé de plusieurs champs)
     private Address address;
     
-    @Column(name = "photo", nullable = true)    
+    @Column(name = "photo")    
     private String photo;
+
+    @Column(name = "id_company", nullable = false)
+    private Integer idCompany;
 
     @OneToMany(mappedBy = "client")
     private List<OrderClient> ordersClient;
-
-    @Column(name = "id_entreprise", nullable = false)
-    private Integer idEntreprise;
-    
 }

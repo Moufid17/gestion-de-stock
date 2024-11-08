@@ -1,8 +1,11 @@
 package com.tmdigital.gestiondestock.model;
 
+import java.util.List;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -10,12 +13,13 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 
+
 @Data // Génère les méthodes getter, setter, toString, equals, et hashCode
-@EqualsAndHashCode(callSuper = true) // Inclut les champs de la classe parente dans equals et hashCode
-@NoArgsConstructor // Génère un constructeur sans arguments
-@AllArgsConstructor // Génère un constructeur avec tous les arguments
-@Entity // Indique que cette classe est une entité JPA
-@Table(name = "company") // Spécifie le nom de la table dans la base de données
+@EqualsAndHashCode(callSuper = true)
+@NoArgsConstructor
+@AllArgsConstructor
+@Entity
+@Table(name = "company") 
 public class Company extends AbstractEntity {
 
     @Column(name = "name")
@@ -30,9 +34,18 @@ public class Company extends AbstractEntity {
     @Column(name = "numTel")
     private String numTel;
 
+    @Column(name = "tax_code")
+    private String taxCode;
+
     @Column(name = "photo")
     private String photo;
 
+    @Column(name = "website")
+    private String website;
+
     @Embedded
     private Address address;
+
+    @OneToMany(mappedBy = "company")
+    private List<User> users;
 }

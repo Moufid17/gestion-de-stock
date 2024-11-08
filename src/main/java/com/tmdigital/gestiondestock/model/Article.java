@@ -15,14 +15,19 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 
+
 @Data // Génère les méthodes getter, setter, toString, equals, et hashCode
 @EqualsAndHashCode(callSuper = true) // Inclut les champs de la classe parente dans equals et hashCode
-@NoArgsConstructor // Génère un constructeur sans arguments
-@AllArgsConstructor // Génère un constructeur avec tous les arguments
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity 
 @Table(name = "article")
 public class Article  extends AbstractEntity {
+
+    @Column(name = "code")
     private String code;
+    
+    @Column(name = "designation")
     private String designation;
     
     @Column(name = "buy_price")
@@ -37,13 +42,18 @@ public class Article  extends AbstractEntity {
     @Column(name = "sell_price_tax")
     private BigDecimal sellPriceInclTax = BigDecimal.ZERO;
     
+    @Column(name = "photo")
     private String photo;
+
     @Column(name = "alert_stock", nullable = false)
     private Integer alertStock = 0;
 
     @ManyToOne
-    @JoinColumn(name = "id_category") // The name of the column in the table that owns the relationship.
+    @JoinColumn(name = "id_category")
     private Category category;
+
+    @OneToMany(mappedBy = "article")
+    private List<SalesLine> salesLine;
 
     @OneToMany(mappedBy = "article")
     private List<OrderLineClient> orderLineClient;
@@ -52,6 +62,5 @@ public class Article  extends AbstractEntity {
     private List<OrderLineSupplier> orderLineSupplier;
 
     @OneToMany(mappedBy = "article")
-    private List<SalesLine> salesLine;
-
+    private List<StockMovement> stockMovement;
 }

@@ -15,12 +15,14 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 
+
+
 @Data // Génère les méthodes getter, setter, toString, equals, et hashCode
-@EqualsAndHashCode(callSuper = true) // Inclut les champs de la classe parente dans equals et hashCode
-@NoArgsConstructor // Génère un constructeur sans arguments
-@AllArgsConstructor // Génère un constructeur avec tous les arguments
-@Entity // Indique que cette classe est une entité JPA
-@Table(name = "order_supplier") // Spécifie le nom de la table dans la base de données
+@EqualsAndHashCode(callSuper = true)
+@NoArgsConstructor
+@AllArgsConstructor
+@Entity
+@Table(name = "order_supplier")
 public class OrderSupplier extends AbstractEntity {
 
     @Column(name = "code")
@@ -28,6 +30,9 @@ public class OrderSupplier extends AbstractEntity {
 
     @Column(name = "date_commande")
     private Instant dateCommande = Instant.now();
+
+    @Column(name = "id_company")
+    private Integer idCompany;
 
     @ManyToOne
     @JoinColumn(name = "id_supplier")

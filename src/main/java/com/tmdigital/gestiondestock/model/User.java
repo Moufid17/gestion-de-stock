@@ -1,21 +1,29 @@
 package com.tmdigital.gestiondestock.model;
 
-import jakarta.annotation.Nullable;
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+
+
 @Data // Génère les méthodes getter, setter, toString, equals, et hashCode
-@EqualsAndHashCode(callSuper = true) // Inclut les champs de la classe parente dans equals et hashCode
-@NoArgsConstructor // Génère un constructeur sans arguments
-@AllArgsConstructor // Génère un constructeur avec tous les arguments
-@Entity // Indique que cette classe est une entité JPA
-@Table(name = "user") // Spécifie le nom de la table dans la base de données
+@EqualsAndHashCode(callSuper = true)
+@NoArgsConstructor
+@AllArgsConstructor
+@Entity
+@Table(name = "user")
 public class User extends AbstractEntity {
 
     @Column(name = "firstName")
@@ -39,9 +47,11 @@ public class User extends AbstractEntity {
     @Embedded
     private Address address;
 
-    // @Column(name = "role")
-    // private Role role;
+    @OneToMany(mappedBy = "user")
+    @JsonIgnore
+    private List<Roles> rules;
 
-    @Column(name = "company")
+    @ManyToOne
+    @JoinColumn(name = "id_company")
     private Company company;
 }

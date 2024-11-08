@@ -2,6 +2,7 @@ package com.tmdigital.gestiondestock.model;
 
 import java.util.List;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
@@ -10,17 +11,25 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+
+
 @Data // Génère les méthodes getter, setter, toString, equals, et hashCode
-@EqualsAndHashCode(callSuper = true) // Inclut les champs de la classe parente dans equals et hashCode
-@NoArgsConstructor // Génère un constructeur sans arguments
-@AllArgsConstructor // Génère un constructeur avec tous les arguments
+@EqualsAndHashCode(callSuper = true)
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity 
 @Table(name = "category") 
-
 public class Category extends AbstractEntity {
+
+    @Column(name = "code")
     private String code;
+
+    @Column(name = "designation")
     private String designation;
 
-    @OneToMany(mappedBy = "category") // One category can have many articles. mappedBy is used to specify the field in the Article class that owns the relationship.
+    @Column(name = "id_company")
+    private Integer company;
+
+    @OneToMany(mappedBy = "category")
     private List<Article> articles;
 }

@@ -2,7 +2,6 @@ package com.tmdigital.gestiondestock.model;
 
 import java.io.Serializable;
 import java.time.Instant;
-import java.util.UUID;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -18,7 +17,7 @@ import jakarta.persistence.MappedSuperclass;
 import lombok.Data;
 
 @Data
-@MappedSuperclass
+@MappedSuperclass // Permet de dire que cette classe est une classe parente. Elle ne sera pas une table dans la base de données.
 @EntityListeners(AuditingEntityListener.class)
 public abstract class AbstractEntity implements Serializable {
     

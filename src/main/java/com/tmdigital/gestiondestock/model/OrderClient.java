@@ -15,10 +15,11 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 
+
 @Data // Génère les méthodes getter, setter, toString, equals, et hashCode
-@EqualsAndHashCode(callSuper = true) // Inclut les champs de la classe parente dans equals et hashCode
-@NoArgsConstructor // Génère un constructeur sans arguments
-@AllArgsConstructor // Génère un constructeur avec tous les arguments
+@EqualsAndHashCode(callSuper = true)
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "order_client")
 public class OrderClient extends AbstractEntity {
@@ -28,6 +29,9 @@ public class OrderClient extends AbstractEntity {
 
     @Column(name = "date_commande")
     private Instant dateCommande = Instant.now();
+
+    @Column(name = "id_company")
+    private Integer idCompany;
 
     @ManyToOne
     @JoinColumn(name = "id_client")
