@@ -14,9 +14,17 @@ Ce projet est une application de gestion de stock conçue pour aider les entrepr
 
 1. Clonez le dépôt : `git clone https://github.com/Moufid17/gestion-de-stock.git`
 2. Accédez au répertoire du projet : `cd gestion-de-stock`
-3. Installez les dépendances : `make install`
+3. Créer le fichier `.env` et copier coller les paramètres ci-dessous avec leur valeurs :
+    ```
+    MYSQL_DATABASE=
+    MYSQL_USER=
+    MYSQL_PASSWORD=
+    MYSQL_ROOT_PASSWORD=
+    MYSQL_ROOT_PASSWORD=
+    ```
+4. Builder le projet:  `make build`
 
-## Utilisation
+## Lancement
 
 1. Démarrez l'application : `make start`
 2. Accédez à l'application via votre navigateur à l'adresse `http://localhost:8089`
