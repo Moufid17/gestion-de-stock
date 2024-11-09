@@ -13,10 +13,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-
-
+import lombok.Builder;
 
 @Data // Génère les méthodes getter, setter, toString, equals, et hashCode
+@Builder
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
@@ -28,6 +28,7 @@ public class OrderClient extends AbstractEntity {
     private String code;
 
     @Column(name = "date_commande")
+    @Builder.Default
     private Instant dateCommande = Instant.now();
 
     @Column(name = "id_company")

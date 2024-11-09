@@ -13,10 +13,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-
-
+import lombok.Builder;
 
 @Data // Génère les méthodes getter, setter, toString, equals, et hashCode
+@Builder
 @EqualsAndHashCode(callSuper = true) // Inclut les champs de la classe parente dans equals et hashCode
 @NoArgsConstructor
 @AllArgsConstructor

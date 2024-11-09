@@ -10,10 +10,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-
-
+import lombok.Builder;
 
 @Data // Génère les méthodes getter, setter, toString, equals, et hashCode
+@Builder
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
@@ -23,9 +23,11 @@ public class OrderLineSupplier extends AbstractEntity {
 
     // Le prix d'achat unitaire ttc pour la commande peut être différente du prix d'achat unitaire ttc actuelle de l'article. 
     @Column(name = "sell_price_tax")
+    @Builder.Default
     private BigDecimal sellPriceInclTax = BigDecimal.ZERO; // Prix unitaire de vente TTC.
 
     @Column(name = "qty")
+    @Builder.Default
     private BigDecimal qty = BigDecimal.ZERO;
 
     @Column(name = "id_company")
