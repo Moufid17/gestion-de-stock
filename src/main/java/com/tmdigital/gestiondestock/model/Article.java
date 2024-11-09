@@ -17,7 +17,7 @@ import lombok.Builder;
 
 @Data // Génère les méthodes getter, setter, toString, equals, et hashCode
 @Builder
-@EqualsAndHashCode(callSuper = true) // Inclut les champs de la classe parente dans equals et hashCode
+@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity 
@@ -29,28 +29,36 @@ public class Article  extends AbstractEntity {
     
     @Column(name = "designation")
     private String designation;
-    
+
+    @Builder.Default
     @Column(name = "buy_price")
     private BigDecimal buyPrice = BigDecimal.ZERO;
 
+    @Builder.Default
     @Column(name = "sell_price")
     private BigDecimal sellPrice = BigDecimal.ZERO;
 
+    @Builder.Default
     @Column(name = "vat_rates")
     private BigDecimal vatRates = BigDecimal.ZERO;
-    
+
+    @Builder.Default
     @Column(name = "sell_price_tax")
     private BigDecimal sellPriceInclTax = BigDecimal.ZERO;
     
     @Column(name = "photo")
     private String photo;
 
+    @Builder.Default
     @Column(name = "alert_stock", nullable = false)
     private Integer alertStock = 0;
 
     @ManyToOne
     @JoinColumn(name = "id_category")
     private Category category;
+
+    @Column(name = "id_company")
+    private Integer company;
 
     @OneToMany(mappedBy = "article")
     private List<SalesLine> salesLine;
