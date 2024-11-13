@@ -2,6 +2,9 @@ package com.tmdigital.gestiondestock.dto;
 
 import java.math.BigDecimal;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.tmdigital.gestiondestock.model.OrderLineClient;
+
 import lombok.Builder;
 import lombok.Data;
 
@@ -21,5 +24,32 @@ public class OrderLineClientDto {
 
     private ArticleDto article;
 
+    @JsonIgnore
     private OrderClientDto orderClient;
+
+    public static OrderLineClientDto fromEntity(OrderLineClient orderLineClient) {
+        if (orderLineClient == null) {
+            return null;
+        }
+        return OrderLineClientDto.builder()
+                .id(orderLineClient.getId())
+                .sellPriceInclTax(orderLineClient.getSellPriceInclTax())
+                .qty(orderLineClient.getQty())
+                .idCompany(orderLineClient.getIdCompany())
+                .article(ArticleDto.fromEntity(orderLineClient.getArticle()))
+                .build();
+    }
+
+    public static OrderLineClient toEntity(OrderLineClientDto orderLineClientDto) {
+        if (orderLineClientDto == null) {
+            return null;
+        }
+        OrderLineClient orderLineClient = new OrderLineClient();
+        orderLineClient.setId(orderLineClientDto.getId());
+        orderLineClient.setSellPriceInclTax(orderLineClientDto.getSellPriceInclTax());
+        orderLineClient.setQty(orderLineClientDto.getQty());
+        orderLineClient.setIdCompany(orderLineClientDto.getIdCompany());
+        orderLineClient.setArticle(ArticleDto.toEntity(orderLineClientDto.getArticle()));
+        return orderLineClient;
+    } 
 }
