@@ -7,10 +7,8 @@ import jakarta.persistence.Embeddable;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Builder;
 
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Embeddable // Permet d'indiquer que l'objet est un objet imbriqué (composé de plusieurs champs), donc pas besoin d'un Id pour l'identification

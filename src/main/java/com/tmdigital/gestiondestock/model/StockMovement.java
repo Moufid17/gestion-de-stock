@@ -12,10 +12,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.Builder;
 
 @Data
-@Builder
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
@@ -30,7 +28,7 @@ public class StockMovement extends AbstractEntity {
     @Column(name = "qty")
     private BigDecimal qty;
     
-    @Builder.Default
+    
     @Column(name = "date_movement")
     private Instant dateMovement = Instant.now();
 

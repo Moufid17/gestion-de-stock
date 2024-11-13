@@ -11,10 +11,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.Builder;
 
 @Data
-@Builder 
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
@@ -32,7 +30,7 @@ public class Client extends AbstractEntity {
     private String email;
     
     @Column(name = "phone_number", nullable = false)    
-    private String phonenumber;
+    private String phonenumber = "0000000000";
     
     @Embedded // Permet d'indiquer que l'objet est un objet imbriqué (composé de plusieurs champs)
     private Address address;
@@ -41,7 +39,7 @@ public class Client extends AbstractEntity {
     private String photo;
 
     @Column(name = "id_company", nullable = false)
-    private Integer idCompany;
+    private Integer idCompany = 0;
 
     @OneToMany(mappedBy = "client")
     private List<OrderClient> ordersClient;

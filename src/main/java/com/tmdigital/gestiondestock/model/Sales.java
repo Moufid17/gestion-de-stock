@@ -11,10 +11,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.Builder;
 
 @Data
-@Builder
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
@@ -26,7 +24,7 @@ public class Sales extends AbstractEntity {
     private String code;
 
     @Column(name = "order_date")
-    @Builder.Default
+    
     private Instant orderDate = Instant.now();
 
     @Column(name = "id_company")
