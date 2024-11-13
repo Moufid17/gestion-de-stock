@@ -3,4 +3,5 @@
 - [x] Setting up a new container for `mysql:latest` and build then run with docker compose.
 
 ### Features
-- [ ] Define the entities
+- [x] Define the entities
+- [ ] Define the Dtos (Data Transfer Objects)

@@ -13,7 +13,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.Builder;
 
-@Data // Génère les méthodes getter, setter, toString, equals, et hashCode
+@Data
 @Builder 
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
