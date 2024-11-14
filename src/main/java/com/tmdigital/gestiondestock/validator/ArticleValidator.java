@@ -34,14 +34,20 @@ public class ArticleValidator {
 
         if (articleDto.getBuyPrice() == null || articleDto.getBuyPrice().compareTo(BigDecimal.ZERO) == 0) {
             errors.add("Veuillez renseigner le prix unitaire HT de l'article");
+        } else if (articleDto.getBuyPrice().compareTo(BigDecimal.ZERO) < 0) {
+            errors.add("Le prix d'achat doit être valable");
         }
 
         if (articleDto.getSellPrice() == null || articleDto.getSellPrice().compareTo(BigDecimal.ZERO) == 0) {
             errors.add("Veuillez renseigner le prix unitaire TTC de l'article");
+        } else if (articleDto.getSellPrice().compareTo(BigDecimal.ZERO) < 0) {
+            errors.add("Le prix de vente doit être valable");
         }
 
         if (articleDto.getVatRates() == null || articleDto.getVatRates().compareTo(BigDecimal.ZERO) == 0) {
             errors.add("Veuillez renseigner le taux de TVA de l'article");
+        } else if (articleDto.getVatRates().compareTo(BigDecimal.ZERO) < 0) {
+            errors.add("Le taux de TVA doit être valable");
         }
 
         if (articleDto.getCategory() == null || articleDto.getCategory().getId() == null) {

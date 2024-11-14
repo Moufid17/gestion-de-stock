@@ -23,10 +23,14 @@ public class SalesLineValidator {
 
         if (salesLineDto.getSellPriceInclTax() == null || salesLineDto.getSellPriceInclTax().compareTo(BigDecimal.ZERO) == 0) {
             errors.add("Veuillez renseigner le prix unitaire de vente");
+        } else if (salesLineDto.getSellPriceInclTax().compareTo(BigDecimal.ZERO) < 0) {
+            errors.add("Le prix unitaire de vente doit valable");
         }
 
         if (salesLineDto.getQty() == null || salesLineDto.getQty().compareTo(BigDecimal.ZERO) == 0) {
             errors.add("Veuillez renseigner la quantité");
+        } else if (salesLineDto.getQty().compareTo(BigDecimal.ZERO) < 0) {
+            errors.add("La quantité doit être valable");
         }
 
         return errors;

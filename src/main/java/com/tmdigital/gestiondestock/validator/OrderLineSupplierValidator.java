@@ -20,10 +20,14 @@ public class OrderLineSupplierValidator {
 
         if (orderLineSupplierDto.getSellPriceInclTax() == null || orderLineSupplierDto.getSellPriceInclTax().compareTo(BigDecimal.ZERO) == 0) {
             errors.add("Veuillez renseigner le prix d'achat unitaire TTC.");
+        } else if (orderLineSupplierDto.getSellPriceInclTax().compareTo(BigDecimal.ZERO) < 0) {
+            errors.add("Le prix d'achat doit être valable.");
         }
 
         if (orderLineSupplierDto.getQty() == null || orderLineSupplierDto.getQty().compareTo(BigDecimal.ZERO) == 0) {
             errors.add("Veuillez renseigner la quantité.");
+        } else if (orderLineSupplierDto.getQty().compareTo(BigDecimal.ZERO) < 0) {
+            errors.add("La quantité doit être valable.");
         }
 
         if (orderLineSupplierDto.getArticle() == null || orderLineSupplierDto.getArticle().getId() == null) {
