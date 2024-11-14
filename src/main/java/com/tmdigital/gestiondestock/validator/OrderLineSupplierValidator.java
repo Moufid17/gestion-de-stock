@@ -11,27 +11,27 @@ public class OrderLineSupplierValidator {
         List<String> errors = new ArrayList<>();
 
         if (orderLineSupplierDto == null) {
-            errors.add("Veuillez renseigner le prix d'achat unitaire TTC");
-            errors.add("Veuillez renseigner la quantité");
-            errors.add("Veuillez renseigner l'article");
-            errors.add("Veuillez renseigner la commande fournisseur");
+            errors.add("Veuillez renseigner le prix d'achat unitaire TTC.");
+            errors.add("Veuillez renseigner la quantité.");
+            errors.add("Veuillez renseigner l'article.");
+            errors.add("Veuillez renseigner la commande fournisseur associée.");
             return errors;
         }
 
         if (orderLineSupplierDto.getSellPriceInclTax() == null || orderLineSupplierDto.getSellPriceInclTax().compareTo(BigDecimal.ZERO) == 0) {
-            errors.add("Veuillez renseigner le prix d'achat unitaire TTC");
+            errors.add("Veuillez renseigner le prix d'achat unitaire TTC.");
         }
 
         if (orderLineSupplierDto.getQty() == null || orderLineSupplierDto.getQty().compareTo(BigDecimal.ZERO) == 0) {
-            errors.add("Veuillez renseigner la quantité");
+            errors.add("Veuillez renseigner la quantité.");
         }
 
         if (orderLineSupplierDto.getArticle() == null || orderLineSupplierDto.getArticle().getId() == null) {
-            errors.add("Veuillez renseigner l'article");
+            errors.add("Veuillez renseigner l'article.");
         }
 
         if (orderLineSupplierDto.getOrderSupplier() == null || orderLineSupplierDto.getOrderSupplier().getId() == null) {
-            errors.add("Veuillez renseigner la commande fournisseur");
+            errors.add("Veuillez renseigner la commande fournisseur associée.");
         }
 
         return errors;

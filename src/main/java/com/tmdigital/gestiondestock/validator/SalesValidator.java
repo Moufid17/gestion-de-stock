@@ -14,7 +14,6 @@ public class SalesValidator {
         if (salesDto == null) {
             errors.add("Veuillez renseigner le code de la vente");
             errors.add("Veuillez renseigner la date de la vente");
-            errors.add("Veuillez renseigner le client");
             return errors;
         }
 
@@ -22,7 +21,9 @@ public class SalesValidator {
             errors.add("Veuillez renseigner le code de la vente");
         }
 
-
+        if (salesDto.getOrderDate() == null) {
+            errors.add("Veuillez renseigner la date de la vente");
+        }
 
         return errors;
     }
