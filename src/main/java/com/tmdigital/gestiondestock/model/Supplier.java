@@ -32,7 +32,7 @@ public class Supplier extends AbstractEntity {
     @Column(name = "phone_number", nullable = false)    
     private String phonenumber;
     
-    @Embedded // Permet d'indiquer que l'objet est un objet imbriqué (composé de plusieurs champs)
+    @Embedded
     @Column(name = "address")    
     private Address address;
     
