@@ -24,7 +24,6 @@ public class Sales extends AbstractEntity {
     private String code;
 
     @Column(name = "order_date")
-    
     private Instant orderDate = Instant.now();
 
     @Column(name = "id_company")

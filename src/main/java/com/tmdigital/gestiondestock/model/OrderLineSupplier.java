@@ -21,11 +21,9 @@ public class OrderLineSupplier extends AbstractEntity {
 
     // Le prix d'achat unitaire ttc pour la commande peut être différente du prix d'achat unitaire ttc actuelle de l'article. 
     @Column(name = "sell_price_tax")
-    
-    private BigDecimal sellPriceInclTax = BigDecimal.ZERO; // Prix unitaire de vente TTC.
+    private BigDecimal sellPriceInclTax = BigDecimal.ZERO;
 
     @Column(name = "qty")
-    
     private BigDecimal qty = BigDecimal.ZERO;
 
     @Column(name = "id_company")
