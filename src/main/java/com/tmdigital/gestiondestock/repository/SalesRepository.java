@@ -6,4 +6,5 @@ import com.tmdigital.gestiondestock.model.Sales;
 
 public interface SalesRepository extends CrudRepository<Sales, Integer> {
 
+    Sales findSalesByCode(String code);
 }

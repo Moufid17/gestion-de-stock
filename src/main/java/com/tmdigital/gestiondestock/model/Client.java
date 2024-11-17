@@ -39,7 +39,7 @@ public class Client extends AbstractEntity {
     private String photo;
 
     @Column(name = "id_company", nullable = false)
-    private Integer idCompany = 0;
+    private Integer idCompany;
 
     @OneToMany(mappedBy = "client")
     private List<OrderClient> ordersClient;
