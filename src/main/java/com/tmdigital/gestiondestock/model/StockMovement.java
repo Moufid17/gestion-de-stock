@@ -28,7 +28,6 @@ public class StockMovement extends AbstractEntity {
     @Column(name = "qty")
     private BigDecimal qty;
     
-    
     @Column(name = "date_movement")
     private Instant dateMovement = Instant.now();
 
