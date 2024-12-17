@@ -10,6 +10,11 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import com.tmdigital.gestiondestock.exception.InvalidEntityException;
 import com.tmdigital.gestiondestock.exception.NotFoundEntityException;
 
+/**
+ * L'annotation @RestControllerAdvice, ce définie que la classe interceptera toutes les exceptions 
+ * lancées par les contrôleurs REST et les traitera avec l'une des méthodes handleException, en 
+ * fonction du type d'exception, définit dans <ExceptionHandler>.
+ */
 @RestControllerAdvice
 public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
@@ -26,7 +31,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(errorDto, notFound);
     }
 
-    @ExceptionHandler({NotFoundEntityException.class})
+    @ExceptionHandler({InvalidEntityException.class})
     public final ResponseEntity<ErrorDto> handleException(InvalidEntityException ex, WebRequest req) {
 
         final HttpStatus badRequest = HttpStatus.BAD_REQUEST;
