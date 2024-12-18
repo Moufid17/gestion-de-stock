@@ -8,4 +8,5 @@
 - [x] Define dao
 - [x] Define validators
 - [x] exceptions
-- [ ] service
+- [*] service
+- [ ] controller
