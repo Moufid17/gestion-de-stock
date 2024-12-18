@@ -4,4 +4,8 @@
 
 ### Features
 - [x] Define the entities
-- [ ] Define the Dtos (Data Transfer Objects)
+- [x] Define the Dtos (Data Transfer Objects)
+- [x] Define dao
+- [x] Define validators
+- [x] exceptions
+- [ ] service
