@@ -10,3 +10,5 @@
 - [x] exceptions
 - [*] service
 - [ ] controller
+- [ ] Security : JWT
+- [ ] Swagger
