@@ -20,3 +20,5 @@
         - /repository/ArticleRepository
             List<Article> findAllByCategoryId(Integer idCategory);
     ```
+    NB : 
+     - Dans votre requête JPQL, vous avez spécifié stock_movement comme nom de l'entité, mais ce n'est pas correct. Dans JPQL, vous devez utiliser le nom de l'entité Java (classe Java), pas celui de la table en base de données. Dans ce cas, le nom correct est StockMovement, comme défini par la classe.
