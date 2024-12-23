@@ -79,7 +79,7 @@ public class ArticleServiceImpl implements ArticleService {
         if (idCompany == null) {
             throw new NotFoundEntityException("L'id de l'entreprise est nulle");
         }
-        return ArticleRepository.findAllByCompanyId(idCompany).stream()
+        return ArticleRepository.findAllByCompany(idCompany).stream()
                 .map(ArticleDto::fromEntity)
                 .collect(Collectors.toList());
     };
