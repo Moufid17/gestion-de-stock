@@ -8,7 +8,7 @@ import com.tmdigital.gestiondestock.model.OrderLineSupplier;
 
 public interface OrderLineSupplierRepository extends CrudRepository<OrderLineSupplier, Integer> {
 
-    List<OrderLineSupplier> findAllByOrderSupplierId(Integer idOrderSupplier);
+    List<OrderLineSupplier> findAllByOrderSupplierId(Integer id);
     
-    List<OrderLineSupplier> findAllByOrderArticleId(Integer idArticle);
+    List<OrderLineSupplier> findAllByArticleId(Integer id);
 }
