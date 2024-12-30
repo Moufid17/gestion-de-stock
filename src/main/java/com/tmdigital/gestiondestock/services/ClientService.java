@@ -12,7 +12,7 @@ public interface ClientService {
 
     public List<ClientDto> findAll();
 
-    public List<ClientDto> findAllByCompany(Integer idCompany);
+    public List<ClientDto> findAllByCompany(Integer id);
 
     public void delete(Integer id);
 }

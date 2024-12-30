@@ -60,7 +60,7 @@ public class ClientServiceImpl implements ClientService {
             throw new InvalidEntityException("Aucun identifiant de la société n'a été fourni");
         }
 
-        return this.clientRepository.findAllByCompany(idCompany)
+        return this.clientRepository.findAllByIdCompany(idCompany)
             .stream()
             .map(ClientDto::fromEntity)
             .toList();
