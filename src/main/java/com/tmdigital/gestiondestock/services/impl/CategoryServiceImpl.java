@@ -4,13 +4,15 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.springframework.stereotype.Service;
+
 import com.tmdigital.gestiondestock.dto.CategoryDto;
 import com.tmdigital.gestiondestock.exception.ErrorCodes;
 import com.tmdigital.gestiondestock.exception.InvalidEntityException;
 import com.tmdigital.gestiondestock.repository.CategoryRepository;
 import com.tmdigital.gestiondestock.services.CategoryService;
 import com.tmdigital.gestiondestock.validator.CategoryValidator;
-
+@Service
 public class CategoryServiceImpl implements CategoryService {
 
     private CategoryRepository categoryRepository;
