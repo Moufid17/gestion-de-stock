@@ -45,7 +45,7 @@ public class UserController implements UserApi {
 
     @Override
     public void delete(Integer id) {
-        this.userService.delete(id);
+        userService.delete(id);
     }
 
 

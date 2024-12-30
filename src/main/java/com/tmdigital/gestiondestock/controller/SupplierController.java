@@ -36,6 +36,6 @@ public class SupplierController implements SupplierApi {
 
     @Override
     public void delete(Integer id) {
-        this.supplierService.delete(id);
+        supplierService.delete(id);
     }
 }

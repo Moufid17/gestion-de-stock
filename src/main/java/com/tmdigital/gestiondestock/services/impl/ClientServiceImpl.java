@@ -29,7 +29,7 @@ public class ClientServiceImpl implements ClientService {
         }
 
         return ClientDto.fromEntity(
-            this.clientRepository.save(
+            clientRepository.save(
                 ClientDto.toEntity(dto)
             )
         );
@@ -41,7 +41,7 @@ public class ClientServiceImpl implements ClientService {
             throw new InvalidEntityException("Aucun identifiant n'a été fourni");
         }
 
-        return this.clientRepository.findById(id)
+        return clientRepository.findById(id)
             .map(ClientDto::fromEntity)
             .orElseThrow(() -> new InvalidEntityException(
                 "Aucun client n'a été trouvé avec l'identifiant : " + id,
@@ -51,7 +51,7 @@ public class ClientServiceImpl implements ClientService {
 
     @Override
     public List<ClientDto> findAll() {
-        return this.clientRepository.findAll()
+        return clientRepository.findAll()
             .stream()
             .map(ClientDto::fromEntity)
             .toList();
@@ -63,7 +63,7 @@ public class ClientServiceImpl implements ClientService {
             throw new InvalidEntityException("Aucun identifiant de la société n'a été fourni");
         }
 
-        return this.clientRepository.findAllByIdCompany(idCompany)
+        return clientRepository.findAllByIdCompany(idCompany)
             .stream()
             .map(ClientDto::fromEntity)
             .toList();
@@ -75,7 +75,7 @@ public class ClientServiceImpl implements ClientService {
             throw new InvalidEntityException("Aucun identifiant n'a été fourni");
         }
 
-        this.clientRepository.deleteById(id);
+        clientRepository.deleteById(id);
     }
 
 }

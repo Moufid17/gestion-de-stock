@@ -65,7 +65,7 @@ public class SalesServiceImpl implements SalesService {
 
     @Override
     public List<SalesDto> findAll() {
-        return this.salesRepository.findAll().stream()
+        return salesRepository.findAll().stream()
             .map(SalesDto::fromEntity)
             .collect(Collectors.toList());
     }
@@ -75,7 +75,7 @@ public class SalesServiceImpl implements SalesService {
         if (id == null) {
             throw new InvalidEntityException("Aucun identifiant n'a été fourni pour la commande de vente");
         }
-        this.salesRepository.deleteById(id);
+        salesRepository.deleteById(id);
     }
 
 }

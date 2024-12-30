@@ -68,7 +68,7 @@ public class SupplierServiceImpl implements SupplierService {
         if (id == null) {
             throw new InvalidEntityException("Aucun identifiant n'est fourni");
         }
-        this.supplierRepository.deleteById(id);
+        supplierRepository.deleteById(id);
     }
 
 }
