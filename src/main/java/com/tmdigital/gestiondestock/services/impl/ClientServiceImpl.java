@@ -2,6 +2,8 @@ package com.tmdigital.gestiondestock.services.impl;
 
 import java.util.List;
 
+import org.springframework.stereotype.Service;
+
 import com.tmdigital.gestiondestock.dto.ClientDto;
 import com.tmdigital.gestiondestock.exception.ErrorCodes;
 import com.tmdigital.gestiondestock.exception.InvalidEntityException;
@@ -9,6 +11,7 @@ import com.tmdigital.gestiondestock.repository.ClientRepository;
 import com.tmdigital.gestiondestock.services.ClientService;
 import com.tmdigital.gestiondestock.validator.ClientValidator;
 
+@Service
 public class ClientServiceImpl implements ClientService {
 
     private ClientRepository clientRepository;
