@@ -5,8 +5,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.tmdigital.gestiondestock.controller.api.ArticleApi;
@@ -24,12 +22,12 @@ public class ArticleController implements ArticleApi {
     }
 
     @Override
-    public @ResponseBody ArticleDto save(@RequestBody ArticleDto dto) {
+    public @ResponseBody ArticleDto save(ArticleDto dto) {
         return articleService.save(dto);
     };
 
     @Override
-    public @ResponseBody ArticleDto get(@PathVariable("articleId") Integer articleId) {
+    public @ResponseBody ArticleDto get(Integer articleId) {
         return articleService.findById(articleId);
     };
 
@@ -39,7 +37,7 @@ public class ArticleController implements ArticleApi {
     };
 
     @Override
-    public @ResponseBody void delete(@PathVariable("articleId") Integer articleId) {
+    public @ResponseBody void delete(Integer articleId) {
         articleService.delete(articleId);
     }
     
