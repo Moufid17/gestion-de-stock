@@ -8,16 +8,16 @@ import java.util.List;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.tmdigital.gestiondestock.controller.api.ArticleApi;
-import com.tmdigital.gestiondestock.services.ArticleService;
+import com.tmdigital.gestiondestock.services.impl.ArticleServiceImpl;
 import com.tmdigital.gestiondestock.dto.ArticleDto;
 
 @RestController
 @RequestMapping("/api/v1/articles")
 public class ArticleController implements ArticleApi {
 
-    private final ArticleService articleService;
+    private final ArticleServiceImpl articleService;
 
-    public ArticleController(ArticleService articleService) {
+    public ArticleController(ArticleServiceImpl articleService) {
         this.articleService = articleService;
     }
 

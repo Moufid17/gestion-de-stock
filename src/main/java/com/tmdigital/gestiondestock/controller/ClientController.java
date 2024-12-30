@@ -7,14 +7,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.tmdigital.gestiondestock.controller.api.ClientApi;
 import com.tmdigital.gestiondestock.dto.ClientDto;
-import com.tmdigital.gestiondestock.services.ClientService;
+import com.tmdigital.gestiondestock.services.impl.ClientServiceImpl;
 
 @RestController
 @RequestMapping("/api/v1/clients")
 public class ClientController implements ClientApi {
-    private ClientService clientService;
+    private ClientServiceImpl clientService;
 
-    public ClientController(ClientService clientService) {
+    public ClientController(ClientServiceImpl clientService) {
         this.clientService = clientService;
     }
 
