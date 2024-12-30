@@ -9,7 +9,10 @@ import com.tmdigital.gestiondestock.model.OrderClient;
 
 public interface OrderClientRepository extends CrudRepository<OrderClient, Integer> {
 
-    Optional<OrderClient> findOrderClientByCode(String code);
+    Optional<OrderClient> findByCode(String code);
+
+    @Override
+    List<OrderClient> findAll();
     
     List<OrderClient> findAllByClientId(Integer id);
 
