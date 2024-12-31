@@ -84,6 +84,17 @@ public class OrderClientServiceImpl implements OrderClientService {
             .collect(Collectors.toList());
     }
 
+	@Override
+	public List<OrderClientDto> findAllByClient(Integer id) {
+		if (id == null) {
+            throw new InvalidEntityException("L'identifiant est invalide.");
+        }
+
+        return orderClientRepository.findAllByClientId(id).stream()
+            .map(OrderClientDto::fromEntity)
+            .collect(Collectors.toList());
+	}
+
     @Override
     public void delete(Integer id) {
         if (id == null) {
@@ -92,4 +103,5 @@ public class OrderClientServiceImpl implements OrderClientService {
 
         orderClientRepository.deleteById(id);
     }
+
 }

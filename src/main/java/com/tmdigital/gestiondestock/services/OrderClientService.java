@@ -16,5 +16,7 @@ public interface OrderClientService {
 
     List<OrderClientDto> findAllByCompany(Integer id);
 
+    List<OrderClientDto> findAllByClient(Integer id);
+
     void delete(Integer id);
 }
