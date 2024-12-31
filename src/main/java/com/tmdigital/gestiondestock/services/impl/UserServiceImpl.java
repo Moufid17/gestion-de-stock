@@ -79,7 +79,7 @@ public class UserServiceImpl implements UserService {
             throw new InvalidEntityException("Aucun identifiant de la société n'a été fourni");
         }
 
-        return userRepository.findAllByCompany(id).stream()
+        return userRepository.findAllByCompanyId(id).stream()
             .map(UserDto::fromEntity)
             .collect(Collectors.toList());
     }
