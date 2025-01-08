@@ -1,6 +1,7 @@
 package com.tmdigital.gestiondestock.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.repository.CrudRepository;
 
@@ -8,7 +9,12 @@ import com.tmdigital.gestiondestock.model.OrderSupplier;
 
 public interface OrderSupplierRepository extends CrudRepository<OrderSupplier, Integer> {
 
-    OrderSupplier findByCode(String code);
+    Optional<OrderSupplier> findByCode(String code);
 
-    List<OrderSupplier> findAllBySupplierId(Integer idSupplier);
+    @Override
+    List<OrderSupplier> findAll();
+
+    List<OrderSupplier> findAllByIdCompany(Integer id);
+
+    List<OrderSupplier> findAllBySupplierId(Integer id);
 }
