@@ -7,10 +7,19 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
 import com.tmdigital.gestiondestock.dto.ArticleDto;
+import com.tmdigital.gestiondestock.dto.OrderLineClientDto;
+import com.tmdigital.gestiondestock.dto.OrderLineSupplierDto;
+import com.tmdigital.gestiondestock.dto.SalesLineDto;
 import com.tmdigital.gestiondestock.exception.ErrorCodes;
 import com.tmdigital.gestiondestock.exception.InvalidEntityException;
 import com.tmdigital.gestiondestock.exception.NotFoundEntityException;
+import com.tmdigital.gestiondestock.model.OrderLineClient;
+import com.tmdigital.gestiondestock.model.OrderLineSupplier;
+import com.tmdigital.gestiondestock.model.SalesLine;
 import com.tmdigital.gestiondestock.repository.ArticleRepository;
+import com.tmdigital.gestiondestock.repository.OrderLineClientRepository;
+import com.tmdigital.gestiondestock.repository.OrderLineSupplierRepository;
+import com.tmdigital.gestiondestock.repository.SalesLineRepository;
 import com.tmdigital.gestiondestock.services.ArticleService;
 import com.tmdigital.gestiondestock.validator.ArticleValidator;
 
@@ -20,10 +29,16 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ArticleServiceImpl implements ArticleService {
 
-    private ArticleRepository ArticleRepository;
+    private ArticleRepository articleRepository;
+    private SalesLineRepository salesLineRepository;
+    private OrderLineClientRepository orderLineClientRepository;
+    private OrderLineSupplierRepository orderLineSupplierRepository;
 
-    public ArticleServiceImpl(ArticleRepository ArticleRepository) {
-        this.ArticleRepository = ArticleRepository;
+    public ArticleServiceImpl(ArticleRepository articleRepository, SalesLineRepository salesLineRepository, OrderLineClientRepository orderLineClientRepository, OrderLineSupplierRepository orderLineSupplierRepository) {
+        this.articleRepository = articleRepository;
+        this.salesLineRepository = salesLineRepository;
+        this.orderLineClientRepository = orderLineClientRepository;
+        this.orderLineSupplierRepository = orderLineSupplierRepository;
     }
 
     @Override
@@ -36,7 +51,7 @@ public class ArticleServiceImpl implements ArticleService {
         }
 
         return ArticleDto.fromEntity(
-                ArticleRepository.save(
+            articleRepository.save(
                     ArticleDto.toEntity(dto)
                 )
             );
@@ -49,7 +64,7 @@ public class ArticleServiceImpl implements ArticleService {
         }
 
         return Optional.of(ArticleDto.fromEntity(
-                    ArticleRepository.findById(id).get()
+            articleRepository.findById(id).get()
                 )).orElseThrow(
                         () -> new NotFoundEntityException("L'article avec l'id = " + id + ", n'existe pas.", ErrorCodes.ARTICLE_NOT_FOUND)
                     );
@@ -62,7 +77,7 @@ public class ArticleServiceImpl implements ArticleService {
         }
 
         return Optional.of(ArticleDto.fromEntity(
-                    ArticleRepository.findArticleByCode(codeArticle)
+            articleRepository.findArticleByCode(codeArticle)
                 )).orElseThrow(
                         () -> new NotFoundEntityException("L'article avec le code = " + codeArticle + ", n'existe pas.", ErrorCodes.ARTICLE_NOT_FOUND)
                     );
@@ -70,7 +85,7 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Override
     public List<ArticleDto> findAll() {
-        return ArticleRepository.findAll().stream()
+        return articleRepository.findAll().stream()
                 .map(ArticleDto::fromEntity)
                 .collect(Collectors.toList());
     };
@@ -79,7 +94,7 @@ public class ArticleServiceImpl implements ArticleService {
         if (idCompany == null) {
             throw new NotFoundEntityException("L'id de l'entreprise est nulle");
         }
-        return ArticleRepository.findAllByCompany(idCompany).stream()
+        return articleRepository.findAllByCompany(idCompany).stream()
                 .map(ArticleDto::fromEntity)
                 .collect(Collectors.toList());
     };
@@ -88,15 +103,71 @@ public class ArticleServiceImpl implements ArticleService {
         if (idCategory == null) {
             throw new NotFoundEntityException("L'id' de la catégorie de l'article est nulle");
         }
-        return ArticleRepository.findAllByCategoryId(idCategory).stream()
+        return articleRepository.findAllByCategoryId(idCategory).stream()
                 .map(ArticleDto::fromEntity)
                 .collect(Collectors.toList());
     };
-    
+
+    @Override
+    public List<SalesLineDto> findAllSalesLineByArticleId(Integer idArticle) {
+        if (idArticle == null) {
+            log.error("L'id de l'article est nulle");
+            return null;
+        }
+
+        return salesLineRepository.findAllByArticleId(idArticle).stream()
+                .map(SalesLineDto::fromEntity)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<OrderLineClientDto> findAllInOrderLineClientByArticleId(Integer idArticle) {
+        if (idArticle == null) {
+            log.error("L'id de l'article est nulle");
+            return null;
+        }
+
+        return orderLineClientRepository.findAllByArticleId(idArticle).stream()
+                .map(OrderLineClientDto::fromEntity)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<OrderLineSupplierDto> findAllOrderLineSupplierByArticleId(Integer idArticle) {
+        if (idArticle == null) {
+            log.error("L'id de l'article est nulle");
+            return null;
+        }
+
+        return orderLineSupplierRepository.findAllByArticleId(idArticle).stream()
+                .map(OrderLineSupplierDto::fromEntity)
+                .collect(Collectors.toList());
+    };
+
     public void delete(Integer id) {
         if (id == null) {
-            throw new NotFoundEntityException("L'id de l'article est nulle");
+            log.error("L'id de l'article est nulle");
+            return;
         }
-        ArticleRepository.deleteById(id);
-    };
+
+        List<SalesLine> salesLines = salesLineRepository.findAllByArticleId(id);
+
+        if (!salesLines.isEmpty()) {
+            throw new InvalidEntityException("Impossible de supprimer l'article avec l'id = " + id + ", car il est lié à une ou plusieurs commande.", ErrorCodes.ARTICLE_ALREADY_IN_USE);
+        }
+
+        List<OrderLineClient> orderLineClients = orderLineClientRepository.findAllByArticleId(id);
+
+        if (!orderLineClients.isEmpty()) {
+            throw new InvalidEntityException("Impossible de supprimer l'article avec l'id = " + id + ", car il est lié à une ou plusieurs commande.", ErrorCodes.ARTICLE_ALREADY_IN_USE);
+        }
+
+        List<OrderLineSupplier> orderLineSuppliers = orderLineSupplierRepository.findAllByArticleId(id);
+
+        if (!orderLineSuppliers.isEmpty()) {
+            throw new InvalidEntityException("Impossible de supprimer l'article avec l'id = " + id + ", car il est lié à une ou plusieurs commande.", ErrorCodes.ARTICLE_ALREADY_IN_USE);
+        }
+
+        articleRepository.deleteById(id);
+    }
 }
