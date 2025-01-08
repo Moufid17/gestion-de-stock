@@ -8,6 +8,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import com.tmdigital.gestiondestock.exception.InvalidEntityException;
+import com.tmdigital.gestiondestock.exception.InvalidOperationException;
 import com.tmdigital.gestiondestock.exception.NotFoundEntityException;
 
 /**
@@ -33,6 +34,19 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler({InvalidEntityException.class})
     public final ResponseEntity<ErrorDto> handleException(InvalidEntityException ex, WebRequest req) {
+
+        final HttpStatus badRequest = HttpStatus.BAD_REQUEST;
+        final ErrorDto errorDto = ErrorDto.builder()
+                .errorCode(ex.getErrorCode())
+                .httpCode(badRequest.value())
+                .message(ex.getMessage())
+                .build();
+
+        return new ResponseEntity<>(errorDto, badRequest);
+    }
+
+    @ExceptionHandler({InvalidOperationException.class})
+    public final ResponseEntity<ErrorDto> handleException(InvalidOperationException ex, WebRequest req) {
 
         final HttpStatus badRequest = HttpStatus.BAD_REQUEST;
         final ErrorDto errorDto = ErrorDto.builder()
