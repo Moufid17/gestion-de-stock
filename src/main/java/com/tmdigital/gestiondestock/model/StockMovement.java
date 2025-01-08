@@ -31,8 +31,11 @@ public class StockMovement extends AbstractEntity {
     @Column(name = "date_movement")
     private Instant dateMovement = Instant.now();
 
-    @Column(name = "type")
-    private StockMovementType type;
+    @Column(name = "typeMvt")
+    private StockMovementType typeMvt;
+
+    @Column(name = "sourceMvt")
+    private MovementSource sourceMvt;
 
     @Column(name = "id_company")
     private Integer idCompany;
