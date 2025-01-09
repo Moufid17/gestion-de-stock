@@ -50,7 +50,7 @@ public class Article  extends AbstractEntity {
     @JoinColumn(name = "id_category")
     private Category category;
 
-    @Column(name = "id_company")
+    @Column(name = "id_company", nullable = false)
     private Integer company;
 
     @OneToMany(mappedBy = "article")

@@ -26,8 +26,10 @@ public class OrderClient extends AbstractEntity {
     private String code;
 
     @Column(name = "date_commande")
-    
     private Instant dateCommande = Instant.now();
+
+    @Column(name = "status")
+    private OrderStatus status;
 
     @Column(name = "id_company")
     private Integer idCompany;

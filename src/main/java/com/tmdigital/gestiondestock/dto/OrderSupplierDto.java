@@ -3,6 +3,7 @@ package com.tmdigital.gestiondestock.dto;
 import java.time.Instant;
 import java.util.List;
 
+import com.tmdigital.gestiondestock.model.OrderStatus;
 import com.tmdigital.gestiondestock.model.OrderSupplier;
 
 import lombok.Builder;
@@ -19,6 +20,8 @@ public class OrderSupplierDto {
     @Builder.Default
     private Instant dateCommande = Instant.now();
 
+    private OrderStatus status;
+
     private Integer idCompany;
 
     private SupplierDto supplier;
@@ -33,6 +36,7 @@ public class OrderSupplierDto {
             .id(orderSupplier.getId())
             .code(orderSupplier.getCode())
             .dateCommande(orderSupplier.getDateCommande())
+            .status(orderSupplier.getStatus())
             .idCompany(orderSupplier.getIdCompany())
             .supplier(SupplierDto.fromEntity(orderSupplier.getSupplier()))
             .build();
@@ -46,6 +50,7 @@ public class OrderSupplierDto {
         orderSupplier.setId(orderSupplierDto.getId());
         orderSupplier.setCode(orderSupplierDto.getCode());
         orderSupplier.setDateCommande(orderSupplierDto.getDateCommande());
+        orderSupplier.setStatus(orderSupplierDto.getStatus());
         orderSupplier.setIdCompany(orderSupplierDto.getIdCompany());
         orderSupplier.setSupplier(SupplierDto.toEntity(orderSupplierDto.getSupplier()));
         return orderSupplier;

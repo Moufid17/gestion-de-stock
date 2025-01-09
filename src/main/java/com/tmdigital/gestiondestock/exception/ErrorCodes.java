@@ -1,0 +1,63 @@
+package com.tmdigital.gestiondestock.exception;
+
+public enum ErrorCodes {
+    ADDRESS_NOT_FOUND(1000),
+    ADDRESS_NOT_VALID(1001),
+
+    ARTICLE_NOT_FOUND(2000),
+    ARTICLE_NOT_VALID(2001),
+    ARTICLE_ALREADY_IN_USE(2002),
+
+    CATEGORY_NOT_FOUND(3000),
+    CATEGORY_NOT_VALID(3001),
+
+    CLIENT_NOT_FOUND(4000),
+    CLIENT_NOT_VALID(4001),
+
+    SUPPLIER_NOT_FOUND(12000),
+    SUPPLIER_NOT_VALID(12001),
+
+    COMPANY_NOT_FOUND(5000),
+    COMPANY_NOT_VALID(5001),
+
+    ORDER_CLIENT_NOT_FOUND(6000),
+    ORDER_CLIENT_NOT_VALID(6001),
+
+    ORDER_LINE_CLIENT_NOT_FOUND(7000),
+    ORDER_LINE_CLIENT_NOT_VALID(7001),
+
+    ORDER_SUPPLIER_NOT_FOUND(8000),
+    ORDER_SUPPLIER_NOT_VALID(8001),
+
+    ORDER_LINE_SUPPLIER_NOT_FOUND(9000),
+    ORDER_LINE_SUPPLIER_NOT_VALID(9001),
+
+    ROLES_NOT_FOUND(10000),
+    ROLES_NOT_VALID(10001),
+
+    SALES_NOT_FOUND(11000),
+    SALES_NOT_VALID(11001),
+
+    SALES_LINE_NOT_FOUND(12000),
+    SALES_LINE_NOT_VALID(12001),
+
+    STOCK_MOVEMENT_NOT_FOUND(12000),
+    STOCK_MOVEMENT_NOT_VALID(12001),
+    
+    USER_NOT_FOUND(13000),
+    USER_NOT_VALID(13001);
+
+    private int code;
+
+    ErrorCodes(int code) {
+        this.code = code;
+    }
+
+    public int getCode() {
+        return code;
+    }
+
+    public void setCode(int code) {
+        this.code = code;
+    }
+}

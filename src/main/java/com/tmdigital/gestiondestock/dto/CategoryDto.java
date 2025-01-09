@@ -27,7 +27,6 @@ public class CategoryDto {
     public static CategoryDto fromEntity(Category category) {
         if (category == null) {
             return null;
-            // throw new RuntimeException("Category is null");
         }
         return CategoryDto.builder()
                 .id(category.getId())
