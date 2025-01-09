@@ -11,7 +11,10 @@ import com.tmdigital.gestiondestock.repository.CompanyRepository;
 import com.tmdigital.gestiondestock.services.CompanyService;
 import com.tmdigital.gestiondestock.validator.CompanyValidator;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Service
+@Slf4j
 public class CompanyServiceImpl implements CompanyService {
     private CompanyRepository companyRepository;
 
@@ -23,6 +26,7 @@ public class CompanyServiceImpl implements CompanyService {
     public CompanyDto save(CompanyDto dto) {
        List<String> errors = CompanyValidator.validate(dto);
         if (!errors.isEmpty()) {
+            log.error("L'objet n'est pas valide {}", dto);
             throw new InvalidEntityException("L'entité company n'est pas valide", ErrorCodes.COMPANY_NOT_VALID, errors);
         }
         return CompanyDto.fromEntity(companyRepository.save(CompanyDto.toEntity(dto)));
@@ -31,7 +35,8 @@ public class CompanyServiceImpl implements CompanyService {
     @Override
     public CompanyDto findById(Integer id) {
         if (id == null) {
-            throw new InvalidEntityException("Aucun identifiant n'a été fourni");
+            log.error("L'identifiant est nul");
+            return null;
         }
 
         return companyRepository.findById(id)
@@ -52,7 +57,8 @@ public class CompanyServiceImpl implements CompanyService {
     @Override
     public void delete(Integer id) {
         if (id == null) {
-            throw new InvalidEntityException("Aucun identifiant n'a été fourni");
+            log.error("L'identifiant est nul");
+            return;
         }
         companyRepository.deleteById(id);
     }

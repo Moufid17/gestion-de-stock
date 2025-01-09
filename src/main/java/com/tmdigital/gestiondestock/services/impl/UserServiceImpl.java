@@ -15,9 +15,12 @@ import com.tmdigital.gestiondestock.repository.UserRepository;
 import com.tmdigital.gestiondestock.services.UserService;
 import com.tmdigital.gestiondestock.validator.UserValidator;
 
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.util.StringUtils;
 
 @Service
+@Slf4j
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
@@ -33,6 +36,7 @@ public class UserServiceImpl implements UserService {
         List<String> errors = UserValidator.validate(dto);
         
         if (!errors.isEmpty()) {
+            log.error("L'objet n'est pas valide {}", dto);
             throw new InvalidEntityException("L'utilisateur n'est pas valide", ErrorCodes.USER_NOT_VALID, errors);
         }
 
@@ -47,7 +51,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto findById(Integer id) {
         if (id == null) {
-            throw new InvalidEntityException("Aucun identifiant n'a été fourni");
+            log.error("L'identifiant est nul");
+            return null;
         }
 
         return userRepository.findById(id)
@@ -58,7 +63,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto findByEmail(String email) {
         if (email == null || !StringUtils.hasLength(email)) {
-            throw new InvalidEntityException("Aucun email n'a été fourni");
+            log.error("L'identifiant est nul");
+            return null;
         }
 
         return userRepository.findByEmail(email)
@@ -76,7 +82,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserDto> findAllByCompany(Integer id) {
         if (id == null) {
-            throw new InvalidEntityException("Aucun identifiant de la société n'a été fourni");
+            log.error("L'identifiant est nul");
+            return null;
         }
 
         return userRepository.findAllByCompanyId(id).stream()
@@ -87,7 +94,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public void delete(Integer id) {
         if (id == null) {
-            throw new InvalidEntityException("Aucun identifiant n'a été fourni");
+            log.error("L'identifiant est nul");
+            return;
         }
 
         userRepository.deleteById(id);

@@ -11,7 +11,10 @@ import com.tmdigital.gestiondestock.repository.ClientRepository;
 import com.tmdigital.gestiondestock.services.ClientService;
 import com.tmdigital.gestiondestock.validator.ClientValidator;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Service
+@Slf4j
 public class ClientServiceImpl implements ClientService {
 
     private ClientRepository clientRepository;
@@ -25,6 +28,7 @@ public class ClientServiceImpl implements ClientService {
         List<String> errors = ClientValidator.validate(dto);
 
         if(!errors.isEmpty()) {
+            log.error("L'objet n'est pas valide {}", dto);
             throw new InvalidEntityException("Le client n'est pas valide", ErrorCodes.CLIENT_NOT_VALID, errors);
         }
 
@@ -38,7 +42,8 @@ public class ClientServiceImpl implements ClientService {
     @Override
     public ClientDto findById(Integer id) {
         if (id == null) {
-            throw new InvalidEntityException("Aucun identifiant n'a été fourni");
+            log.error("L'identifiant est nul");
+            return null;
         }
 
         return clientRepository.findById(id)
@@ -60,7 +65,8 @@ public class ClientServiceImpl implements ClientService {
     @Override
     public List<ClientDto> findAllByCompany(Integer idCompany) {
         if (idCompany == null) {
-            throw new InvalidEntityException("Aucun identifiant de la société n'a été fourni");
+            log.error("L'identifiant est nul");
+            return null;
         }
 
         return clientRepository.findAllByIdCompany(idCompany)
@@ -72,7 +78,8 @@ public class ClientServiceImpl implements ClientService {
     @Override
     public void delete(Integer id) {
         if (id == null) {
-            throw new InvalidEntityException("Aucun identifiant n'a été fourni");
+            log.error("L'identifiant est nul");
+            return;
         }
 
         clientRepository.deleteById(id);

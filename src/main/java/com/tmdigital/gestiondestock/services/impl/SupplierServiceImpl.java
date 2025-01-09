@@ -12,7 +12,10 @@ import com.tmdigital.gestiondestock.repository.SupplierRepository;
 import com.tmdigital.gestiondestock.services.SupplierService;
 import com.tmdigital.gestiondestock.validator.SupplierValidator;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Service
+@Slf4j
 public class SupplierServiceImpl implements SupplierService {
 
     private final SupplierRepository supplierRepository;
@@ -26,6 +29,7 @@ public class SupplierServiceImpl implements SupplierService {
         List<String> errors = SupplierValidator.validate(dto);
 
         if (!errors.isEmpty()) {
+            log.error("L'objet n'est pas valide {}", dto);
             throw new InvalidEntityException("Le fournisseur n'est pas valide", ErrorCodes.SUPPLIER_NOT_VALID, errors);
         }
 
@@ -35,7 +39,8 @@ public class SupplierServiceImpl implements SupplierService {
     @Override
     public SupplierDto findById(Integer id) {
         if (id == null) {
-            throw new InvalidEntityException("Aucun identifiant n'est fourni");
+            log.error("L'identifiant est nul");
+            return null;
         }
 
         return supplierRepository.findById(id)
@@ -54,7 +59,8 @@ public class SupplierServiceImpl implements SupplierService {
     @Override
     public List<SupplierDto> findAllByCompany(Integer id) {
         if (id == null) {
-            throw new InvalidEntityException("Aucun identifiant de la société n'est fourni");
+            log.error("L'identifiant est nul");
+            return null;
         }
 
         return supplierRepository.findAllByIdCompany(id)
@@ -66,7 +72,8 @@ public class SupplierServiceImpl implements SupplierService {
     @Override
     public void delete(Integer id) {
         if (id == null) {
-            throw new InvalidEntityException("Aucun identifiant n'est fourni");
+            log.error("L'identifiant est nul");
+            return;
         }
         supplierRepository.deleteById(id);
     }

@@ -46,7 +46,7 @@ public class ArticleServiceImpl implements ArticleService {
         
         List<String> errors = ArticleValidator.validate(dto);
         if (!errors.isEmpty()) {
-            log.error("Article n'est pas valide {}", dto);
+            log.error("L'objet n'est pas valide {}", dto);
             throw new InvalidEntityException("L'article n'est pas valide", ErrorCodes.ARTICLE_NOT_VALID, errors);
         }
 
@@ -60,11 +60,12 @@ public class ArticleServiceImpl implements ArticleService {
     @Override
     public ArticleDto findById(Integer id) {
         if (id == null) {
-            throw new NotFoundEntityException("L'id de l'article est nulle");
+            log.error("L'identifiant est nul");
+            return null;
         }
 
         return Optional.of(ArticleDto.fromEntity(
-            articleRepository.findById(id).get()
+                    articleRepository.findById(id).get()
                 )).orElseThrow(
                         () -> new NotFoundEntityException("L'article avec l'id = " + id + ", n'existe pas.", ErrorCodes.ARTICLE_NOT_FOUND)
                     );
@@ -73,7 +74,8 @@ public class ArticleServiceImpl implements ArticleService {
     @Override
     public ArticleDto findByCodeArticle(String codeArticle) {
         if (codeArticle == null) {
-            throw new NotFoundEntityException("Le code de l'article est nulle");
+            log.error("L'identifiant est nul");
+            return null;
         }
 
         return Optional.of(ArticleDto.fromEntity(
@@ -92,7 +94,8 @@ public class ArticleServiceImpl implements ArticleService {
     
     public List<ArticleDto> findAllArticleByCompany(Integer idCompany) {
         if (idCompany == null) {
-            throw new NotFoundEntityException("L'id de l'entreprise est nulle");
+            log.error("L'identifiant est nul");
+            return null;
         }
         return articleRepository.findAllByCompany(idCompany).stream()
                 .map(ArticleDto::fromEntity)
@@ -101,7 +104,8 @@ public class ArticleServiceImpl implements ArticleService {
     
     public List<ArticleDto> findAllArticleByCategory(Integer idCategory) {
         if (idCategory == null) {
-            throw new NotFoundEntityException("L'id' de la catégorie de l'article est nulle");
+            log.error("L'identifiant est nul");
+            return null;
         }
         return articleRepository.findAllByCategoryId(idCategory).stream()
                 .map(ArticleDto::fromEntity)
@@ -111,7 +115,7 @@ public class ArticleServiceImpl implements ArticleService {
     @Override
     public List<SalesLineDto> findAllSalesLineByArticleId(Integer idArticle) {
         if (idArticle == null) {
-            log.error("L'id de l'article est nulle");
+            log.error("L'identifiant est nul");
             return null;
         }
 
@@ -123,7 +127,7 @@ public class ArticleServiceImpl implements ArticleService {
     @Override
     public List<OrderLineClientDto> findAllInOrderLineClientByArticleId(Integer idArticle) {
         if (idArticle == null) {
-            log.error("L'id de l'article est nulle");
+            log.error("L'identifiant est nul");
             return null;
         }
 
@@ -135,7 +139,7 @@ public class ArticleServiceImpl implements ArticleService {
     @Override
     public List<OrderLineSupplierDto> findAllOrderLineSupplierByArticleId(Integer idArticle) {
         if (idArticle == null) {
-            log.error("L'id de l'article est nulle");
+            log.error("L'identifiant est nul");
             return null;
         }
 
@@ -146,7 +150,7 @@ public class ArticleServiceImpl implements ArticleService {
 
     public void delete(Integer id) {
         if (id == null) {
-            log.error("L'id de l'article est nulle");
+            log.error("L'identifiant est nul");
             return;
         }
 

@@ -12,7 +12,10 @@ import com.tmdigital.gestiondestock.repository.SalesRepository;
 import com.tmdigital.gestiondestock.services.SalesService;
 import com.tmdigital.gestiondestock.validator.SalesValidator;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Service
+@Slf4j
 public class SalesServiceImpl implements SalesService {
 
     private SalesRepository salesRepository;
@@ -26,6 +29,7 @@ public class SalesServiceImpl implements SalesService {
         List<String> errors = SalesValidator.validate(dto);
 
         if (!errors.isEmpty()) {
+            log.error("L'objet n'est pas valide {}", dto);
             throw new InvalidEntityException("La commande vente n'est pas valide", ErrorCodes.SALES_NOT_VALID, errors);
         }
 
@@ -35,17 +39,20 @@ public class SalesServiceImpl implements SalesService {
     @Override
     public SalesDto findById(Integer id) {
         if (id == null) {
-            throw new InvalidEntityException("Aucun identifiant n'a été fourni pour la commande de vente");
+            log.error("L'identifiant est nul");
+            return null;
         }
 
-        return salesRepository.findById(id).map(SalesDto::fromEntity)
-                .orElseThrow(() -> new InvalidEntityException("Aucune commande de vente n'a été trouvée avec l'identifiant " + id));
+        return salesRepository.findById(id)
+            .map(SalesDto::fromEntity)
+            .orElseThrow(() -> new InvalidEntityException("Aucune commande de vente n'a été trouvée avec l'identifiant " + id));
     }
 
     @Override
     public SalesDto findByCode(String code) {
-       if (code == null) {
-            throw new InvalidEntityException("Aucun code n'a été fourni pour la commande de vente");
+        if (code == null) {
+            log.error("L'identifiant est nul");
+            return null;
         }
 
         return salesRepository.findSalesByCode(code).map(SalesDto::fromEntity)
@@ -55,7 +62,8 @@ public class SalesServiceImpl implements SalesService {
     @Override
     public List<SalesDto> findAllByCompany(Integer idCompany) {
         if (idCompany == null) {
-            throw new InvalidEntityException("Aucun identifiant de société n'a été fourni pour cette commande de vente");
+            log.error("L'identifiant est nul");
+            return null;
         }
 
         return salesRepository.findAllByIdCompany(idCompany).stream()
@@ -73,7 +81,8 @@ public class SalesServiceImpl implements SalesService {
     @Override
     public void delete(Integer id) {
         if (id == null) {
-            throw new InvalidEntityException("Aucun identifiant n'a été fourni pour la commande de vente");
+            log.error("L'identifiant est nul");
+            return;
         }
         salesRepository.deleteById(id);
     }

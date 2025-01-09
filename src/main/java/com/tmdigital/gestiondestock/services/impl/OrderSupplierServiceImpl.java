@@ -35,7 +35,7 @@ public class OrderSupplierServiceImpl implements OrderSupplierService {
         List<String> errors = OrderSupplierValidator.validate(dto);
 
         if (!errors.isEmpty()) {
-            log.error("Commande n'est pas valide");
+            log.error("L'objet n'est pas valide {}", dto);
             throw new InvalidEntityException("La commande n'est pas valide", ErrorCodes.ORDER_SUPPLIER_NOT_VALID, errors);
         }
 
@@ -52,7 +52,8 @@ public class OrderSupplierServiceImpl implements OrderSupplierService {
     @Override
     public OrderSupplierDto findById(Integer id) {
         if (id == null) {
-            throw new InvalidEntityException("Aucun identifiant n'a été fourni");
+            log.error("L'identifiant est nul");
+            return null;
         }
 
         return orderSupplierRepository.findById(id)
@@ -63,7 +64,8 @@ public class OrderSupplierServiceImpl implements OrderSupplierService {
     @Override
     public OrderSupplierDto findByCode(String code) {
         if (!StringUtils.hasLength(code)) {
-            throw new InvalidEntityException("Aucun code n'a été fourni");
+            log.error("L'identifiant est nul");
+            return null;
         }
 
         return orderSupplierRepository.findByCode(code)
@@ -81,7 +83,8 @@ public class OrderSupplierServiceImpl implements OrderSupplierService {
     @Override
     public List<OrderSupplierDto> findAllByCompany(Integer id) {
         if (id == null) {
-            throw new InvalidEntityException("Aucun identifiant n'a été fourni");
+            log.error("L'identifiant est nul");
+            return null;
         }
 
         return orderSupplierRepository.findAllByIdCompany(id).stream()
@@ -92,7 +95,8 @@ public class OrderSupplierServiceImpl implements OrderSupplierService {
     @Override
     public List<OrderSupplierDto> findAllBySupplier(Integer id) {
         if (id == null) {
-            throw new InvalidEntityException("Aucun identifiant n'a été fourni");
+            log.error("L'identifiant est nul");
+            return null;
         }
 
         return orderSupplierRepository.findAllBySupplierId(id).stream()
@@ -103,7 +107,8 @@ public class OrderSupplierServiceImpl implements OrderSupplierService {
     @Override
     public void delete(Integer id) {
         if (id == null) {
-            throw new InvalidEntityException("Aucun identifiant n'a été fourni");
+            log.error("L'identifiant est nul");
+            return;
         }
 
         orderSupplierRepository.deleteById(id);

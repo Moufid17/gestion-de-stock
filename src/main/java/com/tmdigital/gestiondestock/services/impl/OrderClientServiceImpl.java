@@ -16,8 +16,11 @@ import com.tmdigital.gestiondestock.repository.OrderClientRepository;
 import com.tmdigital.gestiondestock.services.OrderClientService;
 import com.tmdigital.gestiondestock.validator.OrderClientValidator;
 
+import lombok.extern.slf4j.Slf4j;
+
 
 @Service
+@Slf4j
 public class OrderClientServiceImpl implements OrderClientService {
 
     private final OrderClientRepository orderClientRepository;
@@ -33,6 +36,7 @@ public class OrderClientServiceImpl implements OrderClientService {
         List<String> errors = OrderClientValidator.validate(dto);
         
         if (!errors.isEmpty()) {
+            log.error("L'objet n'est pas valide {}", dto);
             throw new InvalidEntityException("La commande n'est pas valide", ErrorCodes.ORDER_CLIENT_NOT_VALID, errors);
         }
 
@@ -47,7 +51,8 @@ public class OrderClientServiceImpl implements OrderClientService {
     @Override
     public OrderClientDto findById(Integer id) {
         if(id == null) {
-            throw new InvalidEntityException("L'identifiant de la commande est invalide.");
+            log.error("L'identifiant est nul");
+            return null;
         }
 
         return orderClientRepository.findById(id)
@@ -58,7 +63,8 @@ public class OrderClientServiceImpl implements OrderClientService {
     @Override
     public OrderClientDto findByCode(String code) {
         if(!StringUtils.hasLength(code)) {
-            throw new InvalidEntityException("L'identifiant de la commande est invalide.");
+            log.error("L'identifiant est nul");
+            return null;
         }
 
         return orderClientRepository.findByCode(code)
@@ -76,7 +82,8 @@ public class OrderClientServiceImpl implements OrderClientService {
     @Override
     public List<OrderClientDto> findAllByCompany(Integer id) {
         if (id == null) {
-            throw new InvalidEntityException("L'identifiant est invalide.");
+            log.error("L'identifiant est nul");
+            return null;
         }
 
         return orderClientRepository.findAll().stream()
@@ -87,7 +94,8 @@ public class OrderClientServiceImpl implements OrderClientService {
 	@Override
 	public List<OrderClientDto> findAllByClient(Integer id) {
 		if (id == null) {
-            throw new InvalidEntityException("L'identifiant est invalide.");
+            log.error("L'identifiant est nul");
+            return null;
         }
 
         return orderClientRepository.findAllByClientId(id).stream()
@@ -98,7 +106,8 @@ public class OrderClientServiceImpl implements OrderClientService {
     @Override
     public void delete(Integer id) {
         if (id == null) {
-            throw new InvalidEntityException("L'identifiant est invalide.");
+            log.error("L'identifiant est nul");
+            return;
         }
 
         orderClientRepository.deleteById(id);

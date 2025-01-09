@@ -12,7 +12,10 @@ import com.tmdigital.gestiondestock.exception.InvalidEntityException;
 import com.tmdigital.gestiondestock.repository.CategoryRepository;
 import com.tmdigital.gestiondestock.services.CategoryService;
 import com.tmdigital.gestiondestock.validator.CategoryValidator;
+
+import lombok.extern.slf4j.Slf4j;
 @Service
+@Slf4j
 public class CategoryServiceImpl implements CategoryService {
 
     private CategoryRepository categoryRepository;
@@ -25,6 +28,7 @@ public class CategoryServiceImpl implements CategoryService {
     public CategoryDto save(CategoryDto dto) {
         List<String> errors = CategoryValidator.validate(dto);
         if (!errors.isEmpty()) {
+            log.error("L'objet n'est pas valide {}", dto);
             throw new InvalidEntityException("Category n'est pas valide", ErrorCodes.CATEGORY_NOT_VALID, errors);
         }
 
@@ -38,7 +42,8 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public CategoryDto findById(Integer id) {
         if (id == null) {
-            throw new InvalidEntityException("L'id de la category est nulle");
+            log.error("L'identifiant est nul");
+            return null;
         }
 
         return Optional.of(CategoryDto.fromEntity(
@@ -51,7 +56,8 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public CategoryDto findByCode(String code) {
         if (code == null) {
-            throw new InvalidEntityException("Le code de la category est nulle");
+            log.error("L'identifiant est nul");
+            return null;
         }
 
         return Optional.of(CategoryDto.fromEntity(
@@ -71,7 +77,8 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public List<CategoryDto> findAllByCompany(Integer idCompany) {
         if (idCompany == null) {
-            throw new InvalidEntityException("L'id de l'entrprise est nulle");
+            log.error("L'identifiant est nul");
+            return null;
         }
 
         return categoryRepository.findAllByCompany(idCompany).stream()
@@ -82,7 +89,8 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public void delete(Integer id) {
         if (id == null) {
-            throw new InvalidEntityException("L'id de la categorie est nulle");
+            log.error("L'identifiant est nul");
+            return;
         }
 
         categoryRepository.deleteById(id);
