@@ -25,6 +25,10 @@ public class SalesValidator {
             errors.add("Veuillez renseigner la date de la vente");
         }
 
+        if (salesDto.getIdCompany() == null ) {
+            errors.add("Veuillez renseigner les données de l'identifaint de la société");
+        }
+
         return errors;
     }
 }

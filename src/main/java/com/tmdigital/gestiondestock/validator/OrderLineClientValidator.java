@@ -11,9 +11,9 @@ public class OrderLineClientValidator {
         List<String> errors = new ArrayList<>();
 
         if (orderLineClientDto == null) {
+            errors.add("Veuillez renseigner l'article");
             errors.add("Veuillez renseigner le prix unitaire de vente TTC");
             errors.add("Veuillez renseigner la quantité");
-            errors.add("Veuillez renseigner l'article");
             errors.add("Veuillez renseigner la commande client");
             return errors;
         }
