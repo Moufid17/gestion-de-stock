@@ -5,6 +5,8 @@ import java.time.Instant;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
@@ -32,10 +34,15 @@ public class StockMovement extends AbstractEntity {
     private Instant dateMovement = Instant.now();
 
     @Column(name = "typeMvt")
+    @Enumerated(EnumType.STRING)
     private StockMovementType typeMvt;
 
     @Column(name = "sourceMvt")
+    @Enumerated(EnumType.STRING)
     private MovementSource sourceMvt;
+
+    @Column(name = "orderId")
+    private Integer orderId; // Sales, OrderClient, OrderFournisseur
 
     @Column(name = "id_company")
     private Integer idCompany;
