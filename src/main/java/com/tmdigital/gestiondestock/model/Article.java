@@ -43,14 +43,11 @@ public class Article  extends AbstractEntity {
     @Column(name = "photo")
     private String photo;
 
-    @Column(name = "alert_stock", nullable = false)
-    private Integer alertStock = 0;
-
     @ManyToOne
     @JoinColumn(name = "id_category")
     private Category category;
 
-    @Column(name = "id_company", nullable = false)
+    @Column(name = "id_company")
     private Integer company;
 
     @OneToMany(mappedBy = "article")
