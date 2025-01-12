@@ -11,9 +11,9 @@ public class OrderLineSupplierValidator {
         List<String> errors = new ArrayList<>();
 
         if (orderLineSupplierDto == null) {
+            errors.add("Veuillez renseigner l'article.");
             errors.add("Veuillez renseigner le prix d'achat unitaire TTC.");
             errors.add("Veuillez renseigner la quantité.");
-            errors.add("Veuillez renseigner l'article.");
             errors.add("Veuillez renseigner la commande fournisseur associée.");
             return errors;
         }

@@ -13,10 +13,12 @@ import com.tmdigital.gestiondestock.dto.SalesLineDto;
 import com.tmdigital.gestiondestock.exception.ErrorCodes;
 import com.tmdigital.gestiondestock.exception.InvalidEntityException;
 import com.tmdigital.gestiondestock.exception.NotFoundEntityException;
+import com.tmdigital.gestiondestock.model.Category;
 import com.tmdigital.gestiondestock.model.OrderLineClient;
 import com.tmdigital.gestiondestock.model.OrderLineSupplier;
 import com.tmdigital.gestiondestock.model.SalesLine;
 import com.tmdigital.gestiondestock.repository.ArticleRepository;
+import com.tmdigital.gestiondestock.repository.CategoryRepository;
 import com.tmdigital.gestiondestock.repository.OrderLineClientRepository;
 import com.tmdigital.gestiondestock.repository.OrderLineSupplierRepository;
 import com.tmdigital.gestiondestock.repository.SalesLineRepository;
@@ -33,12 +35,14 @@ public class ArticleServiceImpl implements ArticleService {
     private SalesLineRepository salesLineRepository;
     private OrderLineClientRepository orderLineClientRepository;
     private OrderLineSupplierRepository orderLineSupplierRepository;
+    private CategoryRepository categoryRepository;
 
-    public ArticleServiceImpl(ArticleRepository articleRepository, SalesLineRepository salesLineRepository, OrderLineClientRepository orderLineClientRepository, OrderLineSupplierRepository orderLineSupplierRepository) {
+    public ArticleServiceImpl(ArticleRepository articleRepository, SalesLineRepository salesLineRepository, OrderLineClientRepository orderLineClientRepository, OrderLineSupplierRepository orderLineSupplierRepository, CategoryRepository categoryRepository) {
         this.articleRepository = articleRepository;
         this.salesLineRepository = salesLineRepository;
         this.orderLineClientRepository = orderLineClientRepository;
         this.orderLineSupplierRepository = orderLineSupplierRepository;
+        this.categoryRepository = categoryRepository;
     }
 
     @Override
@@ -48,6 +52,14 @@ public class ArticleServiceImpl implements ArticleService {
         if (!errors.isEmpty()) {
             log.error("L'objet n'est pas valide {}", dto);
             throw new InvalidEntityException("L'article n'est pas valide", ErrorCodes.ARTICLE_NOT_VALID, errors);
+        }
+
+        // CHECK IF THE CATEGORY EXISTS
+        Optional<Category> category = categoryRepository.findById(dto.getCategory().getId());
+
+        if (!category.isPresent()) {
+            log.warn("La category avec l'ID {} n'existe pas.", dto.getCategory().getId());
+            throw new InvalidEntityException("La category avec l'ID " + dto.getCategory().getId() + " n'existe pas.", ErrorCodes.CATEGORY_NOT_FOUND);
         }
 
         return ArticleDto.fromEntity(
@@ -168,7 +180,8 @@ public class ArticleServiceImpl implements ArticleService {
 
         List<OrderLineSupplier> orderLineSuppliers = orderLineSupplierRepository.findAllByArticleId(id);
 
-        if (!orderLineSuppliers.isEmpty()) {
+        if (orderLineSuppliers.isEmpty()) {
+            log.error("Impossible de supprimer l'article avec l'id = " + id + ", car il est lié à une ou plusieurs commande.");
             throw new InvalidEntityException("Impossible de supprimer l'article avec l'id = " + id + ", car il est lié à une ou plusieurs commande.", ErrorCodes.ARTICLE_ALREADY_IN_USE);
         }
 

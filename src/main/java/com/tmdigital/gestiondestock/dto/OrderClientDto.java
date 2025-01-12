@@ -54,4 +54,12 @@ public class OrderClientDto {
         orderClient.setClient(ClientDto.toEntity(orderClientDto.getClient()));
         return orderClient;
     }
+
+    public boolean isCancaled() {
+        return OrderStatus.CANCELED.equals(this.status);
+    }
+
+    public boolean isDelivered() {
+        return OrderStatus.DELIVERED.equals(this.status);
+    }
 }

@@ -55,4 +55,12 @@ public class OrderSupplierDto {
         orderSupplier.setSupplier(SupplierDto.toEntity(orderSupplierDto.getSupplier()));
         return orderSupplier;
     }
+
+    public boolean isCancaled() {
+        return OrderStatus.CANCELED.equals(this.status);
+    }
+
+    public boolean isDelivered() {
+        return OrderStatus.DELIVERED.equals(this.status);
+    }
 }

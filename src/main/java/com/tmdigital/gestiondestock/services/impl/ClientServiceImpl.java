@@ -7,7 +7,9 @@ import org.springframework.stereotype.Service;
 import com.tmdigital.gestiondestock.dto.ClientDto;
 import com.tmdigital.gestiondestock.exception.ErrorCodes;
 import com.tmdigital.gestiondestock.exception.InvalidEntityException;
+import com.tmdigital.gestiondestock.model.OrderClient;
 import com.tmdigital.gestiondestock.repository.ClientRepository;
+import com.tmdigital.gestiondestock.repository.OrderClientRepository;
 import com.tmdigital.gestiondestock.services.ClientService;
 import com.tmdigital.gestiondestock.validator.ClientValidator;
 
@@ -18,9 +20,11 @@ import lombok.extern.slf4j.Slf4j;
 public class ClientServiceImpl implements ClientService {
 
     private ClientRepository clientRepository;
+    private OrderClientRepository orderClientRespRepository;
 
-    public ClientServiceImpl(ClientRepository clientRepository) {
+    public ClientServiceImpl(ClientRepository clientRepository, OrderClientRepository orderClientRespRepository) {
         this.clientRepository = clientRepository;
+        this.orderClientRespRepository = orderClientRespRepository;
     }
 
     @Override
@@ -80,6 +84,13 @@ public class ClientServiceImpl implements ClientService {
         if (id == null) {
             log.error("L'identifiant est nul");
             return;
+        }
+
+        List<OrderClient> orderClients = orderClientRespRepository.findAllByClientId(id);
+
+        if (!orderClients.isEmpty()) {
+            log.error("Impossible de supprimer le client avec l'id = {}", id);
+            throw new InvalidEntityException("Impossible de supprimer client", ErrorCodes.CLIENT_IS_ALREADY_USED);
         }
 
         clientRepository.deleteById(id);
