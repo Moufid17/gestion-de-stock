@@ -15,4 +15,14 @@ public interface StockMovementRepository extends CrudRepository<StockMovement, I
     BigDecimal stockReel(@Param("idArticle") Integer idArticle);
 
     List<StockMovement> findAllByArticleId(Integer idArticle);
+
+    List<StockMovement> findAllByTypeMvt(String typeMvt);
+
+    List<StockMovement> findAllBysourceMvt(String sourceMvt);
+
+    @Query("SELECT m FROM StockMovement m WHERE m.idCompany = :idCompany")
+    List<StockMovement> findAllByIdCompany(Integer idCompany);
+    
+    @Query("SELECT m FROM StockMovement m")
+    List<StockMovement> findAll();
 }

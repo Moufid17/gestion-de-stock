@@ -45,6 +45,11 @@ public class UserServiceImpl implements UserService {
             throw new InvalidEntityException("Aucune société a'existe pas.", ErrorCodes.COMPANY_NOT_FOUND);
         }
 
+        if (userRepository.findByEmail(dto.getEmail()).isPresent()) {
+            log.error("L'utilisateur avec cet email existe déjà.");
+            throw new InvalidEntityException("Il existe déjà un utilisateur avec l'email " + dto.getEmail(), ErrorCodes.USER_ALREADY_IN_USE);
+        }
+
         return UserDto.fromEntity(userRepository.save(UserDto.toEntity(dto)));
     }
 

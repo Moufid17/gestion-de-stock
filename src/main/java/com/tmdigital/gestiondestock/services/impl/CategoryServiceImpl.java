@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import com.tmdigital.gestiondestock.dto.CategoryDto;
 import com.tmdigital.gestiondestock.exception.ErrorCodes;
 import com.tmdigital.gestiondestock.exception.InvalidEntityException;
+import com.tmdigital.gestiondestock.model.Article;
+import com.tmdigital.gestiondestock.repository.ArticleRepository;
 import com.tmdigital.gestiondestock.repository.CategoryRepository;
 import com.tmdigital.gestiondestock.services.CategoryService;
 import com.tmdigital.gestiondestock.validator.CategoryValidator;
@@ -19,9 +21,11 @@ import lombok.extern.slf4j.Slf4j;
 public class CategoryServiceImpl implements CategoryService {
 
     private CategoryRepository categoryRepository;
+    private ArticleRepository articleRepository;
 
-    public CategoryServiceImpl(CategoryRepository categoryRepository) {
+    public CategoryServiceImpl(CategoryRepository categoryRepository, ArticleRepository articleRepository) {
         this.categoryRepository = categoryRepository;
+        this.articleRepository = articleRepository;
     }
 
     @Override
@@ -91,6 +95,13 @@ public class CategoryServiceImpl implements CategoryService {
         if (id == null) {
             log.error("L'identifiant est nul");
             return;
+        }
+
+        List<Article> articles = articleRepository.findAllByCategoryId(id);
+
+        if (!articles.isEmpty()) {
+            log.error("Impossible de supprimer la categorie avec l'id = {}", id);
+            throw new InvalidEntityException("Impossible de supprimer la categorie avec l'id =" + id , ErrorCodes.ARTICLE_CATEGORY_IS_ALREADY_USED);
         }
 
         categoryRepository.deleteById(id);
