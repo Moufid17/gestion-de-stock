@@ -58,7 +58,11 @@ public enum ErrorCodes {
     
     USER_NOT_FOUND(13000),
     USER_NOT_VALID(13001),
-    USER_ALREADY_IN_USE(13004);
+    USER_ALREADY_IN_USE(13004),
+
+    // Liste des exception techniques
+    UPDATE_PHOTO_EXCEPTION(14000),
+    UNKNOWN_CONTEXT(14001);
 
     private int code;
 
