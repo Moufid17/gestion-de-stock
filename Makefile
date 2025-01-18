@@ -1,3 +1,6 @@
+install:
+	mvn clean install
+
 build:
 	mvn clean package
 
@@ -12,3 +15,9 @@ stop:
 
 ps: 
 	docker compose ps
+
+bash:
+	docker compose exec gstock-jdk-server /bin/sh
+
+logs:
+	docker compose logs gstock-jdk-server -f
