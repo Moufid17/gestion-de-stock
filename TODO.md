@@ -8,7 +8,8 @@
 - [x] Define dao
 - [x] Define validators
 - [x] exceptions
+- [x] Picture management
+- [*] Swagger
 - [*] service
-- [ ] controller
+- [*] controller
 - [ ] Security : JWT
-- [ ] Swagger
