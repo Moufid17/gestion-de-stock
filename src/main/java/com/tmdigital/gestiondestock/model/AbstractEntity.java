@@ -14,6 +14,8 @@ import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import lombok.Data;
 
 @Data
@@ -27,13 +29,23 @@ public abstract class AbstractEntity implements Serializable {
     @GeneratedValue
     private Integer id;
 
-    @CreatedDate
-    @Column(name = "createAt", nullable = false) // Remove nullable = false to allow null value
+    // @CreatedDate
+    @Column(name = "createAt", nullable = false)
     @JsonIgnore
     private Instant createAt;
 
-    @LastModifiedDate
+    // @LastModifiedDate
     @Column(name = "updateAt", nullable = false)
     @JsonIgnore
     private Instant updateAt;
+
+    @PrePersist
+    void beforeCreate() {
+        this.createAt = Instant.now();
+    }
+
+    @PreUpdate
+    void beforeUpdate() {
+        this.updateAt = Instant.now();
+    }
 }
