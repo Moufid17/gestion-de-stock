@@ -11,26 +11,90 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import com.tmdigital.gestiondestock.dto.OrderClientDto;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
+@Tag(name = "OrderClient", description = "The OrderClient API")
 public interface OrderClientApi {
 
-    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)  
+    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Create an orderClient", description = "Allow to create an new orderClient", 
+        responses = {
+            @ApiResponse(responseCode = "201", description = "OrderClient created", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OrderClientDto.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid input", content = @Content),
+            @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
+            @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content),
+            @ApiResponse(responseCode = "409", description = "OrderClient already exists", content = @Content),
+        }
+    )  
     OrderClientDto save(@RequestBody OrderClientDto dto);
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Retreive an OrderClient", description = "Allow to retreive an OrderClient by his id", 
+        responses = {
+            @ApiResponse(responseCode = "200", description = "Retreive an OrderClient with success"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
+            @ApiResponse(responseCode = "404", description = "OrderClient not found"),
+        }
+    )
     OrderClientDto findById(@PathVariable Integer id);
     
-    @GetMapping(value = "/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/filter/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Retreive all OrderClient by company id", description = "Allow to retreive all orderClient in the login user company", 
+        responses = {
+            @ApiResponse(responseCode = "200", description = "Retreive with success", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OrderClientDto[].class))),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
+            @ApiResponse(responseCode = "404", description = "OrderClient not found"),
+        }
+    )
     OrderClientDto findByCode(@PathVariable String code);
 
-    @GetMapping(value = "/client/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/filter/client/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Retreive all orderClient by company id", description = "Allow to retreive all orderClient in the login user company", 
+        responses = {
+            @ApiResponse(responseCode = "200", description = "Retreive with success", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OrderClientDto[].class))),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
+            @ApiResponse(responseCode = "404", description = "OrderClient not found"),
+        }
+    )
     List<OrderClientDto> findAllByClientId(@PathVariable Integer id);
 
-    @GetMapping(value = "/company/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/filter/company/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Retreive all orderClient by company id", description = "Allow to retreive all orderClient in the login user company", 
+        responses = {
+            @ApiResponse(responseCode = "200", description = "Retreive with success", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OrderClientDto[].class))),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
+            @ApiResponse(responseCode = "404", description = "OrderClient not found"),
+        }
+    )
     List<OrderClientDto> findAllByCompany(@PathVariable Integer id);
     
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Retreive all orderClient", description = "Allow to retreive all orderSupplier in the login user company", 
+        responses = {
+            @ApiResponse(responseCode = "200", description = "Retreive with success", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OrderClientDto[].class))),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
+            @ApiResponse(responseCode = "404", description = "OrderClient not found"),
+        }
+    )
     List<OrderClientDto> findAll();
 
     @DeleteMapping("/{id}")
+    @Operation(summary = "Delete an orderClient", description = "Allow to delete an orderClient with his id", 
+        responses = {
+            @ApiResponse(responseCode = "204", description = "Delete with success"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
+            @ApiResponse(responseCode = "404", description = "OrderClient not found"),
+        }
+    )
     void delete(@PathVariable Integer id);
 }
