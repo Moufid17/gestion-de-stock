@@ -30,12 +30,12 @@ public abstract class AbstractEntity implements Serializable {
     private Integer id;
 
     // @CreatedDate
-    @Column(name = "createAt", nullable = false)
+    @Column(name = "createAt", nullable = false, updatable = false)
     @JsonIgnore
     private Instant createAt;
 
     // @LastModifiedDate
-    @Column(name = "updateAt", nullable = false)
+    @Column(name = "updateAt")
     @JsonIgnore
     private Instant updateAt;
 
