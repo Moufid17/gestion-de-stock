@@ -2,8 +2,6 @@ package com.tmdigital.gestiondestock.Utils;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.io.Decoders;
-import io.jsonwebtoken.security.Keys;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -18,18 +16,7 @@ import javax.crypto.SecretKey;
 @Service
 public class JwtUtil {
 
-    private String SECRET_KEY = "secret";
-
-    public SecretKey key;
-
-    public JwtUtil() {
-        this.key = getSignInKey();
-    }
-
-    private SecretKey getSignInKey(){
-        byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
-        return Keys.hmacShaKeyFor(keyBytes);
-    }
+    private SecretKey key =  Jwts.SIG.HS256.key().build(); // 256-bit key
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
@@ -44,7 +31,7 @@ public class JwtUtil {
         return claimsResolver.apply(claims);
     }
     private Claims extractAllClaims(String token) {
-        return Jwts.parser().verifyWith(getSignInKey()).build().parseSignedClaims(token).getPayload();
+        return Jwts.parser().verifyWith(key).build().parseSignedClaims(token).getPayload();
     }
 
     private Boolean isTokenExpired(String token) {
