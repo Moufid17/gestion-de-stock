@@ -15,20 +15,16 @@ import com.tmdigital.gestiondestock.dto.auth.AuthenticationRequest;
 import com.tmdigital.gestiondestock.dto.auth.AuthenticationResponse;
 import com.tmdigital.gestiondestock.services.auth.ApplicationUserDetailsService;
 
-import lombok.extern.slf4j.Slf4j;
-
 @RestController
 @RequestMapping("/api/v1")
-@Slf4j
 public class AuthenticationController {
 
     private AuthenticationManager authenticationManager;
     
+    private ApplicationUserDetailsService applicationUserDetailsService;
+    
     @Autowired
     private JwtUtil jwtTokenProvider;
-    
-    private ApplicationUserDetailsService applicationUserDetailsService;
-
 
 	public AuthenticationController(AuthenticationManager authenticationManager, ApplicationUserDetailsService applicationUserDetailsService) {
 		this.authenticationManager = authenticationManager;
