@@ -1,9 +1,10 @@
 package com.tmdigital.gestiondestock.model;
 
+import java.util.List;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -21,7 +22,6 @@ public class Roles extends AbstractEntity {
     @Column(name = "role_name")
     private String roleName;
 
-    @ManyToOne
-    @JoinColumn(name = "id_user")
-    private User user;
+    @ManyToMany
+    private List<User> users;
 }

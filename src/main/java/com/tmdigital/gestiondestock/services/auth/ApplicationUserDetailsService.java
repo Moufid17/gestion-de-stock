@@ -26,12 +26,13 @@ public class ApplicationUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         User user = this.userRepository.findByEmail(email).
                         orElseThrow(() -> new NotFoundEntityException("Not user with this email.", ErrorCodes.USER_NOT_FOUND));
-        
+
         Collection<? extends GrantedAuthority> authorities = user.getRules().stream()
             .map(role -> new SimpleGrantedAuthority(role.getRoleName()))
             .collect(Collectors.toList());
-
+        
         return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), authorities);
+        // return new InMemoryUserDetailsManager(new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), authorities));
     }
 
 }
