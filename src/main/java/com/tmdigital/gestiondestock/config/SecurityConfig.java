@@ -12,7 +12,7 @@ public class SecurityConfig {
     SecurityFilterChain configure(HttpSecurity http) throws Exception {
          
         http
-            .csrf(csrf -> csrf.disable()) // Nouvelle syntaxe pour désactiver CSRF
+            .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
          
         return http.build();
