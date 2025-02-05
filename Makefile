@@ -10,7 +10,7 @@ startfirst:
 start:
 	docker compose up -d
 
-d: 
+down: 
 	docker compose down
 
 stop: 
