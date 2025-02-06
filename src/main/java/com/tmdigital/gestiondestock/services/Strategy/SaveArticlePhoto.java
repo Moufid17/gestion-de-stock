@@ -28,7 +28,6 @@ public class SaveArticlePhoto implements Strategy<ArticleDto> {
     public ArticleDto savePhoto(Integer idArticle, InputStream photo, String title) throws FlickrException {
 
         ArticleDto article = articleService.findById(idArticle);
-        // Save flickr photo(create flickr service)
         String idPhoto = "";
         try {
             idPhoto = flickrService.savePhoto(photo, title);

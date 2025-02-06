@@ -45,6 +45,7 @@ public class AuthenticationController {
     //     return ResponseEntity.ok("User registered successfully!");
     // }
     
+    // [ ] Catcher l'execption si l'utilisateur n'existe pas ou si le mot de passe est incorrect ou si le token n'est pas valide(403) avec un message d'erreur
     @PostMapping("/authenticate")
     public ResponseEntity<AuthenticationResponse> login(@RequestBody AuthenticationRequest req) {
 
