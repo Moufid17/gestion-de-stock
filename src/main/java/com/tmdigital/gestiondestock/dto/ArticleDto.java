@@ -48,7 +48,7 @@ public class ArticleDto {
             .sellPriceInclTax(article.getSellPriceInclTax())
             .photo(article.getPhoto())
             .company(article.getCompany())
-            .category(CategoryDto.fromEntity(article.getCategory())) // Imprtant to use fromEntity() method
+            .category(CategoryDto.fromEntity(article.getCategory()))
             .build();
     }
 
@@ -65,7 +65,7 @@ public class ArticleDto {
         article.setSellPriceInclTax(articleDto.getSellPriceInclTax());
         article.setPhoto(articleDto.getPhoto());
         article.setCompany(articleDto.getCompany());
-        article.setCategory(CategoryDto.toEntity(articleDto.getCategory())); // Imprtant to use toEntity() method
+        article.setCategory(CategoryDto.toEntity(articleDto.getCategory()));
 
         return article;
     }
