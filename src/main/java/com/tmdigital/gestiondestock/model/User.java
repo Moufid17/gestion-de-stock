@@ -56,7 +56,12 @@ public class User extends AbstractEntity {
     @JsonIgnore
     private List<Roles> rules;
 
-    @ManyToOne
-    @JoinColumn(name = "id_company")
+    // @ManyToOne
+    // @JoinColumn(name = "idcompany")
+    // private Company company;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "idcompany")
+    @JsonIgnore
     private Company company;
 }

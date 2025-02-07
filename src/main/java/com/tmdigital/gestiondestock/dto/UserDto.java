@@ -1,10 +1,12 @@
 package com.tmdigital.gestiondestock.dto;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.tmdigital.gestiondestock.model.Company;
 import com.tmdigital.gestiondestock.model.User;
+import com.tmdigital.gestiondestock.repository.CompanyRepository;
 
 import lombok.Builder;
 import lombok.Data;
@@ -32,7 +34,7 @@ public class UserDto {
     @JsonIgnore
     private List<RolesDto> rules;
 
-    private Company company;
+    private Integer idCompany;
 
     public static UserDto fromEntity (User user) {
         if (user == null) {
@@ -48,15 +50,14 @@ public class UserDto {
             .photo(user.getPhoto())
             .numTel(user.getNumTel())
             .address(AddressDto.fromEntity(user.getAddress()))
-            .company(user.getCompany())
+            .idCompany(user.getCompany().getId())
             .build();
     }
 
-    public static User toEntity (UserDto userDto) {
+    public static User toEntity (UserDto userDto, CompanyRepository companyRepository) {
         if (userDto == null) {
             return null;
         }
-
         User user = new User();
         user.setId(userDto.getId());
         user.setFirstName(userDto.getFirstName());
@@ -66,7 +67,8 @@ public class UserDto {
         user.setPhoto(userDto.getPhoto());
         user.setNumTel(userDto.getNumTel());
         user.setAddress(AddressDto.toEntity(userDto.getAddress()));
-        user.setCompany(userDto.getCompany());
+        Optional<Company> company = companyRepository.findById(userDto.getIdCompany());
+        user.setCompany(company != null ? company.get() : null);
         return user;
     }
 }
