@@ -15,8 +15,11 @@ import com.tmdigital.gestiondestock.dto.auth.AuthenticationRequest;
 import com.tmdigital.gestiondestock.dto.auth.AuthenticationResponse;
 import com.tmdigital.gestiondestock.services.auth.ApplicationUserDetailsService;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 @RestController
 @RequestMapping("/api/v1")
+@Tag(name = "Authentication", description = "Sign in")
 public class AuthenticationController {
 
     private AuthenticationManager authenticationManager;

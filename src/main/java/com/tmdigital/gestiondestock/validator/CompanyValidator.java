@@ -22,27 +22,27 @@ public class CompanyValidator {
             return errors;
         }
 
-        if (!StringUtils.hasLength(companyDto.getName())) {
+        if (companyDto.getName() == null || !StringUtils.hasLength(companyDto.getName())) {
             errors.add("Veuillez renseigner le nom de la société");
         }
 
-        if (!StringUtils.hasLength(companyDto.getDescription())) {
+        if (companyDto.getName() == null || !StringUtils.hasLength(companyDto.getDescription())) {
             errors.add("Veuillez renseigner la description de la société");
         }
 
-        if (!StringUtils.hasLength(companyDto.getMail())) {
+        if (companyDto.getName() == null || !StringUtils.hasLength(companyDto.getMail())) {
             errors.add("Veuillez renseigner l'email de la société");
         }
 
-        if (!StringUtils.hasLength(companyDto.getNumTel())) {
+        if (companyDto.getName() == null || !StringUtils.hasLength(companyDto.getNumTel())) {
             errors.add("Veuillez renseigner le numéro de téléphone de la société");
         }
 
-        if (!StringUtils.hasLength(companyDto.getTaxCode())) {
+        if (companyDto.getName() == null || !StringUtils.hasLength(companyDto.getTaxCode())) {
             errors.add("Veuillez renseigner le code fiscal de la société");
         }
 
-        if (!StringUtils.hasLength(companyDto.getWebsite())) {
+        if (companyDto.getName() == null || !StringUtils.hasLength(companyDto.getWebsite())) {
             errors.add("Veuillez renseigner le site web de la société");
         }
 

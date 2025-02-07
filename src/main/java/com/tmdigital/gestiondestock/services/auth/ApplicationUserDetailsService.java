@@ -24,7 +24,7 @@ public class ApplicationUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        User user = this.userRepository.findByEmail(email).
+        User user = this.userRepository.findUserByEmail(email).
                         orElseThrow(() -> new NotFoundEntityException("Not user with this email.", ErrorCodes.USER_NOT_FOUND));
 
         Collection<? extends GrantedAuthority> authorities = user.getRules().stream()

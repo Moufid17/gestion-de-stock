@@ -8,6 +8,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import com.tmdigital.gestiondestock.dto.StockMovementDto;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
+
+@Tag(name = "StockMovement", description = "The stockMovement API")
 public interface StockMovementApi {
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)

@@ -85,7 +85,7 @@ public class CategoryServiceImpl implements CategoryService {
             return null;
         }
 
-        return categoryRepository.findAllByCompany(idCompany).stream()
+        return categoryRepository.findAllByIdCompany(idCompany).stream()
             .map(CategoryDto::fromEntity)
             .collect(Collectors.toList());
     }
