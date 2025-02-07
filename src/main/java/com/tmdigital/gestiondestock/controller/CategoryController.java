@@ -7,15 +7,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.tmdigital.gestiondestock.controller.api.CategoryApi;
 import com.tmdigital.gestiondestock.dto.CategoryDto;
-import com.tmdigital.gestiondestock.services.impl.CategoryServiceImpl;
+import com.tmdigital.gestiondestock.services.CategoryService;
 
 @RestController
 @RequestMapping("/api/v1/categories")
 public class CategoryController implements CategoryApi {
 
-    private final CategoryServiceImpl categoryService;
+    private final CategoryService categoryService;
 
-    public CategoryController(CategoryServiceImpl categoryService) {
+    public CategoryController(CategoryService categoryService) {
         this.categoryService = categoryService;
     }
 

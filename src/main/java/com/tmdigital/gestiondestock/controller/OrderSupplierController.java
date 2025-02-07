@@ -7,15 +7,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.tmdigital.gestiondestock.controller.api.OrderSupplierApi;
 import com.tmdigital.gestiondestock.dto.OrderSupplierDto;
-import com.tmdigital.gestiondestock.services.impl.OrderSupplierServiceImpl;
+import com.tmdigital.gestiondestock.services.OrderSupplierService;
 
 @RestController
 @RequestMapping("/api/v1/ordersuppliers")
 public class OrderSupplierController implements OrderSupplierApi {
 
-    private OrderSupplierServiceImpl orderSupplierService;
+    private OrderSupplierService orderSupplierService;
 
-    public OrderSupplierController(OrderSupplierServiceImpl orderSupplierService) {
+    public OrderSupplierController(OrderSupplierService orderSupplierService) {
         this.orderSupplierService = orderSupplierService;
     }
 

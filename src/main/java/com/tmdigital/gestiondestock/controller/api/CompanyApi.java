@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -40,7 +41,7 @@ public interface CompanyApi {
             @ApiResponse(responseCode = "404", description = "Company not found"),
         }
     )
-    CompanyDto findById(Integer id);
+    CompanyDto findById(@PathVariable Integer id);
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Retreive all Company", description = "Allow to retreive all Categories in the login user company", 
@@ -62,5 +63,5 @@ public interface CompanyApi {
             @ApiResponse(responseCode = "404", description = "Company not found"),
         }
     )
-    void delete(Integer id);
+    void delete(@PathVariable Integer id);
 }
