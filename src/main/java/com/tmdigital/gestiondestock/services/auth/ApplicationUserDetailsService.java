@@ -14,6 +14,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import com.tmdigital.gestiondestock.exception.ErrorCodes;
 import com.tmdigital.gestiondestock.exception.NotFoundEntityException;
 import com.tmdigital.gestiondestock.model.User;
+import com.tmdigital.gestiondestock.model.auth.ExtendUser;
 import com.tmdigital.gestiondestock.repository.UserRepository;
 
 @Service
@@ -31,7 +32,8 @@ public class ApplicationUserDetailsService implements UserDetailsService {
             .map(role -> new SimpleGrantedAuthority(role.getRoleName()))
             .collect(Collectors.toList());
         
-        return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), authorities);
+        return new ExtendUser(user.getEmail(), user.getPassword(), authorities, String.valueOf(user.getCompany().getId()));
+        // return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), authorities);
         // return new InMemoryUserDetailsManager(new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), authorities));
     }
 
