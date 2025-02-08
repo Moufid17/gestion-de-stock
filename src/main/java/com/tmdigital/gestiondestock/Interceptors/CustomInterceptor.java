@@ -20,24 +20,20 @@ public class CustomInterceptor implements StatementInspector {
         
         if (sql.toLowerCase().startsWith("select")) {
             String idCompany = MDC.get("idCompany");
-            // String entityName = sql.substring( "select ".length(), sql.indexOf(".")).toLowerCase();
-            Integer i = sql.indexOf("from") + "from".length();
-            String entityName = sql.substring( i+1, i+4).toLowerCase();
+            Integer indexOfFromInSql = sql.indexOf("from") + "from".length();
+            String entityName = sql.substring(indexOfFromInSql+1).toLowerCase().split(" ")[0];
+            String sqlEntityName = sql.substring(indexOfFromInSql+1).toLowerCase().split(" ")[1];
 
-            
-            // if (StringUtils.hasLength(entityName)
-            // && !excludedEntities.contains(entityName)
-            // && StringUtils.hasLength(idCompany)) 
-            // {
-            //     if (sql.contains("where")) {
-            //         sql = sql + " and " + entityName + ".idcompany=" + idCompany;
-            //     } else {
-            //         sql = sql + " where " + entityName +".idcompany=" + idCompany; 
-            //     }
-            // }
-            System.out.println("(CustomInterceptor) entityName : " + entityName);
-            // System.out.println("(CustomInterceptor) idCompany  : " + idCompany);
-            // System.out.println("(CustomInterceptor) sql : " + sql);
+            if (StringUtils.hasLength(entityName)
+                && !excludedEntities.contains(entityName)
+                && StringUtils.hasLength(idCompany)) 
+            {
+                if (sql.contains("where")) {
+                    sql = sql + " and " + sqlEntityName + ".idcompany=" + idCompany;
+                } else {
+                    sql = sql + " where " + sqlEntityName +".idcompany=" + idCompany; 
+                }
+            }
         }
             
         return sql;
