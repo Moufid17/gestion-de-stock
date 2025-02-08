@@ -2,6 +2,7 @@ package com.tmdigital.gestiondestock.config;
 
 import java.io.IOException;
 
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,8 +18,10 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 
 @Component
+@Slf4j
 public class ApplicationRequestFilter extends OncePerRequestFilter {
 
     @Autowired
@@ -31,10 +34,14 @@ public class ApplicationRequestFilter extends OncePerRequestFilter {
     protected void doFilterInternal(@SuppressWarnings("null") HttpServletRequest request, @SuppressWarnings("null") HttpServletResponse response, @SuppressWarnings("null") FilterChain filterChain) throws ServletException, IOException {
         
         final String authHeader = request.getHeader("Authorization");
+        String idCompany = null; 
+        
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             final String jwt = authHeader.substring(7);
 
             final String username = jwtTokenProvider.extractUsername(jwt);
+            idCompany = jwtTokenProvider.extractIdCompany(jwt);
+            
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 final UserDetails userDetails = applicationUserDetailsService.loadUserByUsername(username);
                 if (jwtTokenProvider.validateToken(jwt, userDetails)) {
@@ -46,6 +53,7 @@ public class ApplicationRequestFilter extends OncePerRequestFilter {
                 }
             }
         }
+        MDC.put("idCompany", idCompany);
         filterChain.doFilter(request, response);
     }
     

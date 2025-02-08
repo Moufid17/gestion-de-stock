@@ -6,6 +6,8 @@ import io.jsonwebtoken.Jwts;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import com.tmdigital.gestiondestock.model.auth.ExtendUser;
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,6 +22,11 @@ public class JwtUtil {
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
+    }
+
+    public String extractIdCompany(String token) {
+        return extractClaim(token, claims -> claims.get("idCompany", String.class));
+
     }
 
     public Date extractExpiration(String token) {
@@ -38,15 +45,16 @@ public class JwtUtil {
         return extractExpiration(token).before(new Date());
     }
 
-    public String generateToken(UserDetails userDetails) {
+    public String generateToken(ExtendUser userDetails) {
         Map<String, Object> claims = new HashMap<>();
-        return createToken(claims, userDetails.getUsername());
+        return createToken(claims, userDetails);
     }
 
-    private String createToken(Map<String, Object> claims, String subject) {
+    private String createToken(Map<String, Object> claims, ExtendUser userDetails) {
 
-        return Jwts.builder().claims(claims).subject(subject).issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))
+        return Jwts.builder().claims(claims).subject(userDetails.getUsername()).issuedAt(new Date(System.currentTimeMillis()))
+                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10)) // 10 hours
+                .claim("idCompany", userDetails.getIdCompany())
                 .signWith(key).compact();
     }
 

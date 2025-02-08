@@ -13,13 +13,16 @@ import org.springframework.web.bind.annotation.RestController;
 import com.tmdigital.gestiondestock.Utils.JwtUtil;
 import com.tmdigital.gestiondestock.dto.auth.AuthenticationRequest;
 import com.tmdigital.gestiondestock.dto.auth.AuthenticationResponse;
+import com.tmdigital.gestiondestock.model.auth.ExtendUser;
 import com.tmdigital.gestiondestock.services.auth.ApplicationUserDetailsService;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("/api/v1")
 @Tag(name = "Authentication", description = "Sign in")
+@Slf4j
 public class AuthenticationController {
 
     private AuthenticationManager authenticationManager;
@@ -51,14 +54,14 @@ public class AuthenticationController {
     // [ ] Catcher l'execption si l'utilisateur n'existe pas ou si le mot de passe est incorrect ou si le token n'est pas valide(403) avec un message d'erreur
     @PostMapping("/authenticate")
     public ResponseEntity<AuthenticationResponse> login(@RequestBody AuthenticationRequest req) {
-
-        final UserDetails userDetails = applicationUserDetailsService.loadUserByUsername(req.getLogin());
-
+        
         authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(req.getLogin(), req.getPassword())
         );
 
-        final String token = jwtTokenProvider.generateToken(userDetails);
+        final UserDetails userDetails = applicationUserDetailsService.loadUserByUsername(req.getLogin());
+
+        final String token = jwtTokenProvider.generateToken((ExtendUser) userDetails);
 
         return ResponseEntity.ok(AuthenticationResponse.builder().accessToken(token).build());
     }
