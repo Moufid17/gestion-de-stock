@@ -19,7 +19,7 @@ public class CategoryDto {
 
     private String designation;
 
-    private Integer company;
+    private Integer idCompany;
 
     @JsonIgnore
     private List<ArticleDto> articles;
@@ -32,7 +32,7 @@ public class CategoryDto {
                 .id(category.getId())
                 .code(category.getCode())
                 .designation(category.getDesignation())
-                .company(category.getCompany())
+                .idCompany(category.getIdCompany())
                 .build();
     }
 
@@ -44,7 +44,7 @@ public class CategoryDto {
         category.setId(categoryDto.getId());
         category.setCode(categoryDto.getCode());
         category.setDesignation(categoryDto.getDesignation());
-        category.setCompany(categoryDto.getCompany());
+        category.setIdCompany(categoryDto.getIdCompany());
         return category;
     }
 }

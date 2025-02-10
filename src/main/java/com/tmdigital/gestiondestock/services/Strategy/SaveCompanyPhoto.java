@@ -15,7 +15,6 @@ import lombok.extern.slf4j.Slf4j;
 
 @Service("companyStrategy")
 @Slf4j
-// @Qualifier("companyStrategy")
 public class SaveCompanyPhoto implements Strategy<CompanyDto> {
 
     private CompanyService companyService;
@@ -30,7 +29,6 @@ public class SaveCompanyPhoto implements Strategy<CompanyDto> {
     public CompanyDto savePhoto(Integer idCompany, InputStream photo, String title) throws FlickrException {
 
         CompanyDto company = companyService.findById(idCompany);
-        // Save flickr photo(create flickr service)
         String idPhoto = "";
         try {
             idPhoto = flickrService.savePhoto(photo, title);

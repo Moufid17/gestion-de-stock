@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import com.tmdigital.gestiondestock.dto.SalesDto;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
+
+@Tag(name = "Sales", description = "The sales API")
 public interface SalesApi {
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)

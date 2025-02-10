@@ -32,7 +32,7 @@ public class Client extends AbstractEntity {
     @Column(name = "phone_number", nullable = false)    
     private String phonenumber = "0000000000";
     
-    @Embedded // Permet d'indiquer que l'objet est un objet imbriqué (composé de plusieurs champs)
+    @Embedded
     private Address address;
     
     @Column(name = "photo")    
