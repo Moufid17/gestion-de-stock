@@ -9,7 +9,8 @@
 - [x] Define validators
 - [x] exceptions
 - [x] Picture management
-- [*] Swagger
+- [x] Swagger
 - [*] service
 - [*] controller
-- [ ] Security : JWT
+- [-] Security : JWT
+    - [ ] Action privileges
