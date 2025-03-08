@@ -35,13 +35,13 @@ class CompanyServiceImplTest {
     @InjectMocks
     private CompanyServiceImpl companyService;
 
-    CompanyDto companyDto;
+    private CompanyDto companyDto;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
         // Given
-        this.companyDto = CompanyDto.builder()
+        companyDto = CompanyDto.builder()
             .id(1)
             .name("Test Company")
             .description("Description")
@@ -63,8 +63,8 @@ class CompanyServiceImplTest {
     void shouldSaveCompanySuccessfully() {
         
         // When
-        when(companyRepository.save(any(Company.class))).thenReturn(CompanyDto.toEntity(this.companyDto));
-        CompanyDto savedCompany = companyService.save(this.companyDto);
+        when(companyRepository.save(any(Company.class))).thenReturn(CompanyDto.toEntity(companyDto));
+        CompanyDto savedCompany = companyService.save(companyDto);
 
         // Then
         assertNotNull(savedCompany);
@@ -95,14 +95,14 @@ class CompanyServiceImplTest {
     @Test
     void shouldFindByIdCompanySuccessfully() {
         // Given
-        Company company = CompanyDto.toEntity(this.companyDto);
+        Company company = CompanyDto.toEntity(companyDto);
         //when
-        when(companyRepository.findById(this.companyDto.getId())).thenReturn(Optional.of(company));
-        CompanyDto foundCompany = companyService.findById(this.companyDto.getId());
+        when(companyRepository.findById(companyDto.getId())).thenReturn(Optional.of(company));
+        CompanyDto foundCompany = companyService.findById(companyDto.getId());
 
         // Then
         assertNotNull(foundCompany);
-        assertEquals(this.companyDto, foundCompany);
+        assertEquals(companyDto, foundCompany);
         assertEquals(companyDto.getId(), foundCompany.getId());
         assertEquals(companyDto.getDescription(), foundCompany.getDescription());
         assertEquals(companyDto.getMail(), foundCompany.getMail());
@@ -114,7 +114,7 @@ class CompanyServiceImplTest {
         assertEquals(companyDto.getAddress().getZip(), foundCompany.getAddress().getZip());
         assertEquals(companyDto.getAddress().getState(), foundCompany.getAddress().getState());
         assertEquals(companyDto.getAddress().getCountry(), foundCompany.getAddress().getCountry());
-        verify(companyRepository, atMostOnce()).findById(this.companyDto.getId());
+        verify(companyRepository, atMostOnce()).findById(companyDto.getId());
     }
 
     @Test
@@ -139,13 +139,13 @@ class CompanyServiceImplTest {
     @Test
     void shouldDeleteCompanySuccessfully() {
         // When
-        when(userRepository.findAllByCompanyId(this.companyDto.getId())).thenReturn(Collections.emptyList());
-        doNothing().when(companyRepository).deleteById(this.companyDto.getId());
-        companyService.delete(this.companyDto.getId());
+        when(userRepository.findAllByCompanyId(companyDto.getId())).thenReturn(Collections.emptyList());
+        doNothing().when(companyRepository).deleteById(companyDto.getId());
+        companyService.delete(companyDto.getId());
 
         // Then
-        verify(userRepository, times(1)).findAllByCompanyId(this.companyDto.getId());
-        verify(companyRepository, times(1)).deleteById(this.companyDto.getId());
+        verify(userRepository, times(1)).findAllByCompanyId(companyDto.getId());
+        verify(companyRepository, times(1)).deleteById(companyDto.getId());
     }
 
     @SuppressWarnings("null")
@@ -162,7 +162,7 @@ class CompanyServiceImplTest {
     @Test
     void shouldThrowInvalidEntityExceptionWhenDeleteCompanyHavingUsers() {
         // Given
-        Company company = CompanyDto.toEntity(this.companyDto);
+        Company company = CompanyDto.toEntity(companyDto);
         UserDto userDto = UserDto.builder()
             .id(1)
             .firstName("Test")
@@ -182,13 +182,13 @@ class CompanyServiceImplTest {
         User user = UserDto.toEntity(userDto, companyRepository);
         
         // When
-        when(userRepository.findAllByCompanyId(this.companyDto.getId())).thenReturn(List.of(user));
-        doNothing().when(companyRepository).deleteById(this.companyDto.getId());
+        when(userRepository.findAllByCompanyId(companyDto.getId())).thenReturn(List.of(user));
+        doNothing().when(companyRepository).deleteById(companyDto.getId());
         
 
         // Then
-        assertThrows(RuntimeException.class, () -> companyService.delete(this.companyDto.getId()), "Impossible de supprimer l'entreprise avec l'id = " + this.companyDto.getId());
-        verify(userRepository, times(1)).findAllByCompanyId(this.companyDto.getId());
-        verify(companyRepository, times(0)).deleteById(this.companyDto.getId());
+        assertThrows(RuntimeException.class, () -> companyService.delete(companyDto.getId()), "Impossible de supprimer l'entreprise avec l'id = " + companyDto.getId());
+        verify(userRepository, times(1)).findAllByCompanyId(companyDto.getId());
+        verify(companyRepository, times(0)).deleteById(companyDto.getId());
     }
 }
