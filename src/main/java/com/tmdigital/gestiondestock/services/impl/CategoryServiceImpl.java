@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.tmdigital.gestiondestock.dto.CategoryDto;
 import com.tmdigital.gestiondestock.exception.ErrorCodes;
 import com.tmdigital.gestiondestock.exception.InvalidEntityException;
+import com.tmdigital.gestiondestock.exception.NotFoundEntityException;
 import com.tmdigital.gestiondestock.model.Article;
 import com.tmdigital.gestiondestock.repository.ArticleRepository;
 import com.tmdigital.gestiondestock.repository.CategoryRepository;
@@ -16,8 +17,8 @@ import com.tmdigital.gestiondestock.services.CategoryService;
 import com.tmdigital.gestiondestock.validator.CategoryValidator;
 
 import lombok.extern.slf4j.Slf4j;
-@Service
 @Slf4j
+@Service
 public class CategoryServiceImpl implements CategoryService {
 
     private CategoryRepository categoryRepository;
@@ -53,7 +54,7 @@ public class CategoryServiceImpl implements CategoryService {
         return Optional.of(CategoryDto.fromEntity(
             categoryRepository.findById(id).get()
         )).orElseThrow(
-            () -> new InvalidEntityException("La category avec l'id = " + id + ", n'existe pas.", ErrorCodes.CATEGORY_NOT_FOUND)
+            () -> new NotFoundEntityException("La category avec l'id = " + id + ", n'existe pas.", ErrorCodes.CATEGORY_NOT_FOUND)
         );
     }
 
@@ -67,7 +68,7 @@ public class CategoryServiceImpl implements CategoryService {
         return Optional.of(CategoryDto.fromEntity(
             categoryRepository.findCategoryByCode(code).get()
         )).orElseThrow(
-            () -> new InvalidEntityException("La category avec le code = " + code + ", n'existe pas.", ErrorCodes.CATEGORY_NOT_FOUND)
+            () -> new NotFoundEntityException("La category avec le code = " + code + ", n'existe pas.", ErrorCodes.CATEGORY_NOT_FOUND)
         );
     }
 
