@@ -26,7 +26,7 @@ logs:
 	docker compose logs gstock-jdk-server -f
 
 testall:
-	mvn test -q
+	mvn test
 
 testone:
 	mvn test -Dtest="$(name)"
