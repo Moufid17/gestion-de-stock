@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import com.tmdigital.gestiondestock.dto.CompanyDto;
 import com.tmdigital.gestiondestock.exception.ErrorCodes;
 import com.tmdigital.gestiondestock.exception.InvalidEntityException;
+import com.tmdigital.gestiondestock.exception.NotFoundEntityException;
 import com.tmdigital.gestiondestock.model.User;
 import com.tmdigital.gestiondestock.repository.CompanyRepository;
 import com.tmdigital.gestiondestock.repository.UserRepository;
@@ -45,7 +46,7 @@ public class CompanyServiceImpl implements CompanyService {
 
         return companyRepository.findById(id)
                 .map(CompanyDto::fromEntity)
-                .orElseThrow(() -> new InvalidEntityException(
+                .orElseThrow(() -> new NotFoundEntityException(
                         "Aucune entreprise n'a été trouvée avec l'ID = " + id,
                         ErrorCodes.COMPANY_NOT_FOUND)
                 );
