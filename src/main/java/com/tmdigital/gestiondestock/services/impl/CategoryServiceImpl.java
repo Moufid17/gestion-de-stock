@@ -34,7 +34,7 @@ public class CategoryServiceImpl implements CategoryService {
         List<String> errors = CategoryValidator.validate(dto);
         if (!errors.isEmpty()) {
             log.error("L'objet n'est pas valide {}", dto);
-            throw new InvalidEntityException("Category n'est pas valide", ErrorCodes.CATEGORY_NOT_VALID, errors);
+            throw new InvalidEntityException("La category n'est pas valide", ErrorCodes.CATEGORY_NOT_VALID, errors);
         }
 
         return CategoryDto.fromEntity(
@@ -102,7 +102,7 @@ public class CategoryServiceImpl implements CategoryService {
 
         if (!articles.isEmpty()) {
             log.error("Impossible de supprimer la categorie avec l'id = {}", id);
-            throw new InvalidEntityException("Impossible de supprimer la categorie avec l'id =" + id , ErrorCodes.ARTICLE_CATEGORY_IS_ALREADY_USED);
+            throw new InvalidEntityException("Impossible de supprimer la categorie avec l'id = " + id , ErrorCodes.ARTICLE_CATEGORY_IS_ALREADY_USED);
         }
 
         categoryRepository.deleteById(id);

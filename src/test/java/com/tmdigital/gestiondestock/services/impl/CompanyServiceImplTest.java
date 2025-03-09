@@ -162,7 +162,6 @@ class CompanyServiceImplTest {
     @Test
     void shouldThrowInvalidEntityExceptionWhenDeleteCompanyHavingUsers() {
         // Given
-        Company company = CompanyDto.toEntity(companyDto);
         UserDto userDto = UserDto.builder()
             .id(1)
             .firstName("Test")
@@ -177,7 +176,7 @@ class CompanyServiceImplTest {
                 .state("Ile de France")
                 .country("France")
                 .build())
-            .idCompany(company.getId())
+            .idCompany(companyDto.getId())
         .build();
         User user = UserDto.toEntity(userDto, companyRepository);
         
