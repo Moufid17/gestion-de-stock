@@ -26,7 +26,7 @@ public class Sales extends AbstractEntity {
     @Column(name = "order_date")
     private Instant orderDate = Instant.now();
 
-    @Column(name = "id_company")
+    @Column(name = "idcompany")
     private Integer idCompany;
 
     @Column(name = "comments")
