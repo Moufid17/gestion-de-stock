@@ -12,6 +12,7 @@ import com.tmdigital.gestiondestock.dto.AddressDto;
 import com.tmdigital.gestiondestock.dto.UserDto;
 import com.tmdigital.gestiondestock.exception.ErrorCodes;
 import com.tmdigital.gestiondestock.exception.InvalidEntityException;
+import com.tmdigital.gestiondestock.exception.NotFoundEntityException;
 import com.tmdigital.gestiondestock.exception.InvalidOperationException;
 import com.tmdigital.gestiondestock.model.User;
 import com.tmdigital.gestiondestock.model.Roles;
@@ -85,11 +86,11 @@ public class CompanyServiceImpl implements CompanyService {
         }
 
         return companyRepository.findById(id)
-            .map(CompanyDto::fromEntity)
-            .orElseThrow(() -> new InvalidEntityException(
-                    "Aucune entreprise n'a été trouvée avec l'ID = " + id,
-                    ErrorCodes.COMPANY_NOT_FOUND)
-            );
+                .map(CompanyDto::fromEntity)
+                .orElseThrow(() -> new NotFoundEntityException(
+                        "Aucune entreprise n'a été trouvée avec l'ID = " + id,
+                        ErrorCodes.COMPANY_NOT_FOUND)
+                );
     }
 
     @Override

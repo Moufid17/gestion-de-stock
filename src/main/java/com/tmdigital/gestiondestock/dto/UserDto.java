@@ -80,7 +80,7 @@ public class UserDto {
             user.setRoles(rolesRepository.findByRoleName("cmp_default").stream().collect(Collectors.toList()));
         }
         Optional<Company> company = companyRepository.findById(userDto.getIdCompany());
-        user.setCompany(company != null ? company.get() : null);
+        if (company.isPresent()) user.setCompany(company.get());
         return user;
     }
 }
