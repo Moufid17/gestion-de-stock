@@ -10,7 +10,21 @@
 - [x] exceptions
 - [x] Picture management
 - [x] Swagger
-- [*] service
-- [*] controller
-- [-] Security : JWT
+- [6] Security :
+    - [x] Jwt
+    - [ ] Session
     - [ ] Action privileges
+- [ ] TU:
+    - [0] Merge Company and category
+    - [5] Update Company and category (if any changement have been made.)
+- [7] Company Implementation:
+    - [x] create one with an admin user
+    - [ ] Send email with email and password
+- [x] Category Implementation
+- [1] Supplier order Implementation
+- [2] Client order Implementation
+- [3] Article Implementation
+- [4] Mvt stock Implementation
+
+- [ ] TI : 
+    - [x] Company to article
