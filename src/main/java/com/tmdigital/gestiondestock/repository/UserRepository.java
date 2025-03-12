@@ -10,7 +10,7 @@ import com.tmdigital.gestiondestock.model.User;
 
 public interface UserRepository extends JpaRepository<User, Integer> {
 
-    Optional<User> findUserByEmail(String email);
+    Optional<User> findByEmail(String email);
 
     List<User> findAllByCompanyId(Integer id);
 }

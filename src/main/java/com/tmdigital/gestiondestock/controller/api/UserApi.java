@@ -20,7 +20,7 @@ public interface UserApi {
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     UserDto save(@RequestBody UserDto dto);
 
-    @GetMapping(value="", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     List<UserDto> findAll();
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)

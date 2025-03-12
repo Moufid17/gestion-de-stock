@@ -15,11 +15,13 @@ public class CustomInterceptor implements StatementInspector {
 
     @Override
     public String inspect(String sql) {
-
         final ArrayList<String> excludedEntities = new ArrayList<>(Arrays.asList("company", "roles", "roles_users", "users_roles"));
         
         if (sql.toLowerCase().startsWith("select")) {
             String idCompany = MDC.get("idCompany");
+            if (idCompany == null) return sql;                
+            if ("200".equals(idCompany)) return sql;               
+            
             Integer indexOfFromInSql = sql.indexOf("from") + "from".length();
             String entityName = sql.substring(indexOfFromInSql+1).toLowerCase().split(" ")[0];
             String sqlEntityName = sql.substring(indexOfFromInSql+1).toLowerCase().split(" ")[1];

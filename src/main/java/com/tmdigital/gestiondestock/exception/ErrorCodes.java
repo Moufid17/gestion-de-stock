@@ -22,6 +22,7 @@ public enum ErrorCodes {
 
     COMPANY_NOT_FOUND(5000),
     COMPANY_NOT_VALID(5001),
+    COMPANY_ALREADY_EXIST(5004),
 
     ORDER_CLIENT_NOT_FOUND(6000),
     ORDER_CLIENT_NOT_VALID(6001),
@@ -58,7 +59,7 @@ public enum ErrorCodes {
     
     USER_NOT_FOUND(13000),
     USER_NOT_VALID(13001),
-    USER_ALREADY_IN_USE(13004),
+    USER_ALREADY_EXIST(13004),
 
     // Liste des exception techniques
     UPDATE_PHOTO_EXCEPTION(14000),

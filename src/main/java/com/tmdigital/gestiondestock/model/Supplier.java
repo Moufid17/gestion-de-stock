@@ -39,7 +39,7 @@ public class Supplier extends AbstractEntity {
     @Column(name = "photo")    
     private String photo;
 
-    @Column(name = "id_company", nullable = false)
+    @Column(name = "idcompany", nullable = false)
     private Integer idCompany;
     
     @OneToMany(mappedBy = "supplier")
