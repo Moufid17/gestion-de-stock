@@ -13,6 +13,7 @@ import com.tmdigital.gestiondestock.dto.UserDto;
 import com.tmdigital.gestiondestock.model.Company;
 import com.tmdigital.gestiondestock.model.User;
 import com.tmdigital.gestiondestock.repository.CompanyRepository;
+import com.tmdigital.gestiondestock.repository.RolesRepository;
 import com.tmdigital.gestiondestock.repository.UserRepository;
 
 import io.jsonwebtoken.lang.Collections;
@@ -31,6 +32,9 @@ class CompanyServiceImplTest {
 
     @Mock
     private UserRepository userRepository;
+    
+    @Mock
+    private RolesRepository rolesRepository;
 
     @InjectMocks
     private CompanyServiceImpl companyService;
@@ -178,7 +182,7 @@ class CompanyServiceImplTest {
                 .build())
             .idCompany(companyDto.getId())
         .build();
-        User user = UserDto.toEntity(userDto, companyRepository);
+        User user = UserDto.toEntity(userDto, companyRepository, rolesRepository);
         
         // When
         when(userRepository.findAllByCompanyId(companyDto.getId())).thenReturn(List.of(user));
