@@ -34,7 +34,7 @@ public class OrderClient extends AbstractEntity {
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
 
-    @Column(name = "id_company")
+    @Column(name = "idcompany")
     private Integer idCompany;
 
     @ManyToOne

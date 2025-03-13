@@ -2,11 +2,13 @@ package com.tmdigital.gestiondestock.dto;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.tmdigital.gestiondestock.model.Company;
 import com.tmdigital.gestiondestock.model.User;
 import com.tmdigital.gestiondestock.repository.CompanyRepository;
+import com.tmdigital.gestiondestock.repository.RolesRepository;
 
 import lombok.Builder;
 import lombok.Data;
@@ -32,7 +34,7 @@ public class UserDto {
     private AddressDto address;
 
     @JsonIgnore
-    private List<RolesDto> rules;
+    private List<String> roles;
 
     private Integer idCompany;
 
@@ -54,7 +56,7 @@ public class UserDto {
             .build();
     }
 
-    public static User toEntity (UserDto userDto, CompanyRepository companyRepository) {
+    public static User toEntity (UserDto userDto, CompanyRepository companyRepository, RolesRepository rolesRepository) {
         if (userDto == null) {
             return null;
         }
@@ -67,8 +69,19 @@ public class UserDto {
         user.setPhoto(userDto.getPhoto());
         user.setNumTel(userDto.getNumTel());
         user.setAddress(AddressDto.toEntity(userDto.getAddress()));
+        if (userDto.getRoles() != null) {
+            user.setRoles(userDto.getRoles().stream()
+                .map(roleName -> rolesRepository.findByRoleName(roleName))
+                .filter(role -> role.isPresent())
+                .map(role -> role.get())
+                .collect(Collectors.toList()));
+        } else {
+            user.setRoles(rolesRepository.findByRoleName("cmp_default").stream().collect(Collectors.toList()));
+        }
         Optional<Company> company = companyRepository.findById(userDto.getIdCompany());
-        user.setCompany(company != null ? company.get() : null);
+        
+        user.getRoles().stream().forEach(role -> role.getUsers().add(user));
+        if (company.isPresent()) user.setCompany(company.get());
         return user;
     }
 }

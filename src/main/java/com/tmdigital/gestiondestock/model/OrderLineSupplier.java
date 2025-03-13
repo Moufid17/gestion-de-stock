@@ -26,7 +26,7 @@ public class OrderLineSupplier extends AbstractEntity {
     @Column(name = "qty")
     private BigDecimal qty = BigDecimal.ZERO;
 
-    @Column(name = "id_company")
+    @Column(name = "idcompany")
     private Integer idCompany;
 
     @ManyToOne

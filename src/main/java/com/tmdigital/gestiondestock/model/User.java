@@ -50,16 +50,12 @@ public class User extends AbstractEntity {
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
         name = "users_roles", 
-        joinColumns = @JoinColumn(name = "id_user", referencedColumnName = "id"),
-        inverseJoinColumns = @JoinColumn(table = "roles",name = "id_role", referencedColumnName = "id")
+        joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+        inverseJoinColumns = @JoinColumn(table = "roles",name = "role_id", referencedColumnName = "id")
     )
     @JsonIgnore
-    private List<Roles> rules;
+    private List<Roles> roles;
 
-    // @ManyToOne
-    // @JoinColumn(name = "idcompany")
-    // private Company company;
-    
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "idcompany")
     @JsonIgnore

@@ -1,17 +1,22 @@
 package com.tmdigital.gestiondestock.services.impl;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.tmdigital.gestiondestock.Utils.PasswordUtils;
 import com.tmdigital.gestiondestock.dto.UserDto;
 import com.tmdigital.gestiondestock.exception.ErrorCodes;
 import com.tmdigital.gestiondestock.exception.InvalidEntityException;
+import com.tmdigital.gestiondestock.exception.NotFoundEntityException;
 import com.tmdigital.gestiondestock.model.Company;
+import com.tmdigital.gestiondestock.model.User;
 import com.tmdigital.gestiondestock.repository.CompanyRepository;
 import com.tmdigital.gestiondestock.repository.UserRepository;
+import com.tmdigital.gestiondestock.repository.RolesRepository;
 import com.tmdigital.gestiondestock.services.UserService;
 import com.tmdigital.gestiondestock.validator.UserValidator;
 
@@ -25,8 +30,10 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final CompanyRepository companyRepository;
+    private final RolesRepository rolesRepository;
 
-    public UserServiceImpl(UserRepository userRepository, CompanyRepository companyRepository) {
+    public UserServiceImpl(UserRepository userRepository, CompanyRepository companyRepository, RolesRepository rolesRepository) {
+        this.rolesRepository = rolesRepository;
         this.userRepository = userRepository;
         this.companyRepository = companyRepository;
     }
@@ -42,15 +49,19 @@ public class UserServiceImpl implements UserService {
 
         Optional<Company> company = companyRepository.findById(dto.getIdCompany());
         if (!company.isPresent()) {
-            throw new InvalidEntityException("Aucune société a'existe pas.", ErrorCodes.COMPANY_NOT_FOUND);
+            throw new NotFoundEntityException("Cette société n'existe pas.", ErrorCodes.COMPANY_NOT_FOUND);
         }
 
-        if (userRepository.findUserByEmail(dto.getEmail()).isPresent()) {
+        if (userRepository.findByEmail(dto.getEmail()).isPresent()) {
             log.error("L'utilisateur avec cet email existe déjà.");
-            throw new InvalidEntityException("Il existe déjà un utilisateur avec l'email " + dto.getEmail(), ErrorCodes.USER_ALREADY_IN_USE);
+            throw new InvalidEntityException("Il existe déjà un utilisateur avec l'email " + dto.getEmail(), ErrorCodes.USER_ALREADY_EXIST);
         }
-
-        return UserDto.fromEntity(userRepository.save(UserDto.toEntity(dto, companyRepository)));
+        final String rawPassword = dto.getPassword(); 
+        // Encrypt password
+        dto.setPassword(PasswordUtils.encodePassword(dto.getPassword()));
+        User userSaved = userRepository.save(UserDto.toEntity(dto, companyRepository, rolesRepository));
+        userSaved.setPassword(rawPassword);
+        return UserDto.fromEntity(userSaved);
     }
 
     @Override
@@ -62,6 +73,10 @@ public class UserServiceImpl implements UserService {
 
         return userRepository.findById(id)
             .map(UserDto::fromEntity)
+            .map(userDto -> {
+                userDto.setPassword(null);
+                return userDto;
+            }) 
             .orElseThrow(() -> new InvalidEntityException("Aucun utilisateur avec l'identifiant " + id + " n'a été trouvé.", ErrorCodes.USER_NOT_FOUND));
     }
 
@@ -72,8 +87,12 @@ public class UserServiceImpl implements UserService {
             return null;
         }
 
-        return userRepository.findUserByEmail(email)
+        return userRepository.findByEmail(email)
             .map(UserDto::fromEntity)
+            .map(userDto -> {
+                userDto.setPassword(null);
+                return userDto;
+            }) 
             .orElseThrow(() -> new InvalidEntityException("Aucun utilisateur avec l'email " + email + " n'a été trouvé.", ErrorCodes.USER_NOT_FOUND));
     }
 
@@ -81,6 +100,10 @@ public class UserServiceImpl implements UserService {
     public List<UserDto> findAll() {
         return userRepository.findAll().stream()
             .map(UserDto::fromEntity)
+            .map(userDto -> {
+                userDto.setPassword(null);
+                return userDto;
+            })
             .collect(Collectors.toList());
     }
 
@@ -88,11 +111,16 @@ public class UserServiceImpl implements UserService {
     public List<UserDto> findAllByCompany(Integer id) {
         if (id == null) {
             log.error("L'identifiant est nul");
-            return null;
+            // throw new InvalidOperationException("L'identifiant de la société ne doit pas être nul.", ErrorCodes.COMPANY_NOT_VALID);
+            return Collections.emptyList();
         }
 
         return userRepository.findAllByCompanyId(id).stream()
             .map(UserDto::fromEntity)
+            .map(userDto -> {
+                userDto.setPassword(null);
+                return userDto;
+            }) 
             .collect(Collectors.toList());
     }
 
@@ -105,6 +133,4 @@ public class UserServiceImpl implements UserService {
 
         userRepository.deleteById(id);
     }
-
-
 }

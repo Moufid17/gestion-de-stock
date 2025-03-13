@@ -1,13 +1,13 @@
 install:
-	mvn clean install
+	mvn clean install -DskipTests
 
 build:
-	mvn clean package
+	mvn clean package -DskipTests
 
-startfirst:
+upfirst:
 	docker compose up --build -d
 
-start:
+up:
 	docker compose up -d
 
 down: 
@@ -24,3 +24,9 @@ bash:
 
 logs:
 	docker compose logs gstock-jdk-server -f
+
+testall:
+	mvn test
+
+testone:
+	mvn test -Dtest="$(name)"
