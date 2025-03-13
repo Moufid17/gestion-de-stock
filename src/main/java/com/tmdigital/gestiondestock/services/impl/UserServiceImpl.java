@@ -13,6 +13,7 @@ import com.tmdigital.gestiondestock.exception.ErrorCodes;
 import com.tmdigital.gestiondestock.exception.InvalidEntityException;
 import com.tmdigital.gestiondestock.exception.NotFoundEntityException;
 import com.tmdigital.gestiondestock.model.Company;
+import com.tmdigital.gestiondestock.model.User;
 import com.tmdigital.gestiondestock.repository.CompanyRepository;
 import com.tmdigital.gestiondestock.repository.UserRepository;
 import com.tmdigital.gestiondestock.repository.RolesRepository;
@@ -55,11 +56,12 @@ public class UserServiceImpl implements UserService {
             log.error("L'utilisateur avec cet email existe déjà.");
             throw new InvalidEntityException("Il existe déjà un utilisateur avec l'email " + dto.getEmail(), ErrorCodes.USER_ALREADY_EXIST);
         }
-
+        final String rawPassword = dto.getPassword(); 
         // Encrypt password
         dto.setPassword(PasswordUtils.encodePassword(dto.getPassword()));
-
-        return UserDto.fromEntity(userRepository.save(UserDto.toEntity(dto, companyRepository, rolesRepository)));
+        User userSaved = userRepository.save(UserDto.toEntity(dto, companyRepository, rolesRepository));
+        userSaved.setPassword(rawPassword);
+        return UserDto.fromEntity(userSaved);
     }
 
     @Override
@@ -71,6 +73,10 @@ public class UserServiceImpl implements UserService {
 
         return userRepository.findById(id)
             .map(UserDto::fromEntity)
+            .map(userDto -> {
+                userDto.setPassword(null);
+                return userDto;
+            }) 
             .orElseThrow(() -> new InvalidEntityException("Aucun utilisateur avec l'identifiant " + id + " n'a été trouvé.", ErrorCodes.USER_NOT_FOUND));
     }
 
@@ -83,6 +89,10 @@ public class UserServiceImpl implements UserService {
 
         return userRepository.findByEmail(email)
             .map(UserDto::fromEntity)
+            .map(userDto -> {
+                userDto.setPassword(null);
+                return userDto;
+            }) 
             .orElseThrow(() -> new InvalidEntityException("Aucun utilisateur avec l'email " + email + " n'a été trouvé.", ErrorCodes.USER_NOT_FOUND));
     }
 
@@ -90,6 +100,10 @@ public class UserServiceImpl implements UserService {
     public List<UserDto> findAll() {
         return userRepository.findAll().stream()
             .map(UserDto::fromEntity)
+            .map(userDto -> {
+                userDto.setPassword(null);
+                return userDto;
+            })
             .collect(Collectors.toList());
     }
 
@@ -103,6 +117,10 @@ public class UserServiceImpl implements UserService {
 
         return userRepository.findAllByCompanyId(id).stream()
             .map(UserDto::fromEntity)
+            .map(userDto -> {
+                userDto.setPassword(null);
+                return userDto;
+            }) 
             .collect(Collectors.toList());
     }
 
