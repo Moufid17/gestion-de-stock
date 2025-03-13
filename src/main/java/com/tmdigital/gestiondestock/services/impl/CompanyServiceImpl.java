@@ -70,7 +70,9 @@ public class CompanyServiceImpl implements CompanyService {
         final String adminPassword = userDto.getPassword();
         userDto.setPassword(PasswordUtils.encodePassword(adminPassword));
         // Save user
-        userRepository.save(UserDto.toEntity(userDto, companyRepository, rolesRepository));
+        User userSaved = userRepository.save(UserDto.toEntity(userDto, companyRepository, rolesRepository));
+        // Add user to role
+        role.ifPresent(r -> r.getUsers().add(userSaved));
         
         log.info("L'utilisateur a été créé avec succès. Son mot de passe est {}", adminPassword);
         // [ ] Send an email to the user with his password
@@ -88,8 +90,8 @@ public class CompanyServiceImpl implements CompanyService {
         return companyRepository.findById(id)
                 .map(CompanyDto::fromEntity)
                 .orElseThrow(() -> new NotFoundEntityException(
-                        "Aucune entreprise n'a été trouvée avec l'ID = " + id,
-                        ErrorCodes.COMPANY_NOT_FOUND)
+                    "Aucune entreprise n'a été trouvée avec l'ID = " + id,
+                    ErrorCodes.COMPANY_NOT_FOUND)
                 );
     }
 
