@@ -23,19 +23,25 @@ public class OrderClientController implements OrderClientApi {
     }
 
     @Override
+    public ResponseEntity<OrderClientDto> save(OrderClientDto dto) {
+        return ResponseEntity.noContent().build();
+    }
+
+    @Override
     public ResponseEntity<Void> updateStatus(Integer id, OrderStatus orderStatus) {
         orderClientService.updateOrderStatus(id, orderStatus);
         return ResponseEntity.noContent().build();
     }
 
     @Override
-    public ResponseEntity<OrderClientDto> updateQte(Integer id, Integer orderLineId, BigDecimal newQte) {
+    public ResponseEntity<Void> updateQte(Integer id, Integer orderLineId, BigDecimal newQte) {
         orderClientService.updateOrderLineQte(id, orderLineId, newQte);
         return ResponseEntity.noContent().build();
     }
 
     @Override
-    public ResponseEntity<OrderClientDto> save(OrderClientDto dto) {
+    public ResponseEntity<Void> updateClient(Integer id, Integer clientId) {
+        orderClientService.updateClient(id, clientId);
         return ResponseEntity.noContent().build();
     }
 
