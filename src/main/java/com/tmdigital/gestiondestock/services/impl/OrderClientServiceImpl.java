@@ -1,5 +1,6 @@
 package com.tmdigital.gestiondestock.services.impl;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -11,6 +12,7 @@ import com.tmdigital.gestiondestock.dto.OrderClientDto;
 import com.tmdigital.gestiondestock.dto.OrderLineClientDto;
 import com.tmdigital.gestiondestock.exception.ErrorCodes;
 import com.tmdigital.gestiondestock.exception.InvalidEntityException;
+import com.tmdigital.gestiondestock.exception.InvalidOperationException;
 import com.tmdigital.gestiondestock.model.Article;
 import com.tmdigital.gestiondestock.model.Client;
 import com.tmdigital.gestiondestock.model.OrderClient;
@@ -112,6 +114,80 @@ public class OrderClientServiceImpl implements OrderClientService {
     }
 
     @Override
+    public void updateOrderLineQte(Integer orderId, Integer orderLineId, BigDecimal qte) {
+        if (orderId == null) {
+            log.error("L'identifiant de la commande est nul");
+            throw new InvalidEntityException("L'identifiant de la commande est nul", ErrorCodes.ORDER_CLIENT_NOT_FOUND);
+        }
+
+        if (orderLineId == null) {
+            log.error("L'identifiant de la ligne de commande est nul");
+            throw new InvalidEntityException("L'identifiant de la ligne de commande est nul", ErrorCodes.ORDER_LINE_CLIENT_NOT_FOUND);
+        }
+
+        if (qte == null || BigDecimal.ZERO.compareTo(qte) == 0) {
+            log.error("La quantité est nulle ou égale à zéro");
+            throw new InvalidEntityException("La quantité est nulle ou égale à zéro", ErrorCodes.ORDER_LINE_CLIENT_NOT_VALID);
+        }
+
+        OrderClientDto orderClientDto = findById(orderId);
+
+        if (orderClientDto == null) {
+            log.error("Aucune commande n'a été trouvée avec l'identifiant {}", orderId);
+            throw new InvalidEntityException("Aucune commande n'a été trouvée avec l'identifiant " + orderId, ErrorCodes.ORDER_CLIENT_NOT_FOUND);
+        }
+
+        OrderLineClientDto orderLineClientDto = orderClientDto.getOrderLineClients().stream()
+            .filter(orderLine -> orderLine.getId().equals(orderLineId))
+            .findFirst()
+            .orElseThrow(() -> new InvalidEntityException("Aucune ligne de commande n'a été trouvée avec l'identifiant " + orderLineId, ErrorCodes.ORDER_LINE_CLIENT_NOT_FOUND));
+
+        if (orderLineClientDto.getQty().compareTo(qte) == 0) {
+            log.error("La nouvelle quantité est la même que l'ancienne quantité");
+            throw new InvalidOperationException("La nouvelle quantité est la même que l'ancienne quantité", ErrorCodes.ORDER_LINE_CLIENT_NOT_VALID);
+        }
+
+        orderLineClientDto.setQty(qte);
+
+        orderLineClientRepository.save(OrderLineClientDto.toEntity(orderLineClientDto));
+    }
+
+    @Override
+    public void updateOrderStatus(Integer orderId, OrderStatus newStatus) {
+        
+        if (orderId == null) {
+            log.error("L'identifiant est nul");
+            throw new InvalidEntityException("L'identifiant de la commande est nul", ErrorCodes.ORDER_CLIENT_NOT_FOUND);
+        }
+
+        if (newStatus == null || !StringUtils.hasLength(newStatus.name())) {
+            log.error("Le nouveau status est nul");
+            throw new InvalidEntityException("Le nouveau status est nul", ErrorCodes.ORDER_CLIENT_NOT_VALID);
+        }
+
+        OrderClientDto orderClientDto = findById(orderId);
+
+        if (orderClientDto == null) {
+            log.error("Aucune commande n'a été trouvée avec l'identifiant {}", orderId);
+            throw new InvalidEntityException("Aucune commande n'a été trouvée avec l'identifiant " + orderId, ErrorCodes.ORDER_CLIENT_NOT_FOUND);
+        }
+
+        if (newStatus.equals(orderClientDto.getStatus())) {
+            log.error("Le nouveau status est le même que l'ancien status");
+            throw new InvalidEntityException("Le nouveau status est le même que l'ancien status", ErrorCodes.ORDER_CLIENT_NOT_VALID);
+        }
+
+        if (newStatus.equals(OrderStatus.CANCELED) || newStatus.equals(OrderStatus.DELIVERED)) {
+            log.error("Impossible de mettre à jour cette commande car elle a été annulé ou elle est déjà livré.");
+            throw new InvalidEntityException("Impossible de mettre à jour cette commande car elle a été annulé ou elle est déjà livré", ErrorCodes.ORDER_CLIENT_ALREADY_DELIVERED);
+        }
+
+        orderClientDto.setStatus(newStatus);
+
+        OrderClientDto.fromEntity(orderClientRepository.save(OrderClientDto.toEntity(orderClientDto)));
+    }
+
+    @Override
     public OrderClientDto findById(Integer id) {
         if(id == null) {
             log.error("L'identifiant est nul");
@@ -195,42 +271,5 @@ public class OrderClientServiceImpl implements OrderClientService {
 
         orderClientRepository.deleteById(id);
     }
-
-    @Override
-    public OrderClientDto updateOrderStatus(Integer orderId, OrderStatus newStatus) {
-        
-        if (orderId == null) {
-            log.error("L'identifiant est nul");
-            throw new InvalidEntityException("L'identifiant de la commande est nul", ErrorCodes.ORDER_CLIENT_NOT_FOUND);
-        }
-
-        if (newStatus == null || !StringUtils.hasLength(newStatus.name())) {
-            log.error("Le nouveau status est nul");
-            throw new InvalidEntityException("Le nouveau status est nul", ErrorCodes.ORDER_CLIENT_NOT_VALID);
-        }
-
-        OrderClientDto orderClientDto = findById(orderId);
-
-        if (orderClientDto == null) {
-            log.error("Aucune commande n'a été trouvée avec l'identifiant {}", orderId);
-            throw new InvalidEntityException("Aucune commande n'a été trouvée avec l'identifiant " + orderId, ErrorCodes.ORDER_CLIENT_NOT_FOUND);
-        }
-
-        if (newStatus.equals(orderClientDto.getStatus())) {
-            log.error("Le nouveau status est le même que l'ancien status");
-            throw new InvalidEntityException("Le nouveau status est le même que l'ancien status", ErrorCodes.ORDER_CLIENT_NOT_VALID);
-        }
-
-        if (newStatus.equals(OrderStatus.CANCELED) || newStatus.equals(OrderStatus.DELIVERED)) {
-            log.error("Impossible de mettre à jour cette commande car elle a été annulé ou elle est déjà livré.");
-            throw new InvalidEntityException("Impossible de mettre à jour cette commande car elle a été annulé ou elle est déjà livré", ErrorCodes.ORDER_CLIENT_ALREADY_DELIVERED);
-        }
-
-        orderClientDto.setStatus(newStatus);
-
-
-        return OrderClientDto.fromEntity(orderClientRepository.save(OrderClientDto.toEntity(orderClientDto)));
-    }
-
 
 }

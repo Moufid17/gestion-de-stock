@@ -11,8 +11,8 @@
     - [x] Company to article
 
 - [1] Client Order 
-    - [*] Edit qte
-    - [ ] Edit client
+    - [x] Edit qte
+    - [*] Edit client
     - [x] Add order state updating (canceled, In progress, shipped)
     - [ ] Edit an article
     - [ ] Delete an article
