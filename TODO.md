@@ -6,21 +6,39 @@
 - [x] exceptions
 - [x] Picture management
 - [x] Swagger
+
+- [ ] TI : 
+    - [x] Company to article
+
+- [1] Client Order 
+    - [*] Edit qte
+    - [ ] Edit client
+    - [x] Add order state updating (canceled, In progress, shipped)
+    - [ ] Edit an article
+    - [ ] Delete an article
+    - [ ] Retreive client orders lines
+- [2] Supplier order
+    - [ ] Edit qte
+    - [ ] Edit client
+    - [ ] Add order state updating (canceled, In progress, shipped)
+    - [ ] Edit an article
+    - [ ] Delete an article
+    - [ ] Retreive client orders lines
+- [3] Article
+    - [ ] Retreive history
+        - [ ] Sales history
+        - [ ] Client Order history
+        - [ ] Supplier Order history
+- [4] Mvt stock Implementation
+
+- [ ] TU:
+    - [x] Merge Company and category
+    - [5] Update Company and category (if any changement have been made.)
 - [6] Security :
     - [x] Jwt
     - [ ] Session
     - [ ] Action privileges
-- [ ] TU:
-    - [0] Merge Company and category
-    - [5] Update Company and category (if any changement have been made.)
 - [7] Company Implementation:
     - [x] create one with an admin user
     - [ ] Send email with email and password
 - [x] Category Implementation
-- [1] Supplier order Implementation
-- [2] Client order Implementation
-- [3] Article Implementation
-- [4] Mvt stock Implementation
-
-- [ ] TI : 
-    - [x] Company to article
