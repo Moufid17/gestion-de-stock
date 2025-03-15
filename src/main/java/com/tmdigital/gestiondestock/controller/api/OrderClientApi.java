@@ -48,17 +48,29 @@ public interface OrderClientApi {
     )  
     ResponseEntity<Void> updateStatus(@PathVariable Integer orderId, @PathVariable OrderStatus orderStatus);
 
-    @PatchMapping(value = "/update/qte/{orderId}/{orderLineId}/{newQte}")
+    @PatchMapping(value = "/update/quantity/{orderId}/{orderLineId}/{newQte}")
     @Operation(summary = "Update an orderClient quantity", description = "Allow to update a orderClient quantity", 
         responses = {
-            @ApiResponse(responseCode = "200", description = "OrderClient update"),
+            @ApiResponse(responseCode = "200", description = "OrderClient update quantity"),
             @ApiResponse(responseCode = "400", description = "Invalid input"),
             @ApiResponse(responseCode = "401", description = "Unauthorized"),
             @ApiResponse(responseCode = "403", description = "Forbidden"),
             @ApiResponse(responseCode = "409", description = "OrderClient already exists"),
         }
     )  
-    ResponseEntity<OrderClientDto> updateQte(@PathVariable Integer orderId, @PathVariable Integer orderLineId, @PathVariable BigDecimal newQte);
+    ResponseEntity<Void> updateQte(@PathVariable Integer orderId, @PathVariable Integer orderLineId, @PathVariable BigDecimal newQte);
+
+    @PatchMapping(value = "/update/client/{orderId}/{clientId}")
+    @Operation(summary = "Update an orderClient client", description = "Allow to update a orderClient client", 
+        responses = {
+            @ApiResponse(responseCode = "200", description = "OrderClient update client"),
+            @ApiResponse(responseCode = "400", description = "Invalid input"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
+            @ApiResponse(responseCode = "409", description = "OrderClient already exists"),
+        }
+    )  
+    ResponseEntity<Void> updateClient(@PathVariable Integer orderId, @PathVariable Integer clientId);
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Retreive an OrderClient", description = "Allow to retreive an OrderClient by his id", 
