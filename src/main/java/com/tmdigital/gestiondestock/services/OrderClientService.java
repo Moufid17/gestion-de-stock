@@ -1,5 +1,6 @@
 package com.tmdigital.gestiondestock.services;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import com.tmdigital.gestiondestock.dto.OrderClientDto;
@@ -9,7 +10,9 @@ public interface OrderClientService {
 
     OrderClientDto save(OrderClientDto dto);
 
-    OrderClientDto updateOrderStatus(Integer orderId, OrderStatus newStatus);
+    void updateOrderStatus(Integer orderId, OrderStatus newStatus);
+
+    void updateOrderLineQte(Integer orderId, Integer orderLineId, BigDecimal qte);
 
     OrderClientDto findById(Integer id);
 

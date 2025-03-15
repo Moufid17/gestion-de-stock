@@ -1,5 +1,6 @@
 package com.tmdigital.gestiondestock.controller.api;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.springframework.http.MediaType;
@@ -35,8 +36,8 @@ public interface OrderClientApi {
     )  
     ResponseEntity<OrderClientDto> save(@RequestBody OrderClientDto dto);
 
-    @PatchMapping(value = "/update/{id}/{orderStatus}", produces = MediaType.APPLICATION_JSON_VALUE )
-    @Operation(summary = "Update an orderClient status", description = "Allow to update an new orderClient", 
+    @PatchMapping(value = "/update/status/{orderId}/{orderStatus}")
+    @Operation(summary = "Update an orderClient status", description = "Allow to update a orderClient status", 
         responses = {
             @ApiResponse(responseCode = "200", description = "OrderClient update"),
             @ApiResponse(responseCode = "400", description = "Invalid input"),
@@ -45,7 +46,19 @@ public interface OrderClientApi {
             @ApiResponse(responseCode = "409", description = "OrderClient already exists"),
         }
     )  
-    ResponseEntity<OrderClientDto> updateStatus(@PathVariable Integer id, @PathVariable OrderStatus orderStatus);
+    ResponseEntity<Void> updateStatus(@PathVariable Integer orderId, @PathVariable OrderStatus orderStatus);
+
+    @PatchMapping(value = "/update/qte/{orderId}/{orderLineId}/{newQte}")
+    @Operation(summary = "Update an orderClient quantity", description = "Allow to update a orderClient quantity", 
+        responses = {
+            @ApiResponse(responseCode = "200", description = "OrderClient update"),
+            @ApiResponse(responseCode = "400", description = "Invalid input"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
+            @ApiResponse(responseCode = "409", description = "OrderClient already exists"),
+        }
+    )  
+    ResponseEntity<OrderClientDto> updateQte(@PathVariable Integer orderId, @PathVariable Integer orderLineId, @PathVariable BigDecimal newQte);
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Retreive an OrderClient", description = "Allow to retreive an OrderClient by his id", 
@@ -111,5 +124,5 @@ public interface OrderClientApi {
             @ApiResponse(responseCode = "404", description = "OrderClient not found"),
         }
     )
-    void delete(@PathVariable Integer id);
+    ResponseEntity<Void> delete(@PathVariable Integer id);
 }

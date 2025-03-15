@@ -1,5 +1,6 @@
 package com.tmdigital.gestiondestock.controller;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
@@ -22,10 +23,16 @@ public class OrderClientController implements OrderClientApi {
     }
 
     @Override
-    public ResponseEntity<OrderClientDto> updateStatus(Integer id, OrderStatus orderStatus) {
-        return ResponseEntity.ok(orderClientService.updateOrderStatus(id, orderStatus));
+    public ResponseEntity<Void> updateStatus(Integer id, OrderStatus orderStatus) {
+        orderClientService.updateOrderStatus(id, orderStatus);
+        return ResponseEntity.noContent().build();
     }
 
+    @Override
+    public ResponseEntity<OrderClientDto> updateQte(Integer id, Integer orderLineId, BigDecimal newQte) {
+        orderClientService.updateOrderLineQte(id, orderLineId, newQte);
+        return ResponseEntity.noContent().build();
+    }
 
     @Override
     public ResponseEntity<OrderClientDto> save(OrderClientDto dto) {
@@ -58,8 +65,8 @@ public class OrderClientController implements OrderClientApi {
     }
 
     @Override
-    public void delete(Integer id) {
+    public ResponseEntity<Void> delete(Integer id) {
         orderClientService.delete(id);
+        return ResponseEntity.noContent().build();
     }
-
 }
