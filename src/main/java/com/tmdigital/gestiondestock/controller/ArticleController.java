@@ -27,8 +27,8 @@ public class ArticleController implements ArticleApi {
     };
 
     @Override
-    public @ResponseBody ArticleDto get(Integer articleId) {
-        return articleService.findById(articleId);
+    public @ResponseBody ArticleDto get(Integer id) {
+        return articleService.findById(id);
     };
 
     @Override
@@ -37,8 +37,8 @@ public class ArticleController implements ArticleApi {
     };
 
     @Override
-    public @ResponseBody void delete(Integer articleId) {
-        articleService.delete(articleId);
+    public @ResponseBody void delete(Integer id) {
+        articleService.delete(id);
     }
     
 }
