@@ -220,6 +220,11 @@ public class OrderClientServiceImpl implements OrderClientService {
             throw new InvalidEntityException("Aucune commande n'a été trouvée avec l'identifiant " + orderId, ErrorCodes.ORDER_CLIENT_NOT_FOUND);
         }
 
+        if (OrderStatus.CANCELED.equals(orderClientDto.getStatus()) || OrderStatus.DELIVERED.equals(orderClientDto.getStatus())) {
+            log.error("Impossible de mettre à jour cette commande car elle a été annulé ou elle est déjà livré : {}", orderClientDto.getStatus());
+            throw new InvalidOperationException("Impossible de mettre à jour cette commande car elle a été annulé ou elle est déjà livré", ErrorCodes.ORDER_CLIENT_ALREADY_DELIVERED);
+        }
+
         Client client = clientRepository.findById(clientId)
             .orElseThrow(() -> new InvalidEntityException("Aucun client n'a été trouvé avec l'identifiant " + clientId, ErrorCodes.CLIENT_NOT_FOUND));
 
@@ -246,19 +251,45 @@ public class OrderClientServiceImpl implements OrderClientService {
         }
 
         OrderClientDto orderClientDto = findById(orderId);
-        OrderLineClientDto orderLineClientDto = orderClientDto.getOrderLineClients().stream()
+
+        if (orderClientDto == null) {
+            log.error("Aucune commande n'a été trouvée avec l'identifiant {}", orderId);
+            throw new InvalidEntityException("Aucune commande n'a été trouvée avec l'identifiant " + orderId, ErrorCodes.ORDER_CLIENT_NOT_FOUND);
+        }
+
+        List<OrderLineClientDto> orderLineClientDtoList = orderClientDto.getOrderLineClients();
+        
+        if (orderLineClientDtoList == null || orderLineClientDtoList.isEmpty()) {
+            log.error("Aucune ligne de commande n'a été trouvée pour la commande d'identifiant {}", orderId);
+            throw new InvalidOperationException("Aucune ligne de commande n'a été trouvée pour la commande d'identifiant " + orderId, ErrorCodes.ORDER_LINE_CLIENT_NOT_FOUND);
+        }
+        
+        OrderLineClientDto orderLineClientDto = orderLineClientDtoList.stream()
             .filter(orderLine -> orderLine.getId().equals(orderLineId))
             .findFirst()
             .orElseThrow(() -> new InvalidEntityException("Aucune ligne de commande n'a été trouvée avec l'identifiant " + orderLineId, ErrorCodes.ORDER_LINE_CLIENT_NOT_FOUND));
 
-        Article article = articleRepository.findById(newArticleId)
-            .orElseThrow(() -> new InvalidEntityException("Aucun article n'a été trouvé avec l'identifiant " + newArticleId, ErrorCodes.ARTICLE_NOT_FOUND));
+        Optional<Article> article = articleRepository.findById(newArticleId);
 
-        orderLineClientDto.setArticle(ArticleDto.fromEntity(article));
+        if (!article.isPresent()) {
+            log.error("Aucun article n'a été trouvé avec l'identifiant {}", newArticleId);
+            throw new InvalidEntityException("Aucun article n'a été trouvé avec l'identifiant " + newArticleId, ErrorCodes.ARTICLE_NOT_FOUND);
+        }
 
-        orderLineClientRepository.save(OrderLineClientDto.toEntity(orderLineClientDto));
+        if (orderLineClientDto.getArticle().getId().equals(newArticleId)) {
+            log.error("Le nouvel article est le même que l'ancien article");
+            throw new InvalidOperationException("Impossible de mettre à jour la commande", ErrorCodes.ARTICLE_ALREADY_IN_USE);
+        }
 
-        orderClientRepository.save(OrderClientDto.toEntity(orderClientDto));
+        orderLineClientDto.setArticle(ArticleDto.fromEntity(article.get()));
+        orderLineClientDto.setSellPriceInclTax(article.get().getSellPriceInclTax());
+
+        // Reset orderLineClientDto client with the old client (it's set in the OrderLineClientDto.toEntity method)
+        OrderLineClient orderLineClient = OrderLineClientDto.toEntity(orderLineClientDto);
+        orderLineClient.setOrderClient(OrderClientDto.toEntity(orderClientDto));
+
+        orderLineClientRepository.save(orderLineClient);
+        
     }
 
     @Override
