@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.tmdigital.gestiondestock.controller.api.OrderClientApi;
 import com.tmdigital.gestiondestock.dto.OrderClientDto;
+import com.tmdigital.gestiondestock.dto.OrderLineClientDto;
 import com.tmdigital.gestiondestock.model.OrderStatus;
 import com.tmdigital.gestiondestock.services.OrderClientService;
 
@@ -63,6 +64,11 @@ public class OrderClientController implements OrderClientApi {
     }
 
     @Override
+    public ResponseEntity<List<OrderLineClientDto>> findAllOrderLine(Integer orderId) {
+        return ResponseEntity.ok(orderClientService.findAllOrderLine(orderId));
+    }
+
+    @Override
     public  ResponseEntity<List<OrderClientDto>> findAllByClientId(Integer id) {
         return ResponseEntity.ok(orderClientService.findAllByClient(id));
     }
@@ -80,6 +86,12 @@ public class OrderClientController implements OrderClientApi {
     @Override
     public ResponseEntity<Void> delete(Integer id) {
         orderClientService.delete(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @Override
+    public ResponseEntity<Void> deleteOrderLine(Integer orderId, Integer orderLineId) {
+        orderClientService.deleteOrderLine(orderId, orderLineId);
         return ResponseEntity.noContent().build();
     }
 
