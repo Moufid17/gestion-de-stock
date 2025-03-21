@@ -11,7 +11,9 @@
     - [x] Company to article
 
 - [1] Client Order 
-    - [-] Edit qte : Error raised while find order id (OrderClientDto calls OrderLineClientDto.fromEntity while OrderLineClientDto calls OrderClientDto..fromEntity).
+    - [x] Edit qte : 
+        - [x] Error raised while find order id (OrderClientDto calls OrderLineClientDto.fromEntity while OrderLineClientDto calls OrderClientDto..fromEntity) : dependency loop error
+        - [x] dependency loop error
     - [x] Edit client
     - [x] Add order state updating (canceled, In progress, shipped)
     - [-] Edit an article : Error raised while find order id (OrderClientDto calls OrderLineClientDto.fromEntity while OrderLineClientDto calls OrderClientDto..fromEntity).
