@@ -7,6 +7,9 @@
 - [x] Picture management
 - [x] Swagger
 
+- Gobal errors
+    - [ ] GET {articleId} : (/api/v1/articles/2) "Required path variable 'articleId' is not present."
+
 - [ ] TI : 
     - [x] Company to article
 
@@ -16,7 +19,7 @@
         - [x] dependency loop error
     - [x] Edit client
     - [x] Add order state updating (canceled, In progress, shipped)
-    - [-] Edit an article : Error raised while find order id (OrderClientDto calls OrderLineClientDto.fromEntity while OrderLineClientDto calls OrderClientDto..fromEntity).
+    - [x] Edit an article : Error raised while find order id (OrderClientDto calls OrderLineClientDto.fromEntity while OrderLineClientDto calls OrderClientDto..fromEntity).
     - [ ] Delete an article
     - [ ] Retreive client orders lines
 - [2] Supplier order
