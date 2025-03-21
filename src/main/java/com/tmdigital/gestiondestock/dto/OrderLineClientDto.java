@@ -7,9 +7,11 @@ import com.tmdigital.gestiondestock.model.OrderLineClient;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 
 @Data
 @Builder
+@Slf4j
 public class OrderLineClientDto {
 
     private Integer id;
@@ -31,6 +33,7 @@ public class OrderLineClientDto {
         if (orderLineClient == null) {
             return null;
         }
+        
         return OrderLineClientDto.builder()
                 .id(orderLineClient.getId())
                 .sellPriceInclTax(orderLineClient.getSellPriceInclTax())

@@ -17,11 +17,11 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-@Tag(name = "Company", description = "The Company API")
+@Tag(name = "Company", description = "The Company endpoint")
 public interface CompanyApi {
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "Create an company", description = "Allow to create an new company", 
+    @Operation(summary = "Create a company", description = "Allow to create a new company", 
         responses = {
             @ApiResponse(responseCode = "201", description = "Company created", content = @Content(mediaType = "application/json", schema = @Schema(implementation = CompanyDto.class))),
             @ApiResponse(responseCode = "400", description = "Invalid input", content = @Content),
@@ -33,9 +33,9 @@ public interface CompanyApi {
     CompanyDto save(@RequestBody CompanyDto dto);
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "Retreive an company", description = "Allow to retreive an company by his id", 
+    @Operation(summary = "Retrieve a company", description = "Allow to retrieve a company by its id", 
         responses = {
-            @ApiResponse(responseCode = "200", description = "Retreive an Company with success"),
+            @ApiResponse(responseCode = "200", description = "Retrieve a Company with success"),
             @ApiResponse(responseCode = "401", description = "Unauthorized"),
             @ApiResponse(responseCode = "403", description = "Forbidden"),
             @ApiResponse(responseCode = "404", description = "Company not found"),
@@ -44,9 +44,9 @@ public interface CompanyApi {
     CompanyDto findById(@PathVariable Integer id);
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "Retreive all Company", description = "Allow to retreive all Categories in the login user company", 
+    @Operation(summary = "Retrieve all Companies", description = "Allow to retrieve all Companies in the logged-in user's company", 
         responses = {
-            @ApiResponse(responseCode = "200", description = "Retreive with success", content = @Content(mediaType = "application/json", schema = @Schema(implementation = CompanyDto[].class))),
+            @ApiResponse(responseCode = "200", description = "Retrieve with success", content = @Content(mediaType = "application/json", schema = @Schema(implementation = CompanyDto[].class))),
             @ApiResponse(responseCode = "401", description = "Unauthorized"),
             @ApiResponse(responseCode = "403", description = "Forbidden"),
             @ApiResponse(responseCode = "404", description = "Company not found"),
@@ -55,7 +55,7 @@ public interface CompanyApi {
     List<CompanyDto> findAll();
 
     @DeleteMapping("/{id}")
-    @Operation(summary = "Delete an company", description = "Allow to delete an company with his id", 
+    @Operation(summary = "Delete a company", description = "Allow to delete a company by its id", 
         responses = {
             @ApiResponse(responseCode = "204", description = "Delete with success"),
             @ApiResponse(responseCode = "401", description = "Unauthorized"),

@@ -23,4 +23,8 @@ public class PasswordUtils {
     public static String encodePassword(String randomPassword) {
         return PasswordEncoderFactories.createDelegatingPasswordEncoder().encode(randomPassword).replace("{bcrypt}", "");
     }
+
+    public static boolean matches(String password, String encodedPassword) {
+        return PasswordEncoderFactories.createDelegatingPasswordEncoder().matches(password, "{bcrypt}" + encodedPassword);
+    }
 }

@@ -25,7 +25,6 @@ public class UserDto {
 
     private String email;
 
-    @JsonIgnore
     private String password;
 
     private String photo;
@@ -80,6 +79,8 @@ public class UserDto {
             user.setRoles(rolesRepository.findByRoleName("cmp_default").stream().collect(Collectors.toList()));
         }
         Optional<Company> company = companyRepository.findById(userDto.getIdCompany());
+        
+        user.getRoles().stream().forEach(role -> role.getUsers().add(user));
         if (company.isPresent()) user.setCompany(company.get());
         return user;
     }
