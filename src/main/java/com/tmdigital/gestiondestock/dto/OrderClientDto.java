@@ -36,9 +36,12 @@ public class OrderClientDto {
             return null;
         }
         
-        List<OrderLineClientDto> orderLineClients = orderClient.getOrderLineClients().size() > 0 ? orderClient.getOrderLineClients().stream()
-            .map(OrderLineClientDto::fromEntity)
-            .collect(Collectors.toList()) : null;
+        List<OrderLineClientDto> orderLineClients = null;
+        if (orderClient.getOrderLineClients() != null && orderClient.getOrderLineClients().size() > 0) {
+            orderLineClients = orderClient.getOrderLineClients().stream()
+                                .map(OrderLineClientDto::fromEntity)
+                                .collect(Collectors.toList());
+        }
 
         return OrderClientDto.builder()
                 .id(orderClient.getId())
