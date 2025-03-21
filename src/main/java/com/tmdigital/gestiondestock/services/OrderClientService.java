@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import com.tmdigital.gestiondestock.dto.OrderClientDto;
+import com.tmdigital.gestiondestock.dto.OrderLineClientDto;
 import com.tmdigital.gestiondestock.model.OrderStatus;
 
 public interface OrderClientService {
@@ -24,9 +25,13 @@ public interface OrderClientService {
 
     List<OrderClientDto> findAll();
 
+    List<OrderLineClientDto> findAllOrderLine(Integer orderId);
+
     List<OrderClientDto> findAllByCompany(Integer id);
 
     List<OrderClientDto> findAllByClient(Integer id);
 
     void delete(Integer id);
+
+    void deleteOrderLine(Integer id, Integer orderLineId);
 }
