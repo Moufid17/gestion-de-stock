@@ -26,7 +26,7 @@ public class OrderLineClientDto {
 
     private ArticleDto article;
 
-    // @JsonIgnore
+    @JsonIgnore
     private OrderClientDto orderClient;
 
     public static OrderLineClientDto fromEntity(OrderLineClient orderLineClient) {
@@ -34,20 +34,12 @@ public class OrderLineClientDto {
             return null;
         }
         
-        OrderClientDto orderClientDto = null;
-        if (orderLineClient.getOrderClient() != null) {
-            orderClientDto = OrderClientDto.fromEntity(orderLineClient.getOrderClient());
-        } else {
-            log.warn("(OrderClientDto) is null");
-        }
-
         return OrderLineClientDto.builder()
                 .id(orderLineClient.getId())
                 .sellPriceInclTax(orderLineClient.getSellPriceInclTax())
                 .qty(orderLineClient.getQty())
                 .idCompany(orderLineClient.getIdCompany())
                 .article(ArticleDto.fromEntity(orderLineClient.getArticle()))
-                .orderClient(orderClientDto)
                 .build();
     }
 
@@ -61,7 +53,6 @@ public class OrderLineClientDto {
         orderLineClient.setQty(orderLineClientDto.getQty());
         orderLineClient.setIdCompany(orderLineClientDto.getIdCompany());
         orderLineClient.setArticle(ArticleDto.toEntity(orderLineClientDto.getArticle()));
-        orderLineClient.setOrderClient(OrderClientDto.toEntity(orderLineClientDto.getOrderClient()));
         return orderLineClient;
     } 
 }
