@@ -36,41 +36,16 @@ public interface OrderClientApi {
     )  
     ResponseEntity<OrderClientDto> save(@RequestBody OrderClientDto dto);
 
-    @PatchMapping(value = "/update/status/{orderId}/{orderStatus}")
-    @Operation(summary = "Update an orderClient status", description = "Allow to update a orderClient status", 
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Retreive all orderClient", description = "Allow to retreive all orderSupplier in the login user company", 
         responses = {
-            @ApiResponse(responseCode = "200", description = "OrderClient update"),
-            @ApiResponse(responseCode = "400", description = "Invalid input"),
+            @ApiResponse(responseCode = "200", description = "Retreive with success", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OrderClientDto[].class))),
             @ApiResponse(responseCode = "401", description = "Unauthorized"),
             @ApiResponse(responseCode = "403", description = "Forbidden"),
-            @ApiResponse(responseCode = "409", description = "OrderClient already exists"),
+            @ApiResponse(responseCode = "404", description = "OrderClient not found"),
         }
-    )  
-    ResponseEntity<Void> updateStatus(@PathVariable Integer orderId, @PathVariable OrderStatus orderStatus);
-
-    @PatchMapping(value = "/update/quantity/{orderId}/{orderLineId}/{newQte}")
-    @Operation(summary = "Update an orderClient quantity", description = "Allow to update a orderClient quantity", 
-        responses = {
-            @ApiResponse(responseCode = "200", description = "OrderClient update quantity"),
-            @ApiResponse(responseCode = "400", description = "Invalid input"),
-            @ApiResponse(responseCode = "401", description = "Unauthorized"),
-            @ApiResponse(responseCode = "403", description = "Forbidden"),
-            @ApiResponse(responseCode = "409", description = "OrderClient already exists"),
-        }
-    )  
-    ResponseEntity<Void> updateQte(@PathVariable Integer orderId, @PathVariable Integer orderLineId, @PathVariable BigDecimal newQte);
-
-    @PatchMapping(value = "/update/client/{orderId}/{clientId}")
-    @Operation(summary = "Update an orderClient client", description = "Allow to update a orderClient client", 
-        responses = {
-            @ApiResponse(responseCode = "200", description = "OrderClient update client"),
-            @ApiResponse(responseCode = "400", description = "Invalid input"),
-            @ApiResponse(responseCode = "401", description = "Unauthorized"),
-            @ApiResponse(responseCode = "403", description = "Forbidden"),
-            @ApiResponse(responseCode = "409", description = "OrderClient already exists"),
-        }
-    )  
-    ResponseEntity<Void> updateClient(@PathVariable Integer orderId, @PathVariable Integer clientId);
+    )
+    ResponseEntity<List<OrderClientDto>> findAll();
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Retreive an OrderClient", description = "Allow to retreive an OrderClient by his id", 
@@ -81,8 +56,8 @@ public interface OrderClientApi {
             @ApiResponse(responseCode = "404", description = "OrderClient not found"),
         }
     )
-    ResponseEntity<OrderClientDto> findById(@PathVariable Integer id);
-    
+    ResponseEntity<OrderClientDto> findById(@PathVariable("id") Integer id);
+
     @GetMapping(value = "/filter/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Retreive all OrderClient by company id", description = "Allow to retreive all orderClient in the login user company", 
         responses = {
@@ -92,7 +67,7 @@ public interface OrderClientApi {
             @ApiResponse(responseCode = "404", description = "OrderClient not found"),
         }
     )
-    ResponseEntity<OrderClientDto> findByCode(@PathVariable String code);
+    ResponseEntity<OrderClientDto> findByCode(@PathVariable("code") String code);
 
     @GetMapping(value = "/filter/client/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Retreive all orderClient by company id", description = "Allow to retreive all orderClient in the login user company", 
@@ -115,18 +90,55 @@ public interface OrderClientApi {
         }
     )
     ResponseEntity<List<OrderClientDto>> findAllByCompany(@PathVariable Integer id);
-    
-    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "Retreive all orderClient", description = "Allow to retreive all orderSupplier in the login user company", 
+
+    @PatchMapping(value = "/update/status/{orderId}/{orderStatus}")
+    @Operation(summary = "Update an orderClient status", description = "Allow to update a orderClient status", 
         responses = {
-            @ApiResponse(responseCode = "200", description = "Retreive with success", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OrderClientDto[].class))),
+            @ApiResponse(responseCode = "200", description = "OrderClient update"),
+            @ApiResponse(responseCode = "400", description = "Invalid input"),
             @ApiResponse(responseCode = "401", description = "Unauthorized"),
             @ApiResponse(responseCode = "403", description = "Forbidden"),
-            @ApiResponse(responseCode = "404", description = "OrderClient not found"),
+            @ApiResponse(responseCode = "409", description = "OrderClient already exists"),
         }
-    )
-    ResponseEntity<List<OrderClientDto>> findAll();
+    )  
+    ResponseEntity<Void> updateStatus(@PathVariable("orderId") Integer orderId, @PathVariable("orderStatus") OrderStatus orderStatus);
 
+    @PatchMapping(value = "/update/quantity/{orderId}/{orderLineId}/{newQte}")
+    @Operation(summary = "Update an orderClient quantity", description = "Allow to update a orderClient quantity", 
+        responses = {
+            @ApiResponse(responseCode = "200", description = "OrderClient update quantity"),
+            @ApiResponse(responseCode = "400", description = "Invalid input"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
+            @ApiResponse(responseCode = "409", description = "OrderClient already exists"),
+        }
+    )  
+    ResponseEntity<Void> updateQte(@PathVariable("orderId") Integer orderId, @PathVariable("orderLineId") Integer orderLineId, @PathVariable("newQte") BigDecimal newQte);
+
+    @PatchMapping(value = "/update/client/{orderId}/{clientId}")
+    @Operation(summary = "Update an orderClient client", description = "Allow to update a orderClient client", 
+        responses = {
+            @ApiResponse(responseCode = "200", description = "OrderClient update client"),
+            @ApiResponse(responseCode = "400", description = "Invalid input"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
+            @ApiResponse(responseCode = "409", description = "OrderClient already exists"),
+        }
+    )  
+    ResponseEntity<Void> updateClient(@PathVariable("orderId") Integer orderId, @PathVariable("clientId") Integer clientId);
+
+    @PatchMapping(value = "/update/article/{orderId}/{orderLineId}/{articleId}")
+    @Operation(summary = "Update an orderClient article", description = "Allow to update a orderClient article", 
+        responses = {
+            @ApiResponse(responseCode = "200", description = "OrderClient update article"),
+            @ApiResponse(responseCode = "400", description = "Invalid input"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
+            @ApiResponse(responseCode = "409", description = "OrderClient already exists"),
+        }
+    )  
+    ResponseEntity<Void> updateArticle(@PathVariable("orderId") Integer orderId, @PathVariable("orderLineId") Integer orderLineId, @PathVariable("articleId") Integer newArticleId);
+    
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete an orderClient", description = "Allow to delete an orderClient with his id", 
         responses = {

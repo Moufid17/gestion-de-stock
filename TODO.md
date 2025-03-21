@@ -11,10 +11,10 @@
     - [x] Company to article
 
 - [1] Client Order 
-    - [x] Edit qte
+    - [-] Edit qte : Error raised to retreive an order line.
     - [x] Edit client
     - [x] Add order state updating (canceled, In progress, shipped)
-    - [ ] Edit an article
+    - [-] Edit an article : Error raised to retreive an order line.
     - [ ] Delete an article
     - [ ] Retreive client orders lines
 - [2] Supplier order
