@@ -36,9 +36,9 @@ public class OrderClientDto {
             return null;
         }
         
-        List<OrderLineClientDto> orderLineClients = null;
+        List<OrderLineClientDto> orderLineClientsList = null;
         if (orderClient.getOrderLineClients() != null && orderClient.getOrderLineClients().size() > 0) {
-            orderLineClients = orderClient.getOrderLineClients().stream()
+            orderLineClientsList = orderClient.getOrderLineClients().stream()
                                 .map(OrderLineClientDto::fromEntity)
                                 .collect(Collectors.toList());
         }
@@ -50,7 +50,7 @@ public class OrderClientDto {
                 .status(orderClient.getStatus())
                 .idCompany(orderClient.getIdCompany())
                 .client(ClientDto.fromEntity(orderClient.getClient()))
-                .orderLineClients(orderLineClients)
+                .orderLineClients(orderLineClientsList)
                 .build();
     }
 
@@ -59,10 +59,13 @@ public class OrderClientDto {
             return null;
         }
 
-        List<OrderLineClient> orderLineClients = orderClientDto.getOrderLineClients().size() > 0 ? orderClientDto.getOrderLineClients().stream()
-            .map(OrderLineClientDto::toEntity)
-            .collect(Collectors.toList()) : null;
-
+        List<OrderLineClient> orderLineClientsList = null;
+        if (orderClientDto.getOrderLineClients() != null && orderClientDto.getOrderLineClients().size() > 0) {
+            orderLineClientsList = orderClientDto.getOrderLineClients().stream()
+                .map(OrderLineClientDto::toEntity)
+                .collect(Collectors.toList());
+        }
+        
         OrderClient orderClient = new OrderClient();
         orderClient.setId(orderClientDto.getId());
         orderClient.setCode(orderClientDto.getCode());
@@ -70,7 +73,7 @@ public class OrderClientDto {
         orderClient.setStatus(orderClientDto.getStatus());
         orderClient.setIdCompany(orderClientDto.getIdCompany());
         orderClient.setClient(ClientDto.toEntity(orderClientDto.getClient()));
-        orderClient.setOrderLineClients(orderLineClients);
+        orderClient.setOrderLineClients(orderLineClientsList);
         return orderClient;
     }
 
