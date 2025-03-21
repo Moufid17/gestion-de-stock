@@ -33,6 +33,13 @@ public class OrderLineClientDto {
         if (orderLineClient == null) {
             return null;
         }
+        
+        OrderClientDto orderClientDto = null;
+        if (orderLineClient.getOrderClient() != null) {
+            orderClientDto = OrderClientDto.fromEntity(orderLineClient.getOrderClient());
+        } else {
+            log.warn("(OrderClientDto) is null");
+        }
 
         return OrderLineClientDto.builder()
                 .id(orderLineClient.getId())
@@ -40,7 +47,7 @@ public class OrderLineClientDto {
                 .qty(orderLineClient.getQty())
                 .idCompany(orderLineClient.getIdCompany())
                 .article(ArticleDto.fromEntity(orderLineClient.getArticle()))
-                .orderClient(OrderClientDto.fromEntity(orderLineClient.getOrderClient()))
+                .orderClient(orderClientDto)
                 .build();
     }
 

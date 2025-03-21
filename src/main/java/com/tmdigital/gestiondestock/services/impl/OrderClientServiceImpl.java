@@ -128,31 +128,33 @@ public class OrderClientServiceImpl implements OrderClientService {
 
         OrderClientDto orderClientDto = findById(orderId);
 
-        if (orderClientDto == null) {
-            log.error("Aucune commande n'a été trouvée avec l'identifiant {}", orderId);
-            throw new InvalidEntityException("Aucune commande n'a été trouvée avec l'identifiant " + orderId, ErrorCodes.ORDER_CLIENT_NOT_FOUND);
-        }
+    
 
-        List<OrderLineClientDto> orderLineClientDtoList = orderClientDto.getOrderLineClients();
+        // if (orderClientDto == null) {
+        //     log.error("Aucune commande n'a été trouvée avec l'identifiant {}", orderId);
+        //     throw new InvalidEntityException("Aucune commande n'a été trouvée avec l'identifiant " + orderId, ErrorCodes.ORDER_CLIENT_NOT_FOUND);
+        // }
 
-        if (orderLineClientDtoList == null || orderLineClientDtoList.isEmpty()) {
-            log.error("Aucune ligne de commande n'a été trouvée pour la commande d'identifiant {}", orderId);
-            throw new InvalidOperationException("Aucune ligne de commande n'a été trouvée pour la commande d'identifiant " + orderId, ErrorCodes.ORDER_LINE_CLIENT_NOT_FOUND);
-        }
+        // List<OrderLineClientDto> orderLineClientDtoList = orderClientDto.getOrderLineClients();
+
+        // if (orderLineClientDtoList == null || orderLineClientDtoList.isEmpty()) {
+        //     log.error("Aucune ligne de commande n'a été trouvée pour la commande d'identifiant {}", orderId);
+        //     throw new InvalidOperationException("Aucune ligne de commande n'a été trouvée pour la commande d'identifiant " + orderId, ErrorCodes.ORDER_LINE_CLIENT_NOT_FOUND);
+        // }
         
-        OrderLineClientDto orderLineClientDto = orderLineClientDtoList.stream()
-            .filter(orderLine -> orderLine.getId().equals(orderLineId))
-            .findFirst()
-            .orElseThrow(() -> new InvalidEntityException("Aucune ligne de commande n'a été trouvée avec l'identifiant " + orderLineId, ErrorCodes.ORDER_LINE_CLIENT_NOT_FOUND));
+        // OrderLineClientDto orderLineClientDto = orderLineClientDtoList.stream()
+        //     .filter(orderLine -> orderLine.getId().equals(orderLineId))
+        //     .findFirst()
+        //     .orElseThrow(() -> new InvalidEntityException("Aucune ligne de commande n'a été trouvée avec l'identifiant " + orderLineId, ErrorCodes.ORDER_LINE_CLIENT_NOT_FOUND));
 
-        if (orderLineClientDto.getQty().compareTo(qte) == 0) {
-            log.error("La nouvelle quantité est la même que l'ancienne quantité");
-            throw new InvalidOperationException("La nouvelle quantité est la même que l'ancienne quantité", ErrorCodes.ORDER_LINE_CLIENT_NOT_VALID);
-        }
+        // if (orderLineClientDto.getQty().compareTo(qte) == 0) {
+        //     log.error("La nouvelle quantité est la même que l'ancienne quantité");
+        //     throw new InvalidOperationException("La nouvelle quantité est la même que l'ancienne quantité", ErrorCodes.ORDER_LINE_CLIENT_NOT_VALID);
+        // }
 
-        orderLineClientDto.setQty(qte);
+        // orderLineClientDto.setQty(qte);
 
-        orderLineClientRepository.save(OrderLineClientDto.toEntity(orderLineClientDto));
+        // orderLineClientRepository.save(OrderLineClientDto.toEntity(orderLineClientDto));
     }
 
     @Override

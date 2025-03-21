@@ -11,10 +11,10 @@
     - [x] Company to article
 
 - [1] Client Order 
-    - [-] Edit qte : Error raised to retreive an order line.
+    - [-] Edit qte : Error raised while find order id (OrderClientDto calls OrderLineClientDto.fromEntity while OrderLineClientDto calls OrderClientDto..fromEntity).
     - [x] Edit client
     - [x] Add order state updating (canceled, In progress, shipped)
-    - [-] Edit an article : Error raised to retreive an order line.
+    - [-] Edit an article : Error raised while find order id (OrderClientDto calls OrderLineClientDto.fromEntity while OrderLineClientDto calls OrderClientDto..fromEntity).
     - [ ] Delete an article
     - [ ] Retreive client orders lines
 - [2] Supplier order
