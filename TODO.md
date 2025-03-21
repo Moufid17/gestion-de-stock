@@ -13,7 +13,7 @@
 - [ ] TI : 
     - [x] Company to article
 
-- [1] Client Order 
+- [x] Client Order 
     - [x] Edit qte : 
         - [x] Error raised while find order id (OrderClientDto calls OrderLineClientDto.fromEntity while OrderLineClientDto calls OrderClientDto..fromEntity) : dependency loop error
         - [x] dependency loop error
@@ -21,7 +21,7 @@
     - [x] Add order state updating (canceled, In progress, shipped)
     - [x] Edit an article : Error raised while find order id (OrderClientDto calls OrderLineClientDto.fromEntity while OrderLineClientDto calls OrderClientDto..fromEntity).
     - [x] Delete an article
-    - [ ] Add an article
+    - [x] Add an article
     - [x] Retreive client orders lines
 - [2] Supplier order
     - [ ] Edit qte

@@ -26,7 +26,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 public interface OrderClientApi {
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "Create an orderClient", description = "Allow to create an new orderClient", 
+    @Operation(summary = "Create an orderClient", description = "Allow to create a new orderClient", 
         responses = {
             @ApiResponse(responseCode = "201", description = "OrderClient created", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OrderClientDto.class))),
             @ApiResponse(responseCode = "400", description = "Invalid input", content = @Content),
@@ -36,6 +36,18 @@ public interface OrderClientApi {
         }
     )  
     ResponseEntity<OrderClientDto> save(@RequestBody OrderClientDto dto);
+
+    @PostMapping(value="/article/{orderId}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Create a new client order line", description = "Allow to create a new client order line", 
+        responses = {
+            @ApiResponse(responseCode = "200", description = "New client order Line created", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OrderLineClientDto.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid input", content = @Content),
+            @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
+            @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content),
+            @ApiResponse(responseCode = "409", description = "OrderClient already exists", content = @Content),
+        }
+    )  
+    ResponseEntity<OrderClientDto> saveOrderLine(@PathVariable Integer orderId, @RequestBody OrderLineClientDto dto);
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Retreive all orderClient", description = "Allow to retreive all orderSupplier in the login user company", 
