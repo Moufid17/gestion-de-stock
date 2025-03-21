@@ -31,19 +31,7 @@ public interface ArticleApi {
         }
     )
     ArticleDto save(@RequestBody ArticleDto dto);
-
-    
-    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "Retreive all article", description = "Allow to retreive all articles in the login user company", 
-        responses = {
-            @ApiResponse(responseCode = "200", description = "Retreive with success", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ArticleDto[].class))),
-            @ApiResponse(responseCode = "401", description = "Unauthorized"),
-            @ApiResponse(responseCode = "403", description = "Forbidden"),
-            @ApiResponse(responseCode = "404", description = "Article not found"),
-        }
-    )
-    List<ArticleDto> getAll();
-    
+   
     @GetMapping(value="/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Retreive an article", description = "Allow to retreive an article by his id", 
         responses = {
@@ -54,6 +42,17 @@ public interface ArticleApi {
         }
     )
     ArticleDto get(@PathVariable Integer id);
+
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Retreive all article", description = "Allow to retreive all articles in the login user company", 
+        responses = {
+            @ApiResponse(responseCode = "200", description = "Retreive with success", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ArticleDto[].class))),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
+            @ApiResponse(responseCode = "404", description = "Article not found"),
+        }
+    )
+    List<ArticleDto> getAll();
     
     @DeleteMapping(value="/{id}")
     @Operation(summary = "Delete an article", description = "Allow to delete an article with his id", 

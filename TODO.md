@@ -8,7 +8,8 @@
 - [x] Swagger
 
 - Gobal errors
-    - [ ] GET {articleId} : (/api/v1/articles/2) "Required path variable 'articleId' is not present."
+    - [x] GET {articleId} : (/api/v1/articles/2) "Required path variable 'articleId' is not present."
+    - [x] GET {articleId} : NoSuchElementException when you try to retreive unauthorised article. (for exemple from another company)
 
 - [ ] TI : 
     - [x] Company to article
@@ -23,12 +24,13 @@
     - [x] Delete an article
     - [x] Add an article
     - [x] Retreive client orders lines
-- [2] Supplier order
+- [*] Supplier order
     - [ ] Edit qte
     - [ ] Edit client
     - [ ] Add order state updating (canceled, In progress, shipped)
     - [ ] Edit an article
     - [ ] Delete an article
+    - [ ] Add an article
     - [ ] Retreive client orders lines
 - [3] Article
     - [ ] Retreive history
