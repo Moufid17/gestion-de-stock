@@ -11,10 +11,10 @@ public class OrderLineClientValidator {
         List<String> errors = new ArrayList<>();
 
         if (orderLineClientDto == null) {
-            errors.add("Veuillez renseigner l'article");
             errors.add("Veuillez renseigner le prix unitaire de vente TTC");
             errors.add("Veuillez renseigner la quantité");
             errors.add("Veuillez renseigner la commande client");
+            errors.add("Veuillez renseigner l'article");
             return errors;
         }
 
@@ -34,9 +34,9 @@ public class OrderLineClientValidator {
             errors.add("Veuillez renseigner l'article");
         }
 
-        if (orderLineClientDto.getOrderClient() == null || orderLineClientDto.getOrderClient().getId() == null) {
-            errors.add("Veuillez renseigner la commande client");
-        }
+        // if (orderLineClientDto.getOrderClient() == null || orderLineClientDto.getOrderClient().getId() == null) {
+        //     errors.add("Veuillez renseigner la commande client");
+        // }
 
         return errors;
     }

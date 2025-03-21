@@ -24,6 +24,7 @@ public class OrderClientController implements OrderClientApi {
 
     @Override
     public ResponseEntity<OrderClientDto> save(OrderClientDto dto) {
+        orderClientService.save(dto);
         return ResponseEntity.noContent().build();
     }
 
@@ -42,6 +43,12 @@ public class OrderClientController implements OrderClientApi {
     @Override
     public ResponseEntity<Void> updateClient(Integer id, Integer clientId) {
         orderClientService.updateClient(id, clientId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @Override
+    public ResponseEntity<Void> updateArticle(Integer orderId, Integer orderLineId, Integer newArticleId) {
+        orderClientService.updateArticle(orderId, orderLineId, newArticleId);
         return ResponseEntity.noContent().build();
     }
 
@@ -75,4 +82,5 @@ public class OrderClientController implements OrderClientApi {
         orderClientService.delete(id);
         return ResponseEntity.noContent().build();
     }
+
 }

@@ -7,9 +7,11 @@ import com.tmdigital.gestiondestock.model.OrderLineClient;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 
 @Data
 @Builder
+@Slf4j
 public class OrderLineClientDto {
 
     private Integer id;
@@ -24,19 +26,21 @@ public class OrderLineClientDto {
 
     private ArticleDto article;
 
-    @JsonIgnore
+    // @JsonIgnore
     private OrderClientDto orderClient;
 
     public static OrderLineClientDto fromEntity(OrderLineClient orderLineClient) {
         if (orderLineClient == null) {
             return null;
         }
+
         return OrderLineClientDto.builder()
                 .id(orderLineClient.getId())
                 .sellPriceInclTax(orderLineClient.getSellPriceInclTax())
                 .qty(orderLineClient.getQty())
                 .idCompany(orderLineClient.getIdCompany())
                 .article(ArticleDto.fromEntity(orderLineClient.getArticle()))
+                .orderClient(OrderClientDto.fromEntity(orderLineClient.getOrderClient()))
                 .build();
     }
 
@@ -50,6 +54,7 @@ public class OrderLineClientDto {
         orderLineClient.setQty(orderLineClientDto.getQty());
         orderLineClient.setIdCompany(orderLineClientDto.getIdCompany());
         orderLineClient.setArticle(ArticleDto.toEntity(orderLineClientDto.getArticle()));
+        orderLineClient.setOrderClient(OrderClientDto.toEntity(orderLineClientDto.getOrderClient()));
         return orderLineClient;
     } 
 }

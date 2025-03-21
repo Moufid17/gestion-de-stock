@@ -13,8 +13,10 @@ public interface OrderClientService {
     void updateOrderStatus(Integer orderId, OrderStatus newStatus);
 
     void updateOrderLineQte(Integer orderId, Integer orderLineId, BigDecimal qte);
-    
+
     void updateClient(Integer orderId, Integer clientId);
+
+    void updateArticle(Integer orderId, Integer orderLineId, Integer newArticleId);
 
     OrderClientDto findById(Integer id);
 

@@ -32,7 +32,7 @@ public class OrderClient extends AbstractEntity {
 
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
-    private OrderStatus status;
+    private OrderStatus status = OrderStatus.IN_PROGRESS;
 
     @Column(name = "idcompany")
     private Integer idCompany;
