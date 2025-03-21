@@ -11,6 +11,8 @@ public interface OrderClientService {
 
     OrderClientDto save(OrderClientDto dto);
 
+    OrderClientDto addClientOrderLine(Integer orderId, OrderLineClientDto dto);
+
     void updateOrderStatus(Integer orderId, OrderStatus newStatus);
 
     void updateOrderLineQte(Integer orderId, Integer orderLineId, BigDecimal qte);
