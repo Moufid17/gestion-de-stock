@@ -150,6 +150,18 @@ public interface OrderSupplierApi {
     )
     ResponseEntity<Void> updateSupplier(@PathVariable Integer orderId, @PathVariable Integer supplierId);
 
+    @PatchMapping(value = "/update/article/{orderId}/{orderLineId}/{articleId}")
+    @Operation(summary = "Update an order article", description = "Allow to update a order article", 
+        responses = {
+            @ApiResponse(responseCode = "200", description = "OrderClient update article"),
+            @ApiResponse(responseCode = "400", description = "Invalid input"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
+            @ApiResponse(responseCode = "409", description = "Order already exists"),
+        }
+    )  
+    ResponseEntity<Void> updateArticle(@PathVariable Integer orderId, @PathVariable Integer orderLineId, @PathVariable("articleId") Integer newArticleId);
+
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete an orderSupplier", description = "Allow to delete an orderSupplier with his id", 
         responses = {
@@ -160,4 +172,15 @@ public interface OrderSupplierApi {
         }
     )
     void delete(@PathVariable Integer id);
+
+    @DeleteMapping("/delete/article/{orderId}/{orderLineId}")
+    @Operation(summary = "Delete an orderLine", description = "Allow to delete an orderLine with his id", 
+        responses = {
+            @ApiResponse(responseCode = "204", description = "Delete with success"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
+            @ApiResponse(responseCode = "404", description = "OrderClient not found"),
+        }
+    )
+    ResponseEntity<Void> deleteOrderLine(@PathVariable Integer orderId, @PathVariable Integer orderLineId);
 }
