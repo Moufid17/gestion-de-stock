@@ -83,8 +83,20 @@ public class OrderSupplierController implements OrderSupplierApi {
     }
 
     @Override
+    public ResponseEntity<Void> updateArticle(Integer orderId, Integer orderLineId, Integer newArticleId) {
+        orderSupplierService.updateArticle(orderId, orderLineId, newArticleId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @Override
     public void delete(Integer id) {
         orderSupplierService.delete(id);
+    }
+
+    @Override
+    public ResponseEntity<Void> deleteOrderLine(Integer orderId, Integer orderLineId) {
+        orderSupplierService.deleteOrderLine(orderId, orderLineId);
+        return ResponseEntity.noContent().build();
     }
 
 }

@@ -18,6 +18,7 @@ import com.tmdigital.gestiondestock.dto.SupplierDto;
 import com.tmdigital.gestiondestock.exception.ErrorCodes;
 import com.tmdigital.gestiondestock.exception.InvalidEntityException;
 import com.tmdigital.gestiondestock.exception.InvalidOperationException;
+import com.tmdigital.gestiondestock.model.Article;
 import com.tmdigital.gestiondestock.model.OrderLineSupplier;
 import com.tmdigital.gestiondestock.model.OrderStatus;
 import com.tmdigital.gestiondestock.model.OrderSupplier;
@@ -355,6 +356,59 @@ public class OrderSupplierServiceImpl implements OrderSupplierService {
     }
 
     @Override
+    public void updateArticle(Integer orderId, Integer orderLineId, Integer newArticleId) {
+        if (orderId == null) {
+            log.error("L'identifiant de la commande est nul");
+            throw new InvalidOperationException("L'identifiant de la commande est nul", ErrorCodes.ORDER_SUPPLIER_NOT_FOUND);
+        }
+
+        if (orderLineId == null) {
+            log.error("L'identifiant de la line de commande est nul");
+            throw new InvalidOperationException("L'identifiant de la line de commande est nul", ErrorCodes.ORDER_LINE_SUPPLIER_NOT_FOUND);
+        }
+
+        if (newArticleId == null) {
+            log.error("L'identifiant de l'article est nul");
+            throw new InvalidOperationException("L'identifiant de l'article est nul", ErrorCodes.ARTICLE_NOT_FOUND);
+        }
+
+        OrderSupplierDto orderSupplierDto = findById(orderId);
+
+        List<OrderLineSupplierDto> orderLineSupplierDtoList = orderSupplierDto.getOrderLineSupplier();
+        
+        if (orderLineSupplierDtoList == null || orderLineSupplierDtoList.isEmpty()) {
+            log.error("Aucune ligne de commande n'a été trouvée pour la commande d'identifiant {}", orderId);
+            throw new InvalidOperationException("Aucune ligne de commande n'a été trouvée pour la commande d'identifiant " + orderId, ErrorCodes.ORDER_LINE_SUPPLIER_NOT_FOUND);
+        }
+        
+        OrderLineSupplierDto orderLineSupplierDto = orderLineSupplierDtoList.stream()
+            .filter(orderLine -> orderLine.getId().equals(orderLineId))
+            .findFirst()
+            .orElseThrow(() -> new InvalidEntityException("Aucune ligne de commande n'a été trouvée avec l'identifiant " + orderLineId, ErrorCodes.ORDER_LINE_SUPPLIER_NOT_FOUND));
+
+        Optional<Article> article = articleRepository.findById(newArticleId);
+
+        if (!article.isPresent()) {
+            log.error("Aucun article n'a été trouvé avec l'identifiant {}", newArticleId);
+            throw new InvalidEntityException("Aucun article n'a été trouvé avec l'identifiant " + newArticleId, ErrorCodes.ARTICLE_NOT_FOUND);
+        }
+
+        if (orderLineSupplierDto.getArticle().getId().equals(newArticleId)) {
+            log.error("Le nouvel article est le même que l'ancien article");
+            throw new InvalidOperationException("Impossible de mettre à jour la commande", ErrorCodes.ARTICLE_ALREADY_IN_USE);
+        }
+
+        orderLineSupplierDto.setArticle(ArticleDto.fromEntity(article.get()));
+        orderLineSupplierDto.setSellPriceInclTax(article.get().getSellPriceInclTax());
+
+        // Reset orderLineSupplierDto client with the old client (it's set in the OrderLineSupplierDto.toEntity method)
+        OrderLineSupplier orderLineSupplier = OrderLineSupplierDto.toEntity(orderLineSupplierDto);
+        orderLineSupplier.setOrderSupplier(OrderSupplierDto.toEntity(orderSupplierDto));
+
+        orderLineSupplierRepository.save(orderLineSupplier);
+    }
+
+    @Override
     public void delete(Integer id) {
         if (id == null) {
             log.error("L'identifiant est nul");
@@ -382,4 +436,7 @@ public class OrderSupplierServiceImpl implements OrderSupplierService {
 
         orderSupplierRepository.deleteById(id);
     }
+
+    @Override
+    public void deleteOrderLine(Integer orderId, Integer orderLineId) {}
 }
