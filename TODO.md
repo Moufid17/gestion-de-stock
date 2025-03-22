@@ -27,12 +27,12 @@
     - [x] Delete an article
     - [x] Add an article
     - [x] Retreive client orders lines
-- [*] Supplier order
+- [x] Supplier order
     - [x] Edit qte
     - [x] Edit Supplier
     - [x] Update order status (canceled, In progress, shipped)
     - [x] Edit an article
-    - [*] Delete an article
+    - [x] Delete an article
     - [x] Add an article
     - [x] Retreive client orders lines
 - [3] Article

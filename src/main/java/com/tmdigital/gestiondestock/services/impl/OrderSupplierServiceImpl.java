@@ -438,5 +438,46 @@ public class OrderSupplierServiceImpl implements OrderSupplierService {
     }
 
     @Override
-    public void deleteOrderLine(Integer orderId, Integer orderLineId) {}
+    public void deleteOrderLine(Integer orderId, Integer orderLineId) {
+        if (orderId == null) {
+            log.error("L'identifiant de la commande est nul");
+            throw new InvalidOperationException("L'identifiant de la commande est nul", ErrorCodes.ORDER_SUPPLIER_NOT_FOUND);
+        }
+
+        if (orderLineId == null) {
+            log.error("L'identifiant de la ligne de commande est nul");
+            throw new InvalidOperationException("L'identifiant de la ligne de commande est nul", ErrorCodes.ORDER_LINE_SUPPLIER_NOT_FOUND);
+        }
+
+        // check if the order exists
+        Optional<OrderSupplier> orderSupplier = orderSupplierRepository.findById(orderId);
+        if (!orderSupplier.isPresent()) {
+            log.error("Aucune commande n'a été trouvée avec l'identifiant {}", orderId);
+            throw new InvalidEntityException("Aucune commande n'a été trouvée avec l'identifiant " + orderId, ErrorCodes.ORDER_SUPPLIER_NOT_FOUND);
+        }
+        
+        // check if the order is already delivered or canceled
+        if (OrderStatus.DELIVERED.equals(orderSupplier.get().getStatus()) || OrderStatus.CANCELED.equals(orderSupplier.get().getStatus())) {
+            log.error("Impossible de supprimer une commande annulé ou déjà livrée");
+            throw new InvalidOperationException("Impossible de supprimer une commande annulé ou déjà livrée.", ErrorCodes.ORDER_SUPPLIER_ALREADY_DELIVERED);
+        }
+
+        List<OrderLineSupplier> orderLineSuppliersList = orderSupplier.get().getOrderLineSupplier();
+        // check if the order has order lines
+        if (orderLineSuppliersList == null || orderLineSuppliersList.isEmpty()) {
+            log.error("Aucune ligne de commande n'a été trouvée pour la commande d'identifiant {}", orderId);
+            throw new InvalidOperationException("Aucune ligne de commande n'a été trouvée pour la commande d'identifiant " + orderId, ErrorCodes.ORDER_LINE_SUPPLIER_NOT_FOUND);
+        }
+
+        Optional<OrderLineSupplier> orderLineSupplier = orderLineSuppliersList.stream()
+            .filter(orderLine -> orderLine.getId().equals(orderLineId))
+            .findFirst();
+        
+        if (!orderLineSupplier.isPresent()) {
+            log.error("Aucune ligne de commande n'a été trouvée avec l'identifiant {}", orderLineId);
+            throw new InvalidEntityException("Aucune ligne de commande n'a été trouvée avec l'identifiant " + orderLineId, ErrorCodes.ORDER_LINE_SUPPLIER_NOT_FOUND);
+        }
+
+        orderLineSupplierRepository.deleteById(orderLineId);
+    }
 }
