@@ -1,16 +1,21 @@
 package com.tmdigital.gestiondestock.services.impl;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import com.tmdigital.gestiondestock.dto.ArticleDto;
 import com.tmdigital.gestiondestock.dto.OrderLineSupplierDto;
 import com.tmdigital.gestiondestock.dto.OrderSupplierDto;
 import com.tmdigital.gestiondestock.exception.ErrorCodes;
 import com.tmdigital.gestiondestock.exception.InvalidEntityException;
+import com.tmdigital.gestiondestock.exception.InvalidOperationException;
 import com.tmdigital.gestiondestock.model.Article;
 import com.tmdigital.gestiondestock.model.OrderLineSupplier;
 import com.tmdigital.gestiondestock.model.OrderStatus;
@@ -21,6 +26,7 @@ import com.tmdigital.gestiondestock.repository.OrderLineSupplierRepository;
 import com.tmdigital.gestiondestock.repository.OrderSupplierRepository;
 import com.tmdigital.gestiondestock.repository.SupplierRepository;
 import com.tmdigital.gestiondestock.services.OrderSupplierService;
+import com.tmdigital.gestiondestock.validator.OrderLineClientValidator;
 import com.tmdigital.gestiondestock.validator.OrderLineSupplierValidator;
 import com.tmdigital.gestiondestock.validator.OrderSupplierValidator;
 
@@ -51,6 +57,23 @@ public class OrderSupplierServiceImpl implements OrderSupplierService {
             throw new InvalidEntityException("La commande n'est pas valide", ErrorCodes.ORDER_SUPPLIER_NOT_VALID, errors);
         }
 
+        if (null == dto.getIdCompany()) {
+            log.error("Impossible de créer une commande sans entreprise");
+            throw new InvalidEntityException("Impossible de créer une commande sans entreprise", ErrorCodes.COMPANY_NOT_FOUND);
+        }
+
+        // check if the order is already delivered or canceled
+        if (dto.getId() != null && (dto.isDelivered() || dto.isCancaled())) {
+            log.error("Impossible de mettre à jour cette commande car elle a été annulé ou elle est déjà livré.");
+            throw new InvalidEntityException("Impossible de mettre à jour cette commande car elle a été annulé ou elle est déjà livré", ErrorCodes.ORDER_CLIENT_ALREADY_DELIVERED);
+        }
+
+        // Check if the order lines are valid
+        if (dto.getOrderLineSupplier() ==  null) {
+            log.warn("Impossible d'enregister une commande avec des lignes de commandes nulles.");
+            throw new InvalidEntityException("Impossible d'enregister une commande avec des lignes de commandes nulles.", ErrorCodes.ORDER_SUPPLIER_NOT_VALID, errors);
+        }
+
         // Check if the supplier exists
         Optional<Supplier> supplier = supplierRepository.findById(dto.getSupplier().getId());
         if (!supplier.isPresent()) {
@@ -58,50 +81,35 @@ public class OrderSupplierServiceImpl implements OrderSupplierService {
             throw new InvalidEntityException("Le fournisseur n'existe pas", ErrorCodes.SUPPLIER_NOT_FOUND);
         }
 
-        
         // Check if the order lines are valid
-        if (dto.getOrderLineSupplier() ==  null) {
-            log.warn("Impossible d'enregister une commande avec des lignes de commandes nulles.");
-            throw new InvalidEntityException("Impossible d'enregister une commande avec des lignes de commandes nulles.", ErrorCodes.ORDER_CLIENT_NOT_VALID, errors);
+        Set<String> errorsOrderLine = new HashSet<>();
+            
+        dto.getOrderLineSupplier().forEach(orderLine -> {
+            errorsOrderLine.addAll(OrderLineSupplierValidator.validate(orderLine));
+        });
+
+        if (!errorsOrderLine.isEmpty()) {
+            log.warn("Une ligne de commande n'est pas valide ou un L'article n'existe pas.");
+            throw new InvalidEntityException("Une ligne de commande n'est pas valide ou un L'article n'existe pas.", ErrorCodes.ORDER_CLIENT_NOT_VALID, new ArrayList<>(errorsOrderLine));
         }
 
-        // check if the order is already delivered or canceled
-        if (dto.isDelivered() || dto.isCancaled()) {
-            log.error("Impossible de mettre à jour cette commande car elle a été annulé ou elle est déjà livré.");
-            throw new InvalidEntityException("Impossible de mettre à jour cette commande car elle a été annulé ou elle est déjà livré", ErrorCodes.ORDER_SUPPLIER_ALREADY_DELIVERED);
-        }
-
-        // Check if each order line are valid abd if the article exists
-        List<String> orderLineErrors = dto.getOrderLineSupplier().stream()
-            .map(orderLine -> {
-                List<String> errorsOrderLine = OrderLineSupplierValidator.validate(orderLine);
-                if (errorsOrderLine.isEmpty()) {
-                    Optional<Article> article = articleRepository.findById(orderLine.getArticle().getId());
-                    if (!article.isPresent()) {
-                        return "L'article avec l'identifiant " + orderLine.getArticle().getId() + " n'existe pas";
-                    } else {
-                        return null;
-                    }
-                } else {
-                    return "Impossible d'enregister une commande avec une ligne de commande non valide";
-                }
-            })
-            .filter(error -> error != null)
-            .distinct()
-            .collect(Collectors.toList());
-
-        if (!orderLineErrors.isEmpty()) {
-            log.warn("Une ligne de commande n'est pas valide ou un l'article n'existe pas.");
-            throw new InvalidEntityException("Une ligne de commande n'est pas valide ou un l'article n'existe pas.", ErrorCodes.ORDER_CLIENT_NOT_VALID, orderLineErrors);
+        if (dto.getStatus() == null) {
+            dto.setStatus(OrderStatus.IN_PROGRESS);
         }
 
         // Save the order
         OrderSupplier savedOrderSupplier = orderSupplierRepository.save(OrderSupplierDto.toEntity(dto));
 
         dto.getOrderLineSupplier().forEach(orderLine -> {
+            ArticleDto articleDto = ArticleDto.fromEntity(articleRepository.findById(orderLine.getArticle().getId())
+                .orElseThrow(() -> new InvalidEntityException("Aucun article n'a été trouvé avec l'identifiant " + orderLine.getArticle().getId(), ErrorCodes.ARTICLE_NOT_FOUND)));
+            
             OrderLineSupplier orderLineSupplier = OrderLineSupplierDto.toEntity(orderLine);
             orderLineSupplier.setOrderSupplier(savedOrderSupplier);
             orderLineSupplier.setIdCompany(dto.getIdCompany());
+            if (null == orderLine.getSellPriceInclTax()) {
+                orderLineSupplier.setSellPriceInclTax(articleDto.getSellPriceInclTax());
+            }
             orderLineSupplierRepository.save(orderLineSupplier);
 
             // [ ] Mise à jour le Mvt de stock en entrée
@@ -109,6 +117,46 @@ public class OrderSupplierServiceImpl implements OrderSupplierService {
         });
         
         return OrderSupplierDto.fromEntity(savedOrderSupplier);
+    }
+
+    @Override
+    public OrderSupplierDto addClientOrderLine(Integer orderId, OrderLineSupplierDto dto) {
+
+        List<String> errors = OrderLineSupplierValidator.validate(dto);
+        
+        if (!errors.isEmpty()) {
+            log.error("L'objet n'est pas valide {}", dto);
+            throw new InvalidEntityException("La ligne de commande n'est pas valide", ErrorCodes.ORDER_LINE_CLIENT_NOT_VALID, errors);
+        }
+
+        ArticleDto articleDto = ArticleDto.fromEntity(articleRepository.findById(dto.getArticle().getId())
+            .orElseThrow(() -> new InvalidEntityException("Aucun article n'a été trouvé avec l'identifiant " + dto.getArticle().getId(), ErrorCodes.ARTICLE_NOT_FOUND)));   
+
+
+        List<OrderLineSupplierDto> orderLineSupplierList = findAllOrderLine(orderId);
+        if (orderLineSupplierList == null || orderLineSupplierList.isEmpty()) {
+            log.error("Aucune ligne de commande n'a été trouvée pour la commande d'identifiant {}", orderId);
+            throw new InvalidEntityException("Aucune ligne de commande n'a été trouvée pour la commande d'identifiant " + orderId, ErrorCodes.ORDER_LINE_CLIENT_NOT_FOUND);
+        }        
+                
+        orderLineSupplierList.stream()
+            .filter(orderLine -> orderLine.getArticle().getId().equals(dto.getArticle().getId()))
+            .findAny()
+            .ifPresent(orderLine -> {
+                log.error("L'article avec l'identifiant {} est déjà dans la commande", dto.getArticle().getId());
+                throw new InvalidOperationException("L'article avec l'identifiant " + dto.getArticle().getId() + " est déjà dans la commande", ErrorCodes.ARTICLE_ALREADY_IN_USE);
+            });
+
+        OrderSupplierDto orderSupplierDto = findById(orderId);
+
+        OrderLineSupplier newOrderLineSupplier = OrderLineSupplierDto.toEntity(dto);
+        newOrderLineSupplier.setOrderSupplier(OrderSupplierDto.toEntity(orderSupplierDto));
+        newOrderLineSupplier.setIdCompany(orderSupplierDto.getIdCompany());
+        newOrderLineSupplier.setSellPriceInclTax(articleDto.getSellPriceInclTax());
+        orderLineSupplierRepository.save(newOrderLineSupplier);
+
+        orderSupplierDto.getOrderLineSupplier().add(OrderLineSupplierDto.fromEntity(newOrderLineSupplier));
+        return OrderSupplierDto.fromEntity(orderSupplierRepository.save(OrderSupplierDto.toEntity(orderSupplierDto)));
     }
 
     @Override
@@ -133,6 +181,33 @@ public class OrderSupplierServiceImpl implements OrderSupplierService {
         return orderSupplierRepository.findByCode(code)
                 .map(OrderSupplierDto::fromEntity)
                 .orElseThrow(() -> new InvalidEntityException("Le code " + code + " n'est pas valide.", ErrorCodes.ORDER_SUPPLIER_NOT_FOUND));
+    }
+
+    @Override
+    public List<OrderLineSupplierDto> findAllOrderLine(Integer orderId) {
+        if (orderId == null) {
+            log.error("L'identifiant de la commande est nul");
+            throw new InvalidOperationException("L'identifiant de la commande est nul", ErrorCodes.ORDER_CLIENT_NOT_FOUND);
+        }
+
+        Optional<OrderSupplier> orderSupplier = orderSupplierRepository.findById(orderId);
+
+        // check if the order exists
+        if (!orderSupplier.isPresent()) {
+            log.error("Aucune commande n'a été trouvée avec l'identifiant {}", orderId);
+            throw new InvalidEntityException("Aucune commande n'a été trouvée avec l'identifiant " + orderId, ErrorCodes.ORDER_CLIENT_NOT_FOUND);
+        }
+
+        List<OrderLineSupplier> orderLineSupplierList = orderSupplier.get().getOrderLineSupplier();
+        // check if the order has order lines
+        if (orderLineSupplierList == null || orderLineSupplierList.isEmpty()) {
+            log.info("Aucune ligne de commande n'a été trouvée pour la commande d'identifiant {}", orderId);
+            return new ArrayList<>();
+        }
+
+        return orderLineSupplierList.stream()
+            .map(OrderLineSupplierDto::fromEntity)
+            .collect(Collectors.toList());
     }
 
     @Override
