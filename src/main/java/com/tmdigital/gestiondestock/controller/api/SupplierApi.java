@@ -21,6 +21,7 @@ public interface SupplierApi {
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE) 
     SupplierDto findById(@PathVariable Integer id);
 
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     List<SupplierDto> findAll();
 
     @GetMapping(value = "/company/{id}", produces = MediaType.APPLICATION_JSON_VALUE) 

@@ -10,8 +10,9 @@
 - Gobal errors
     - [x] GET {articleId} : (/api/v1/articles/2) "Required path variable 'articleId' is not present."
     - [x] GET {articleId} : NoSuchElementException when you try to retreive unauthorised article. (for exemple from another company)
-    - [x] GET suppliers : return "null" for existing order lines
-    - [x] GET suppliers/{id} : return "null" for existing order lines
+    - [x] GET supplier orders : return "null" for existing order lines
+    - [x] GET supplier orders/{id} : return "null" for existing order lines
+    - [x] GET suppliers : "GET" method not allowed
 
 - [ ] TI : 
     - [x] Company to article
