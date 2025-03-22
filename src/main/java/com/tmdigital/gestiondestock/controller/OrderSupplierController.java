@@ -77,8 +77,8 @@ public class OrderSupplierController implements OrderSupplierApi {
     }
 
     @Override
-    public ResponseEntity<Void> updateSupplier(Integer id, Integer supplierId) {
-        orderSupplierService.updateSupplier(id, supplierId);
+    public ResponseEntity<Void> updateSupplier(Integer orderId, Integer supplierId) {
+        orderSupplierService.updateSupplier(orderId, supplierId);
         return ResponseEntity.noContent().build();
     }
 

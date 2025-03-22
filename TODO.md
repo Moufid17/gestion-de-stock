@@ -29,7 +29,7 @@
     - [x] Retreive client orders lines
 - [*] Supplier order
     - [x] Edit qte
-    - [*] Edit client
+    - [x] Edit Supplier
     - [x] Update order status (canceled, In progress, shipped)
     - [ ] Edit an article
     - [ ] Delete an article
