@@ -241,7 +241,38 @@ public class OrderSupplierServiceImpl implements OrderSupplierService {
     }
 
     @Override
-    public void updateOrderStatus(Integer orderId, OrderStatus newStatus) {}
+    public void updateOrderStatus(Integer orderId, OrderStatus newStatus) {
+        if (orderId == null) {
+            log.error("L'identifiant est nul");
+            throw new InvalidOperationException("L'identifiant de la commande est nul", ErrorCodes.ORDER_SUPPLIER_NOT_FOUND);
+        }
+
+        if (newStatus == null || !StringUtils.hasLength(newStatus.name())) {
+            log.error("Le nouveau status est nul");
+            throw new InvalidOperationException("Le nouveau status est nul", ErrorCodes.ORDER_SUPPLIER_NOT_VALID);
+        }
+
+        OrderSupplierDto orderSupplierDto = findById(orderId);
+
+        if (orderSupplierDto == null) {
+            log.error("Aucune commande n'a été trouvée avec l'identifiant {}", orderId);
+            throw new InvalidEntityException("Aucune commande n'a été trouvée avec l'identifiant " + orderId, ErrorCodes.ORDER_SUPPLIER_NOT_FOUND);
+        }
+
+        if (OrderStatus.CANCELED.equals(orderSupplierDto.getStatus()) || OrderStatus.DELIVERED.equals(orderSupplierDto.getStatus())) {
+            log.error("Impossible de mettre à jour cette commande car elle a été annulé ou elle est déjà livré : {}", orderSupplierDto.getStatus());
+            throw new InvalidOperationException("Impossible de mettre à jour cette commande car elle a été annulé ou elle est déjà livré", ErrorCodes.ORDER_SUPPLIER_ALREADY_DELIVERED);
+        }
+
+        if (orderSupplierDto.getStatus().equals(newStatus)) {
+            log.error("Le nouveau status est le même que l'ancien status");
+            throw new InvalidOperationException("Le nouveau status est le même que l'ancien status", ErrorCodes.ORDER_SUPPLIER_NOT_VALID);
+        }
+
+        orderSupplierDto.setStatus(newStatus);
+
+        OrderSupplierDto.fromEntity(orderSupplierRepository.save(OrderSupplierDto.toEntity(orderSupplierDto)));
+    }
 
     @Override
     public void updateOrderLineQte(Integer orderId, Integer orderLineId, BigDecimal qte) {
@@ -261,11 +292,6 @@ public class OrderSupplierServiceImpl implements OrderSupplierService {
         }
 
         OrderSupplierDto orderSupplierDto = findById(orderId);
-
-        if (orderSupplierDto == null) {
-            log.error("Aucune commande n'a été trouvée avec l'identifiant {}", orderId);
-            throw new InvalidEntityException("Aucune commande n'a été trouvée avec l'identifiant " + orderId, ErrorCodes.ORDER_SUPPLIER_NOT_FOUND);
-        }
 
         if (OrderStatus.CANCELED.equals(orderSupplierDto.getStatus()) || OrderStatus.DELIVERED.equals(orderSupplierDto.getStatus())) {
             log.error("Impossible de mettre à jour cette commande car elle a été annulé ou elle est déjà livré : {}", orderSupplierDto.getStatus());
