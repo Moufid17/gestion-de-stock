@@ -5,11 +5,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.tmdigital.gestiondestock.controller.api.ArticleApi;
 import com.tmdigital.gestiondestock.services.ArticleService;
 import com.tmdigital.gestiondestock.dto.ArticleDto;
+import com.tmdigital.gestiondestock.dto.OrderLineClientDto;
+import com.tmdigital.gestiondestock.dto.OrderLineSupplierDto;
+import com.tmdigital.gestiondestock.dto.SalesLineDto;
 
 @RestController
 @RequestMapping("/api/v1/articles")
@@ -32,6 +36,21 @@ public class ArticleController implements ArticleApi {
     };
 
     @Override
+    public ResponseEntity<List<SalesLineDto>> findSalesHistory(Integer articleId) {
+        return ResponseEntity.ok(articleService.findSalesHistory(articleId));
+    }
+    
+    @Override
+    public ResponseEntity<List<OrderLineSupplierDto>> findSupplierOrderHistory(Integer articleId) {
+        return ResponseEntity.ok(articleService.findClientOrdersHistory(articleId));
+    }
+    
+    @Override
+    public ResponseEntity<List<OrderLineClientDto>> findClientOrderHistory(Integer articleId) {
+        return ResponseEntity.ok(articleService.findSupplierOrdersHistory(articleId));
+    }
+
+    @Override
     public List<ArticleDto> getAll() {
         return articleService.findAll();
     };
@@ -39,6 +58,5 @@ public class ArticleController implements ArticleApi {
     @Override
     public @ResponseBody void delete(Integer id) {
         articleService.delete(id);
-    }
-    
+    }    
 }
