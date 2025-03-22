@@ -19,7 +19,8 @@ public class CustomInterceptor implements StatementInspector {
         
         if (sql.toLowerCase().startsWith("select")) {
             String idCompany = MDC.get("idCompany");
-            if (idCompany == null) return sql;                
+            if (idCompany == null) return sql;         
+            // Handle the case when the idCompany is a master company. Try to find a better way to handle this case.       
             if ("200".equals(idCompany)) return sql;               
             
             Integer indexOfFromInSql = sql.indexOf("from") + "from".length();

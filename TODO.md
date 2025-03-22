@@ -30,7 +30,7 @@
 - [*] Supplier order
     - [x] Edit qte
     - [*] Edit client
-    - [*] Add order state updating (canceled, In progress, shipped)
+    - [x] Update order status (canceled, In progress, shipped)
     - [ ] Edit an article
     - [ ] Delete an article
     - [x] Add an article
