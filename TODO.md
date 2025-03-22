@@ -27,9 +27,9 @@
     - [x] Add an article
     - [x] Retreive client orders lines
 - [*] Supplier order
-    - [ ] Edit qte
-    - [ ] Edit client
-    - [ ] Add order state updating (canceled, In progress, shipped)
+    - [*] Edit qte
+    - [*] Edit client
+    - [*] Add order state updating (canceled, In progress, shipped)
     - [ ] Edit an article
     - [ ] Delete an article
     - [x] Add an article
@@ -44,6 +44,12 @@
 - [ ] TU:
     - [x] Merge Company and category
     - [5] Update Company and category (if any changement have been made.)
+    - [5bis] Client :
+        - [ ] Client
+        - [ ] Client Order
+    - [5bis+] Supplier :
+        - [ ] Supplier
+        - [ ] Supplier Order
 - [6] Security :
     - [x] Jwt
     - [ ] Session
