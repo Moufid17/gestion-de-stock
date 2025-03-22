@@ -90,6 +90,57 @@ public class ArticleServiceImpl implements ArticleService {
     };
 
     @Override
+    public List<SalesLineDto> findSalesHistory(Integer articleId) {
+        // To handle forbidden access to the article
+        findById(articleId);
+
+        List<SalesLine> allSalesHistory = salesLineRepository.findAllByArticleId(articleId);
+
+        if (allSalesHistory.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        return allSalesHistory.stream()
+                .map(SalesLineDto::fromEntity)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<OrderLineClientDto> findSupplierOrdersHistory(Integer articleId) {
+        // To handle forbidden access to the article
+        findById(articleId);
+
+        List<OrderLineClient> allClientOrdersHistory = orderLineClientRepository.findAllByArticleId(articleId);
+
+        if (allClientOrdersHistory.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        return allClientOrdersHistory.stream()
+                .map(OrderLineClientDto::fromEntity)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<OrderLineSupplierDto> findClientOrdersHistory(Integer articleId) {
+        // To handle forbidden access to the article
+        findById(articleId);
+
+        // To handle forbidden access to the article
+        findById(articleId);
+
+        List<OrderLineSupplier> allSupplierOrdersHistory = orderLineSupplierRepository.findAllByArticleId(articleId);
+
+        if (allSupplierOrdersHistory.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        return allSupplierOrdersHistory.stream()
+                .map(OrderLineSupplierDto::fromEntity)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public ArticleDto findByCodeArticle(String codeArticle) {
         if (codeArticle == null) {
             log.error("L'identifiant est nul");
@@ -234,4 +285,5 @@ public class ArticleServiceImpl implements ArticleService {
 
         articleRepository.deleteById(id);
     }
+
 }

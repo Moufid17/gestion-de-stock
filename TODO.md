@@ -14,9 +14,6 @@
     - [x] GET supplier orders/{id} : return "null" for existing order lines
     - [x] GET suppliers : "GET" method not allowed
 
-- [ ] TI : 
-    - [x] Company to article
-
 - [x] Client Order 
     - [x] Edit qte : 
         - [x] Error raised while find order id (OrderClientDto calls OrderLineClientDto.fromEntity while OrderLineClientDto calls OrderClientDto..fromEntity) : dependency loop error
@@ -37,12 +34,25 @@
     - [x] Add an article
     - [x] Retreive client orders lines
     - [x] Prohibit deletion of a cmd line if it is the last one.
-- [3] Article
-    - [ ] Retreive history
-        - [ ] Sales history
-        - [ ] Client Order history
-        - [ ] Supplier Order history
-- [4] Mvt stock Implementation
+- [x] Article
+    - [x] Retreive history
+        - [x] Sales history
+        - [x] Client Order history
+        - [x] Supplier Order history
+- [*] Mvt stock Implementation
+- [6] Security :
+    - [x] Jwt
+    - [ ] Session
+    - [ ] Action privileges
+- [7] Company Implementation:
+    - [x] create one with an admin user
+    - [ ] Send email with email and password
+- [x] Category Implementation
+
+- [ ] TI : 
+    - [x] Company to article
+    - [x] supplier to supplier order
+    - [x] client to client order
 
 - [ ] TU:
     - [x] Merge Company and category
@@ -53,11 +63,3 @@
     - [5bis+] Supplier :
         - [ ] Supplier
         - [ ] Supplier Order
-- [6] Security :
-    - [x] Jwt
-    - [ ] Session
-    - [ ] Action privileges
-- [7] Company Implementation:
-    - [x] create one with an admin user
-    - [ ] Send email with email and password
-- [x] Category Implementation
