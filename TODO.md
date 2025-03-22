@@ -39,14 +39,18 @@
         - [x] Sales history
         - [x] Client Order history
         - [x] Supplier Order history
+
 - [*] Mvt stock Implementation
+
 - [6] Security :
     - [x] Jwt
     - [ ] Session
     - [ ] Action privileges
+    
 - [7] Company Implementation:
     - [x] create one with an admin user
     - [ ] Send email with email and password
+
 - [x] Category Implementation
 
 - [ ] TI : 
@@ -63,3 +67,6 @@
     - [5bis+] Supplier :
         - [ ] Supplier
         - [ ] Supplier Order
+    - [ ] Article
+    - [ ] Sales
+    - [ ] Stock mvt
