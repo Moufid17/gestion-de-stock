@@ -28,7 +28,7 @@
     - [x] Add an article
     - [x] Retreive client orders lines
 - [*] Supplier order
-    - [*] Edit qte
+    - [x] Edit qte
     - [*] Edit client
     - [*] Add order state updating (canceled, In progress, shipped)
     - [ ] Edit an article

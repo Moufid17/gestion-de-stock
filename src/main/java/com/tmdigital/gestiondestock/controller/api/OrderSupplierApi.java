@@ -1,16 +1,19 @@
 package com.tmdigital.gestiondestock.controller.api;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import com.tmdigital.gestiondestock.dto.OrderSupplierDto;
+import com.tmdigital.gestiondestock.model.OrderStatus;
 import com.tmdigital.gestiondestock.dto.OrderLineSupplierDto;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -32,7 +35,7 @@ public interface OrderSupplierApi {
             @ApiResponse(responseCode = "409", description = "OrderSupplier already exists", content = @Content),
         }
     ) 
-    OrderSupplierDto save(@RequestBody OrderSupplierDto dto);
+    ResponseEntity<OrderSupplierDto> save(@RequestBody OrderSupplierDto dto);
 
     @PostMapping(value="/article/{orderId}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Create a new supplier order line", description = "Allow to create a new supplier order line", 
@@ -74,7 +77,7 @@ public interface OrderSupplierApi {
             @ApiResponse(responseCode = "200", description = "Retreive with success", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OrderLineSupplierDto[].class))),
             @ApiResponse(responseCode = "401", description = "Unauthorized"),
             @ApiResponse(responseCode = "403", description = "Forbidden"),
-            @ApiResponse(responseCode = "404", description = "OrderClient not found"),
+            @ApiResponse(responseCode = "404", description = "Order not found"),
         }
     )
     ResponseEntity<List<OrderLineSupplierDto>> findAllOrderLine(@PathVariable Integer orderId);
@@ -111,6 +114,41 @@ public interface OrderSupplierApi {
         }
     )
     List<OrderSupplierDto> findAllBySupplier(@PathVariable Integer id);
+
+    @PatchMapping(value = "/update/status/{orderId}/{orderStatus}")
+    @Operation(summary = "Update a spplier order status", description = "Allow to update a spplier order status", 
+        responses = {
+            @ApiResponse(responseCode = "200", description = "Order update"),
+            @ApiResponse(responseCode = "400", description = "Invalid input"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
+            @ApiResponse(responseCode = "409", description = "Order already exists"),
+        }
+    )  
+    ResponseEntity<Void> updateStatus(@PathVariable Integer orderId, @PathVariable OrderStatus orderStatus);
+
+    @PatchMapping(value = "/update/quantity/{orderId}/{orderLineId}/{newQte}")
+    @Operation(summary = "Update an order quantity", description = "Allow to update a order quantity", 
+        responses = {
+            @ApiResponse(responseCode = "200", description = "Order update quantity"),
+            @ApiResponse(responseCode = "400", description = "Invalid input"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
+            @ApiResponse(responseCode = "409", description = "Order already exists"),
+        }
+    )  
+    ResponseEntity<Void> updateQte(@PathVariable Integer orderId, @PathVariable Integer orderLineId, @PathVariable BigDecimal newQte);
+
+    @PatchMapping(value = "/update/supplier/{orderId}/{supplierId}")
+    @Operation(summary = "Update an order with a new supplier", description = "Allow to update an order with a new supplier", 
+        responses = {
+            @ApiResponse(responseCode = "200", description = "update an order supplier"),
+            @ApiResponse(responseCode = "400", description = "Invalid input"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
+        }
+    )
+    ResponseEntity<Void> updateSupplier(@PathVariable Integer orderId, @PathVariable Integer supplierId);
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete an orderSupplier", description = "Allow to delete an orderSupplier with his id", 
