@@ -27,6 +27,7 @@
     - [x] Delete an article
     - [x] Add an article
     - [x] Retreive client orders lines
+    - [x] Prohibit deletion of a cmd line if it is the last one.
 - [x] Supplier order
     - [x] Edit qte
     - [x] Edit Supplier
@@ -35,6 +36,7 @@
     - [x] Delete an article
     - [x] Add an article
     - [x] Retreive client orders lines
+    - [x] Prohibit deletion of a cmd line if it is the last one.
 - [3] Article
     - [ ] Retreive history
         - [ ] Sales history

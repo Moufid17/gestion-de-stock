@@ -494,6 +494,11 @@ public class OrderClientServiceImpl implements OrderClientService {
             throw new InvalidOperationException("Aucune ligne de commande n'a été trouvée pour la commande d'identifiant " + orderId, ErrorCodes.ORDER_LINE_CLIENT_NOT_FOUND);
         }
 
+        if (orderLineClientsList.size() == 1) {
+            log.error("Impossible de supprimer la dernière ligne de commande");
+            throw new InvalidOperationException("Impossible de supprimer la dernière ligne de commande", ErrorCodes.ORDER_CLIENT_ALREADY_DELIVERED);
+        }
+
         Optional<OrderLineClient> orderLineClient = orderLineClientsList.stream()
             .filter(orderLine -> orderLine.getId().equals(orderLineId))
             .findFirst();

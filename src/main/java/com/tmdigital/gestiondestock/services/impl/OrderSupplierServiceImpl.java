@@ -469,6 +469,11 @@ public class OrderSupplierServiceImpl implements OrderSupplierService {
             throw new InvalidOperationException("Aucune ligne de commande n'a été trouvée pour la commande d'identifiant " + orderId, ErrorCodes.ORDER_LINE_SUPPLIER_NOT_FOUND);
         }
 
+        if (orderLineSuppliersList.size() == 1) {
+            log.error("Impossible de supprimer la dernière ligne de commande");
+            throw new InvalidOperationException("Impossible de supprimer la dernière ligne de commande", ErrorCodes.ORDER_SUPPLIER_ALREADY_DELIVERED);
+        }
+
         Optional<OrderLineSupplier> orderLineSupplier = orderLineSuppliersList.stream()
             .filter(orderLine -> orderLine.getId().equals(orderLineId))
             .findFirst();
