@@ -16,7 +16,6 @@ import com.tmdigital.gestiondestock.dto.OrderSupplierDto;
 import com.tmdigital.gestiondestock.exception.ErrorCodes;
 import com.tmdigital.gestiondestock.exception.InvalidEntityException;
 import com.tmdigital.gestiondestock.exception.InvalidOperationException;
-import com.tmdigital.gestiondestock.model.Article;
 import com.tmdigital.gestiondestock.model.OrderLineSupplier;
 import com.tmdigital.gestiondestock.model.OrderStatus;
 import com.tmdigital.gestiondestock.model.OrderSupplier;
@@ -26,7 +25,6 @@ import com.tmdigital.gestiondestock.repository.OrderLineSupplierRepository;
 import com.tmdigital.gestiondestock.repository.OrderSupplierRepository;
 import com.tmdigital.gestiondestock.repository.SupplierRepository;
 import com.tmdigital.gestiondestock.services.OrderSupplierService;
-import com.tmdigital.gestiondestock.validator.OrderLineClientValidator;
 import com.tmdigital.gestiondestock.validator.OrderLineSupplierValidator;
 import com.tmdigital.gestiondestock.validator.OrderSupplierValidator;
 
