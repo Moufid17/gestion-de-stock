@@ -3,6 +3,7 @@ package com.tmdigital.gestiondestock.controller.api;
 import java.util.List;
 
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import com.tmdigital.gestiondestock.dto.OrderSupplierDto;
+import com.tmdigital.gestiondestock.dto.OrderLineSupplierDto;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -32,6 +34,18 @@ public interface OrderSupplierApi {
     ) 
     OrderSupplierDto save(@RequestBody OrderSupplierDto dto);
 
+    @PostMapping(value="/article/{orderId}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Create a new supplier order line", description = "Allow to create a new supplier order line", 
+        responses = {
+            @ApiResponse(responseCode = "200", description = "New supplier order Line created", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OrderLineSupplierDto.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid input", content = @Content),
+            @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
+            @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content),
+            @ApiResponse(responseCode = "409", description = "Order already exists", content = @Content),
+        }
+    )  
+    ResponseEntity<OrderSupplierDto> saveOrderLine(@PathVariable Integer orderId, @RequestBody OrderLineSupplierDto dto);
+
     @GetMapping(value="/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Retreive an orderSupplier", description = "Allow to retreive an orderSupplier by his id", 
         responses = {
@@ -53,6 +67,17 @@ public interface OrderSupplierApi {
         }
     )
     OrderSupplierDto findByCode(@PathVariable String code);
+
+    @GetMapping(value = "/{orderId}/orderlines", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Retreive all orderSupplier by company id", description = "Allow to retreive all orderSupplier in the login user company", 
+        responses = {
+            @ApiResponse(responseCode = "200", description = "Retreive with success", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OrderLineSupplierDto[].class))),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
+            @ApiResponse(responseCode = "404", description = "OrderClient not found"),
+        }
+    )
+    ResponseEntity<List<OrderLineSupplierDto>> findAllOrderLine(@PathVariable Integer orderId);
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Retreive all orderSupplier", description = "Allow to retreive all orderSupplier in the login user company", 

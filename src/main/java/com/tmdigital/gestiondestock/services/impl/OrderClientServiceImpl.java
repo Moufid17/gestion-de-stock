@@ -59,6 +59,11 @@ public class OrderClientServiceImpl implements OrderClientService {
             throw new InvalidEntityException("La commande n'est pas valide", ErrorCodes.ORDER_CLIENT_NOT_VALID, errors);
         }
 
+        if (null == dto.getIdCompany()) {
+            log.error("Impossible de créer une commande sans entreprise");
+            throw new InvalidEntityException("Impossible de créer une commande sans entreprise", ErrorCodes.COMPANY_NOT_FOUND);
+        }
+
         // check if the order is already delivered or canceled
         if (dto.getId() != null && (dto.isDelivered() || dto.isCancaled())) {
             log.error("Impossible de mettre à jour cette commande car elle a été annulé ou elle est déjà livré.");
@@ -98,10 +103,17 @@ public class OrderClientServiceImpl implements OrderClientService {
         OrderClient savedOrderClient = orderClientRepository.save(OrderClientDto.toEntity(dto));
         
         dto.getOrderLineClients().forEach(orderLine -> {
+            ArticleDto articleDto = ArticleDto.fromEntity(articleRepository.findById(orderLine.getArticle().getId())
+                .orElseThrow(() -> new InvalidEntityException("Aucun article n'a été trouvé avec l'identifiant " + orderLine.getArticle().getId(), ErrorCodes.ARTICLE_NOT_FOUND)));
+
             OrderLineClient orderLineClient = OrderLineClientDto.toEntity(orderLine);
             orderLineClient.setOrderClient(savedOrderClient);
             orderLineClient.setIdCompany(dto.getIdCompany());
+            if (null == orderLine.getSellPriceInclTax()) {
+                orderLineClient.setSellPriceInclTax(articleDto.getSellPriceInclTax());
+            }
             orderLineClientRepository.save(orderLineClient);
+            
             // [ ] Mise à jour le Mvt de stock en sortie
 
         });
