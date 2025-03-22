@@ -14,6 +14,7 @@ import org.springframework.util.StringUtils;
 import com.tmdigital.gestiondestock.dto.ArticleDto;
 import com.tmdigital.gestiondestock.dto.OrderLineSupplierDto;
 import com.tmdigital.gestiondestock.dto.OrderSupplierDto;
+import com.tmdigital.gestiondestock.dto.SupplierDto;
 import com.tmdigital.gestiondestock.exception.ErrorCodes;
 import com.tmdigital.gestiondestock.exception.InvalidEntityException;
 import com.tmdigital.gestiondestock.exception.InvalidOperationException;
@@ -327,7 +328,31 @@ public class OrderSupplierServiceImpl implements OrderSupplierService {
     }
 
     @Override
-    public void updateSupplier(Integer orderId, Integer SUPPLIERId) {}
+    public void updateSupplier(Integer orderId, Integer supplierId) {
+        if (orderId == null) {
+            log.error("L'identifiant de la commande est nul");
+            throw new InvalidOperationException("L'identifiant de la commande est nul", ErrorCodes.ORDER_SUPPLIER_NOT_FOUND);
+        }
+
+        if (supplierId == null) {
+            log.error("L'identifiant du client est nul");
+            throw new InvalidOperationException("L'identifiant du client est nul", ErrorCodes.SUPPLIER_NOT_FOUND);
+        }
+
+        OrderSupplierDto orderSupplierDto = findById(orderId);
+
+        if (orderSupplierDto.isCancaled() || orderSupplierDto.isDelivered()) {
+            log.error("Impossible de mettre à jour cette commande car elle a été annulé ou elle est déjà livré : {}", orderSupplierDto.getStatus());
+            throw new InvalidOperationException("Impossible de mettre à jour cette commande car elle a été annulé ou elle est déjà livré", ErrorCodes.ORDER_SUPPLIER_ALREADY_DELIVERED);
+        }
+
+        Supplier supplier = supplierRepository.findById(supplierId)
+            .orElseThrow(() -> new InvalidEntityException("Aucun client n'a été trouvé avec l'identifiant " + supplierId, ErrorCodes.SUPPLIER_NOT_FOUND));
+
+        orderSupplierDto.setSupplier(SupplierDto.fromEntity(supplier));
+
+        orderSupplierRepository.save(OrderSupplierDto.toEntity(orderSupplierDto));
+    }
 
     @Override
     public void delete(Integer id) {
