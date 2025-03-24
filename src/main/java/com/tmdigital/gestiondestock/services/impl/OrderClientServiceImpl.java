@@ -1,6 +1,7 @@
 package com.tmdigital.gestiondestock.services.impl;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -15,6 +16,7 @@ import com.tmdigital.gestiondestock.dto.OrderClientDto;
 import com.tmdigital.gestiondestock.dto.ArticleDto;
 import com.tmdigital.gestiondestock.dto.ClientDto;
 import com.tmdigital.gestiondestock.dto.OrderLineClientDto;
+import com.tmdigital.gestiondestock.dto.StockMovementDto;
 import com.tmdigital.gestiondestock.exception.ErrorCodes;
 import com.tmdigital.gestiondestock.exception.InvalidEntityException;
 import com.tmdigital.gestiondestock.exception.InvalidOperationException;
@@ -28,8 +30,11 @@ import com.tmdigital.gestiondestock.repository.ClientRepository;
 import com.tmdigital.gestiondestock.repository.OrderClientRepository;
 import com.tmdigital.gestiondestock.repository.OrderLineClientRepository;
 import com.tmdigital.gestiondestock.services.OrderClientService;
+import com.tmdigital.gestiondestock.services.StockMovementService;
 import com.tmdigital.gestiondestock.validator.OrderClientValidator;
 import com.tmdigital.gestiondestock.validator.OrderLineClientValidator;
+import com.tmdigital.gestiondestock.model.StockMovementType;
+import com.tmdigital.gestiondestock.model.MovementSource;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -42,12 +47,14 @@ public class OrderClientServiceImpl implements OrderClientService {
     private final ClientRepository clientRepository;
     private final ArticleRepository articleRepository;
     private final OrderLineClientRepository orderLineClientRepository;
+    private final StockMovementService stockMovementService;
 
-    public OrderClientServiceImpl(OrderClientRepository orderClientRepository, ClientRepository clientRepository, ArticleRepository articleRepository, OrderLineClientRepository orderLineClientRepository) {
+    public OrderClientServiceImpl(OrderClientRepository orderClientRepository, ClientRepository clientRepository, ArticleRepository articleRepository, OrderLineClientRepository orderLineClientRepository, StockMovementService stockMovementService) {  
         this.orderClientRepository = orderClientRepository;
         this.clientRepository = clientRepository;
         this.articleRepository = articleRepository;
         this.orderLineClientRepository = orderLineClientRepository;
+        this.stockMovementService = stockMovementService;
     }
 
     @Override
@@ -58,6 +65,7 @@ public class OrderClientServiceImpl implements OrderClientService {
             log.error("L'objet n'est pas valide {}", dto);
             throw new InvalidEntityException("La commande n'est pas valide", ErrorCodes.ORDER_CLIENT_NOT_VALID, errors);
         }
+
 
         if (null == dto.getIdCompany()) {
             log.error("Impossible de créer une commande sans entreprise");
@@ -95,6 +103,18 @@ public class OrderClientServiceImpl implements OrderClientService {
             throw new InvalidEntityException("Une ligne de commande n'est pas valide ou un L'article n'existe pas.", ErrorCodes.ORDER_CLIENT_NOT_VALID, new ArrayList<>(errorsOrderLine));
         }
 
+        // Check if the company have a stock for each article
+        dto.getOrderLineClients().forEach(orderLine -> {
+            ArticleDto articleDto = ArticleDto.fromEntity(articleRepository.findById(orderLine.getArticle().getId())
+                .orElseThrow(() -> new InvalidEntityException("Aucun article n'a été trouvé avec l'identifiant " + orderLine.getArticle().getId(), ErrorCodes.ARTICLE_NOT_FOUND)));
+
+            BigDecimal stock = stockMovementService.realStockArticle(articleDto.getId());
+            if (null == stock || stock.compareTo(orderLine.getQty()) < 0) {
+                log.error("La quantité en stock de l'article {} est insuffisante", articleDto.getId());
+                throw new InvalidOperationException("La quantité en stock de l'article " + articleDto.getId() + " est insuffisante", ErrorCodes.STOCK_INSUFFICIENT);
+            }
+        });
+
         if (dto.getStatus() == null) {
             dto.setStatus(OrderStatus.IN_PROGRESS);
         }
@@ -102,6 +122,7 @@ public class OrderClientServiceImpl implements OrderClientService {
         // Save the order
         OrderClient savedOrderClient = orderClientRepository.save(OrderClientDto.toEntity(dto));
         
+        // Save the order lines and the stock movements
         dto.getOrderLineClients().forEach(orderLine -> {
             ArticleDto articleDto = ArticleDto.fromEntity(articleRepository.findById(orderLine.getArticle().getId())
                 .orElseThrow(() -> new InvalidEntityException("Aucun article n'a été trouvé avec l'identifiant " + orderLine.getArticle().getId(), ErrorCodes.ARTICLE_NOT_FOUND)));
@@ -115,7 +136,17 @@ public class OrderClientServiceImpl implements OrderClientService {
             orderLineClientRepository.save(orderLineClient);
             
             // [ ] Mise à jour le Mvt de stock en sortie
+            StockMovementDto stockMovementDto = StockMovementDto.builder()
+                .article(articleDto)
+                .qty(orderLine.getQty())
+                .dateMovement(Instant.now())
+                .typeMvt(StockMovementType.OUTPUT)
+                .sourceMvt(MovementSource.ORDER_CLIENT)
+                .orderId(savedOrderClient.getId())
+                .companyId(dto.getIdCompany())
+                .build();
 
+            stockMovementService.stockOut(stockMovementDto);
         });
         
         return OrderClientDto.fromEntity(savedOrderClient);
