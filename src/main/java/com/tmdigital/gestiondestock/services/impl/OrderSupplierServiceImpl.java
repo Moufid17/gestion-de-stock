@@ -1,6 +1,7 @@
 package com.tmdigital.gestiondestock.services.impl;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -14,6 +15,7 @@ import org.springframework.util.StringUtils;
 import com.tmdigital.gestiondestock.dto.ArticleDto;
 import com.tmdigital.gestiondestock.dto.OrderLineSupplierDto;
 import com.tmdigital.gestiondestock.dto.OrderSupplierDto;
+import com.tmdigital.gestiondestock.dto.StockMovementDto;
 import com.tmdigital.gestiondestock.dto.SupplierDto;
 import com.tmdigital.gestiondestock.exception.ErrorCodes;
 import com.tmdigital.gestiondestock.exception.InvalidEntityException;
@@ -28,8 +30,11 @@ import com.tmdigital.gestiondestock.repository.OrderLineSupplierRepository;
 import com.tmdigital.gestiondestock.repository.OrderSupplierRepository;
 import com.tmdigital.gestiondestock.repository.SupplierRepository;
 import com.tmdigital.gestiondestock.services.OrderSupplierService;
+import com.tmdigital.gestiondestock.services.StockMovementService;
 import com.tmdigital.gestiondestock.validator.OrderLineSupplierValidator;
 import com.tmdigital.gestiondestock.validator.OrderSupplierValidator;
+import com.tmdigital.gestiondestock.model.StockMovementType;
+import com.tmdigital.gestiondestock.model.MovementSource;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -41,8 +46,10 @@ public class OrderSupplierServiceImpl implements OrderSupplierService {
     private SupplierRepository supplierRepository;
     private final ArticleRepository articleRepository;
     private final OrderLineSupplierRepository orderLineSupplierRepository;
+    private final StockMovementService stockMovementService;
 
-    public OrderSupplierServiceImpl(OrderSupplierRepository orderSupplierRepository, SupplierRepository supplierRepository, ArticleRepository articleRepository, OrderLineSupplierRepository orderLineSupplierRepository) {
+    public OrderSupplierServiceImpl(OrderSupplierRepository orderSupplierRepository, SupplierRepository supplierRepository, ArticleRepository articleRepository, OrderLineSupplierRepository orderLineSupplierRepository, StockMovementService stockMovementService) {
+        this.stockMovementService = stockMovementService;
         this.orderSupplierRepository = orderSupplierRepository;
         this.supplierRepository = supplierRepository;
         this.articleRepository = articleRepository;
@@ -114,6 +121,17 @@ public class OrderSupplierServiceImpl implements OrderSupplierService {
             orderLineSupplierRepository.save(orderLineSupplier);
 
             // [ ] Mise à jour le Mvt de stock en entrée
+            StockMovementDto stockMovementDto = StockMovementDto.builder()
+                .article(articleDto)
+                .qty(orderLine.getQty())
+                .dateMovement(Instant.now())
+                .typeMvt(StockMovementType.INPUT)
+                .sourceMvt(MovementSource.ORDER_SUPPLIER)
+                .orderId(savedOrderSupplier.getId())
+                .companyId(dto.getIdCompany())
+                .build();
+
+            stockMovementService.stockIn(stockMovementDto);
 
         });
         

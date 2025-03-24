@@ -41,6 +41,20 @@
         - [x] Supplier Order history
 
 - [*] Mvt stock Implementation
+    - [x] Stock réel de chaque article
+    - [x] Consulter mvt de stock de chaque article
+    - [x] Entree de stock
+    - [x] Sortie de stock
+    - [*] Correction de stock : + ou -
+    - [x] Order : set stock mvt according to order source.
+
+- [ ] User : Reset password
+- [ ] Validator : Finsih with the rest
+
+- [ ] Stats :
+    - [ ] Most sales articles
+    - [ ] Most loyal customers
+    - [ ] Sales stats per period (start and end date)
 
 - [6] Security :
     - [x] Jwt
