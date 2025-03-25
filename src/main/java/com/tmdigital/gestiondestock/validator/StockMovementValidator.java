@@ -8,7 +8,7 @@ import com.tmdigital.gestiondestock.dto.StockMovementDto;
 public class StockMovementValidator {
 
     public static List<String> validate(StockMovementDto dto) {
-        List<String> errors = new ArrayList<>();
+        List<String> errors = new ArrayList<String>();
         if (dto == null) {
             errors.add("Veuillez renseigner la quantité du mouvement de stock");
             errors.add("Veuillez renseigner l'article du mouvement de stock");

@@ -40,13 +40,18 @@
         - [x] Client Order history
         - [x] Supplier Order history
 
-- [*] Mvt stock Implementation
+- [*] stock Mvt  Implementation
     - [x] Stock réel de chaque article
     - [x] Consulter mvt de stock de chaque article
     - [x] Entree de stock
     - [x] Sortie de stock
     - [*] Correction de stock : + ou -
-    - [x] Order : set stock mvt according to order source.
+    - [x] Order : 
+        - [x] set stock mvt according to order source.
+        - [x] add order line
+        - [x] update order (quantity , article )
+        - [x] delete order line
+        - [*] delete order
 
 - [ ] User : Reset password
 - [ ] Validator : Finsih with the rest
