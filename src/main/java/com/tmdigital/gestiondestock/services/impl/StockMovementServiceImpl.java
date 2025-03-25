@@ -105,6 +105,27 @@ public class StockMovementServiceImpl implements StockMovementService{
     }
 
     @Override
+    public StockMovementDto findByOrderIdAndArticleId(Integer orderId, Integer idArticle) {
+        if (orderId == null) {
+            log.error("Trying to find stockMovement by null id");
+            throw new InvalidOperationException("The order id is required", ErrorCodes.STOCK_MOVEMENT_NOT_FOUND);
+        }
+
+        if (idArticle == null) {
+            log.error("Trying to find stockMovement by null idArticle");
+            throw new InvalidOperationException("The article id is required", ErrorCodes.STOCK_MOVEMENT_NOT_FOUND);
+        }
+
+        Optional<StockMovement> stockMovement = stockMovementRepository.findByOrderIdAndArticleId(orderId, idArticle);
+
+        if (!stockMovement.isPresent()) {
+            throw new InvalidEntityException("No stockMovement found with id = " + orderId, ErrorCodes.STOCK_MOVEMENT_NOT_FOUND);
+        }
+
+        return StockMovementDto.fromEntity(stockMovement.get());
+    }
+
+    @Override
     public List<StockMovementDto> findAllByTypeMvt(String typeMvt) {
         return stockMovementRepository.findAllByTypeMvt(typeMvt).stream()
                 .map(StockMovementDto::fromEntity)
@@ -140,6 +161,16 @@ public class StockMovementServiceImpl implements StockMovementService{
         }
 
         stockMovementRepository.deleteById(id);
+    }
+
+    @Override
+    public void deleteAllByOrderId(Integer orderId) {
+        if (null == orderId) {
+            log.error("Trying to delete stockMovement by null orderId");
+            throw new InvalidOperationException("The order id is required", ErrorCodes.STOCK_MOVEMENT_NOT_FOUND);
+        }
+
+        stockMovementRepository.deleteAllByOrderId(orderId);
     }
 
     private void stockInMvt(StockMovementDto dto, StockMovementType typeMvt) {
@@ -190,6 +221,5 @@ public class StockMovementServiceImpl implements StockMovementService{
         dto.setTypeMvt(null == dto.getTypeMvt() ? typeMvt : dto.getTypeMvt());
 
         stockMovementRepository.save(StockMovementDto.toEntity(dto));
-    }
-   
+    }  
 }

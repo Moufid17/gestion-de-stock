@@ -21,6 +21,8 @@ public interface StockMovementService {
 
     StockMovementDto findById(Integer id);
 
+    StockMovementDto findByOrderIdAndArticleId(Integer id, Integer idArticle);
+
     List<StockMovementDto> findAllByTypeMvt(String typeMvt);
 
     List<StockMovementDto> findAllBysourceMvt(String sourceMvt);
@@ -30,5 +32,7 @@ public interface StockMovementService {
     List<StockMovementDto> findAll();
 
     void delete(Integer id);
+
+    void deleteAllByOrderId(Integer id);
 
 }

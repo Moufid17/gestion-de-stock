@@ -118,20 +118,9 @@ public class OrderSupplierServiceImpl implements OrderSupplierService {
             if (null == orderLine.getSellPriceInclTax()) {
                 orderLineSupplier.setSellPriceInclTax(articleDto.getSellPriceInclTax());
             }
-            orderLineSupplierRepository.save(orderLineSupplier);
+            OrderLineSupplierDto newOrderLineDto = OrderLineSupplierDto.fromEntity(orderLineSupplierRepository.save(orderLineSupplier));
 
-            // [ ] Mise à jour le Mvt de stock en entrée
-            StockMovementDto stockMovementDto = StockMovementDto.builder()
-                .article(articleDto)
-                .qty(orderLine.getQty())
-                .dateMovement(Instant.now())
-                .typeMvt(StockMovementType.INPUT)
-                .sourceMvt(MovementSource.ORDER_SUPPLIER)
-                .orderId(savedOrderSupplier.getId())
-                .companyId(dto.getIdCompany())
-                .build();
-
-            stockMovementService.stockIn(stockMovementDto);
+            addStockMovement(newOrderLineDto, OrderSupplierDto.fromEntity(savedOrderSupplier));
 
         });
         
@@ -172,7 +161,10 @@ public class OrderSupplierServiceImpl implements OrderSupplierService {
         newOrderLineSupplier.setOrderSupplier(OrderSupplierDto.toEntity(orderSupplierDto));
         newOrderLineSupplier.setIdCompany(orderSupplierDto.getIdCompany());
         newOrderLineSupplier.setSellPriceInclTax(articleDto.getSellPriceInclTax());
-        orderLineSupplierRepository.save(newOrderLineSupplier);
+        OrderLineSupplierDto newOrderLineSupplierDto = OrderLineSupplierDto.fromEntity(orderLineSupplierRepository.save(newOrderLineSupplier));
+
+        // Mise à jour le Mvt de stock en entrée
+        addStockMovement(newOrderLineSupplierDto, orderSupplierDto);
 
         orderSupplierDto.getOrderLineSupplier().add(OrderLineSupplierDto.fromEntity(newOrderLineSupplier));
         return OrderSupplierDto.fromEntity(orderSupplierRepository.save(OrderSupplierDto.toEntity(orderSupplierDto)));
@@ -215,6 +207,11 @@ public class OrderSupplierServiceImpl implements OrderSupplierService {
         if (!orderSupplier.isPresent()) {
             log.error("Aucune commande n'a été trouvée avec l'identifiant {}", orderId);
             throw new InvalidEntityException("Aucune commande n'a été trouvée avec l'identifiant " + orderId, ErrorCodes.ORDER_SUPPLIER_NOT_FOUND);
+        }
+
+        if (OrderStatus.CANCELED.equals(orderSupplier.get().getStatus()) || OrderStatus.DELIVERED.equals(orderSupplier.get().getStatus())) {
+            log.error("Impossible de mettre à jour cette commande car elle a été annulé ou elle est déjà livré : {}", orderSupplier.get().getStatus());
+            throw new InvalidOperationException("Impossible de mettre à jour cette commande car elle a été annulé ou elle est déjà livré", ErrorCodes.ORDER_SUPPLIER_ALREADY_DELIVERED);
         }
 
         List<OrderLineSupplier> orderLineSupplierList = orderSupplier.get().getOrderLineSupplier();
@@ -344,6 +341,9 @@ public class OrderSupplierServiceImpl implements OrderSupplierService {
         orderLineSupplier.setOrderSupplier(OrderSupplierDto.toEntity(orderSupplierDto));
 
         orderLineSupplierRepository.save(orderLineSupplier);
+
+        // Mise à jour le Mvt de stock en entrée
+        updateStockMovement(orderLineSupplierDto, orderSupplierDto);
     }
 
     @Override
@@ -404,9 +404,9 @@ public class OrderSupplierServiceImpl implements OrderSupplierService {
             .findFirst()
             .orElseThrow(() -> new InvalidEntityException("Aucune ligne de commande n'a été trouvée avec l'identifiant " + orderLineId, ErrorCodes.ORDER_LINE_SUPPLIER_NOT_FOUND));
 
-        Optional<Article> article = articleRepository.findById(newArticleId);
+        Optional<Article> newArticle = articleRepository.findById(newArticleId);
 
-        if (!article.isPresent()) {
+        if (!newArticle.isPresent()) {
             log.error("Aucun article n'a été trouvé avec l'identifiant {}", newArticleId);
             throw new InvalidEntityException("Aucun article n'a été trouvé avec l'identifiant " + newArticleId, ErrorCodes.ARTICLE_NOT_FOUND);
         }
@@ -416,14 +416,22 @@ public class OrderSupplierServiceImpl implements OrderSupplierService {
             throw new InvalidOperationException("Impossible de mettre à jour la commande", ErrorCodes.ARTICLE_ALREADY_IN_USE);
         }
 
-        orderLineSupplierDto.setArticle(ArticleDto.fromEntity(article.get()));
-        orderLineSupplierDto.setSellPriceInclTax(article.get().getSellPriceInclTax());
+        final Integer oldArticleId = orderLineSupplierDto.getArticle().getId();
+
+        orderLineSupplierDto.setArticle(ArticleDto.fromEntity(newArticle.get()));
+        orderLineSupplierDto.setSellPriceInclTax(newArticle.get().getSellPriceInclTax());
 
         // Reset orderLineSupplierDto client with the old client (it's set in the OrderLineSupplierDto.toEntity method)
         OrderLineSupplier orderLineSupplier = OrderLineSupplierDto.toEntity(orderLineSupplierDto);
         orderLineSupplier.setOrderSupplier(OrderSupplierDto.toEntity(orderSupplierDto));
 
         orderLineSupplierRepository.save(orderLineSupplier);
+
+        // Mise à jour le Mvt de stock en entrée
+        StockMovementDto stockMovementDto = stockMovementService.findByOrderIdAndArticleId(orderSupplierDto.getId(), oldArticleId);
+        
+        stockMovementDto.setArticle(orderLineSupplierDto.getArticle());
+        stockMovementService.updateIn(stockMovementDto);
     }
 
     @Override
@@ -500,7 +508,30 @@ public class OrderSupplierServiceImpl implements OrderSupplierService {
             log.error("Aucune ligne de commande n'a été trouvée avec l'identifiant {}", orderLineId);
             throw new InvalidEntityException("Aucune ligne de commande n'a été trouvée avec l'identifiant " + orderLineId, ErrorCodes.ORDER_LINE_SUPPLIER_NOT_FOUND);
         }
-
+        StockMovementDto stockMovementDto = stockMovementService.findByOrderIdAndArticleId(orderId, orderLineSupplier.get().getArticle().getId());
+        stockMovementService.delete(stockMovementDto.getId());
         orderLineSupplierRepository.deleteById(orderLineId);
+    }
+
+    private void addStockMovement(OrderLineSupplierDto orderLineSupplierDto, OrderSupplierDto orderSupplierDto) {
+        StockMovementDto stockMovementDto = StockMovementDto.builder()
+            .article(orderLineSupplierDto.getArticle())
+            .qty(orderLineSupplierDto.getQty())
+            .dateMovement(Instant.now())
+            .typeMvt(StockMovementType.INPUT)
+            .sourceMvt(MovementSource.ORDER_SUPPLIER)
+            .orderId(orderSupplierDto.getId())
+            .companyId(orderSupplierDto.getIdCompany())
+            .build();
+
+        stockMovementService.stockIn(stockMovementDto);
+    }
+
+    private void updateStockMovement(OrderLineSupplierDto orderLineSupplierDto, OrderSupplierDto orderSupplierDto) {
+        StockMovementDto stockMovementDto = stockMovementService.findByOrderIdAndArticleId(orderSupplierDto.getId(), orderLineSupplierDto.getArticle().getId());
+        
+        stockMovementDto.setQty(orderLineSupplierDto.getQty());
+        stockMovementDto.setArticle(orderLineSupplierDto.getArticle());
+        stockMovementService.updateIn(stockMovementDto);
     }
 }
