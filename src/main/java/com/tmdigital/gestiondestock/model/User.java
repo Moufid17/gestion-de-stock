@@ -7,9 +7,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -45,11 +47,17 @@ public class User extends AbstractEntity {
     @Embedded
     private Address address;
 
-    @OneToMany(mappedBy = "user")
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+        name = "users_roles", 
+        joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+        inverseJoinColumns = @JoinColumn(table = "roles",name = "role_id", referencedColumnName = "id")
+    )
     @JsonIgnore
-    private List<Roles> rules;
+    private List<Roles> roles;
 
-    @ManyToOne
-    @JoinColumn(name = "id_company")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "idcompany")
+    @JsonIgnore
     private Company company;
 }

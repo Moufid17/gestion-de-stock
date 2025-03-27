@@ -7,15 +7,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.tmdigital.gestiondestock.controller.api.SalesApi;
 import com.tmdigital.gestiondestock.dto.SalesDto;
-import com.tmdigital.gestiondestock.services.impl.SalesServiceImpl;
-
+import com.tmdigital.gestiondestock.services.SalesService;
 @RestController
 @RequestMapping("/api/v1/sales")
 public class SalesController implements SalesApi {
 
-    private final SalesServiceImpl salesService;
+    private final SalesService salesService;
 
-    public SalesController(SalesServiceImpl salesService) {
+    public SalesController(SalesService salesService) {
         this.salesService = salesService;
     }
 

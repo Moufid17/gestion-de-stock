@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
@@ -27,10 +28,10 @@ public class OrderLineClient extends AbstractEntity {
     @Column(name = "qty")
     private BigDecimal qty = BigDecimal.ZERO;
 
-    @Column(name = "id_company")
+    @Column(name = "idcompany")
     private Integer idCompany;
 
-    @ManyToOne 
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_article")
     private Article article;
 

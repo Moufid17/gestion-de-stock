@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import com.tmdigital.gestiondestock.dto.SupplierDto;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
+@Tag(name = "Supplier", description = "The supplier API")
 public interface SupplierApi {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -19,6 +21,7 @@ public interface SupplierApi {
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE) 
     SupplierDto findById(@PathVariable Integer id);
 
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     List<SupplierDto> findAll();
 
     @GetMapping(value = "/company/{id}", produces = MediaType.APPLICATION_JSON_VALUE) 

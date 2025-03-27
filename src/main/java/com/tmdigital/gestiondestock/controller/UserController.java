@@ -7,20 +7,21 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.tmdigital.gestiondestock.controller.api.UserApi;
 import com.tmdigital.gestiondestock.dto.UserDto;
-import com.tmdigital.gestiondestock.services.impl.UserServiceImpl;
+import com.tmdigital.gestiondestock.services.UserService;
+
 
 @RestController
 @RequestMapping("/api/v1/users")
 public class UserController implements UserApi {
-    private final UserServiceImpl userService;
+    private final UserService userService;
 
-    public UserController(UserServiceImpl userService) {
+    public UserController(UserService userService) {
         this.userService = userService;
     }
 
     @Override
     public UserDto save(UserDto dto) {
-        return userService.save(dto);
+        return this.userService.save(dto);
     }
 
     @Override

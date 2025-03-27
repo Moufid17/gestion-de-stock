@@ -4,6 +4,7 @@ target/
 *.war
 *.ear
 .env.local
+.env
 
 # Maven
 log/

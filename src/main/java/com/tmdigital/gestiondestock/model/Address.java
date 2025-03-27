@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Embeddable // Permet d'indiquer que l'objet est un objet imbriqué (composé de plusieurs champs), donc pas besoin d'un Id pour l'identification
+@Embeddable
 public class Address implements Serializable {
 
     private static final long serialVersionUID = 1L;

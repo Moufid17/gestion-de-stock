@@ -14,5 +14,5 @@ public interface CategoryRepository extends CrudRepository<Category, Integer> {
     @Override
     List<Category> findAll();
 
-    List<Category> findAllByCompany(Integer id);
+    List<Category> findAllByIdCompany(Integer id);
 }

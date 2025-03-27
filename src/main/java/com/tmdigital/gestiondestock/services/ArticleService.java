@@ -13,6 +13,12 @@ public interface ArticleService {
 
     ArticleDto findById(Integer id);
 
+    List<SalesLineDto> findSalesHistory(Integer articleId);
+
+    List<OrderLineClientDto> findSupplierOrdersHistory(Integer articleId);
+    
+    List<OrderLineSupplierDto> findClientOrdersHistory(Integer articleId);
+
     ArticleDto findByCodeArticle(String codeArticle);
 
     List<ArticleDto> findAll();

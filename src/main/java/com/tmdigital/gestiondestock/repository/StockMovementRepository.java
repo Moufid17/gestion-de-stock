@@ -2,6 +2,7 @@ package com.tmdigital.gestiondestock.repository;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -16,6 +17,9 @@ public interface StockMovementRepository extends CrudRepository<StockMovement, I
 
     List<StockMovement> findAllByArticleId(Integer idArticle);
 
+    @Query("SELECT m FROM StockMovement m WHERE m.orderId = :orderId AND m.orderlineId = :orderlineId")
+    Optional<StockMovement> findByOrderIdAndOrderlineId(@Param("orderId") Integer orderId, @Param("orderlineId") Integer orderlineId);
+
     List<StockMovement> findAllByTypeMvt(String typeMvt);
 
     List<StockMovement> findAllBysourceMvt(String sourceMvt);
@@ -23,6 +27,8 @@ public interface StockMovementRepository extends CrudRepository<StockMovement, I
     @Query("SELECT m FROM StockMovement m WHERE m.idCompany = :idCompany")
     List<StockMovement> findAllByIdCompany(Integer idCompany);
     
-    @Query("SELECT m FROM StockMovement m")
     List<StockMovement> findAll();
+
+    @Query("DELETE FROM StockMovement m WHERE m.orderId = :orderId")
+    void deleteAllByOrderId(@Param("orderId") Integer orderId);
 }

@@ -7,15 +7,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.tmdigital.gestiondestock.controller.api.CompanyApi;
 import com.tmdigital.gestiondestock.dto.CompanyDto;
-import com.tmdigital.gestiondestock.services.impl.CompanyServiceImpl;
+import com.tmdigital.gestiondestock.services.CompanyService;
 
 @RestController
 @RequestMapping("/api/v1/companies")
 public class CompanyController implements CompanyApi {
 
-    private final CompanyServiceImpl companyService;
+    private final CompanyService companyService;
 
-    public CompanyController(CompanyServiceImpl companyService) {
+    public CompanyController(CompanyService companyService) {
         this.companyService = companyService;
     }
 

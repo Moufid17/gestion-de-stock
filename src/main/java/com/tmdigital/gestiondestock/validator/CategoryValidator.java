@@ -13,8 +13,23 @@ public class CategoryValidator {
         public static List<String> validate(CategoryDto categoryDto) {
             List<String> errors = new ArrayList<>();
 
-            if (categoryDto == null || !StringUtils.hasLength(categoryDto.getCode())) {
+            if (categoryDto == null) {
                 errors.add("Veuillez renseigner le code de la catégorie");
+                errors.add("Veuillez renseigner la désignaton de la catégorie");
+                errors.add("Veuillez renseigner l'entreprise associé à la catégorie");
+                return errors;
+            }
+
+            if (categoryDto.getCode() == null || !StringUtils.hasLength(categoryDto.getCode())) {
+                errors.add("Veuillez renseigner le code de la catégorie");
+            }
+
+            if (categoryDto.getDesignation() == null || !StringUtils.hasLength(categoryDto.getDesignation())) {
+                errors.add("Veuillez renseigner la désignaton de la catégorie");
+            }
+            
+            if (categoryDto.getIdCompany() == null) {
+                errors.add("Veuillez renseigner l'entreprise associé à la catégorie");
             }
             
             return errors;

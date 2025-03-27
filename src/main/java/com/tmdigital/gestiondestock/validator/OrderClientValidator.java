@@ -23,10 +23,6 @@ public class OrderClientValidator {
             errors.add("Veuillez renseigner le code de la commande");
         }
 
-        if (!StringUtils.hasLength(orderClientDto.getStatus().toString())) {
-            errors.add("Veuillez renseigner l'état de la commande");
-        }
-
         if (orderClientDto.getIdCompany() == null ) {
             errors.add("Veuillez renseigner les données de l'auteur de la commande");
         }

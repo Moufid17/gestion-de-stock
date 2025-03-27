@@ -1,5 +1,6 @@
 package com.tmdigital.gestiondestock.services.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -13,6 +14,8 @@ import com.tmdigital.gestiondestock.dto.SalesLineDto;
 import com.tmdigital.gestiondestock.exception.ErrorCodes;
 import com.tmdigital.gestiondestock.exception.InvalidEntityException;
 import com.tmdigital.gestiondestock.exception.NotFoundEntityException;
+import com.tmdigital.gestiondestock.exception.InvalidOperationException;
+import com.tmdigital.gestiondestock.model.Article;
 import com.tmdigital.gestiondestock.model.Category;
 import com.tmdigital.gestiondestock.model.OrderLineClient;
 import com.tmdigital.gestiondestock.model.OrderLineSupplier;
@@ -76,12 +79,66 @@ public class ArticleServiceImpl implements ArticleService {
             return null;
         }
 
-        return Optional.of(ArticleDto.fromEntity(
-                    articleRepository.findById(id).get()
-                )).orElseThrow(
-                        () -> new NotFoundEntityException("L'article avec l'id = " + id + ", n'existe pas.", ErrorCodes.ARTICLE_NOT_FOUND)
-                    );
+        Optional<Article> articleRetreived = articleRepository.findById(id);
+
+        if (articleRetreived.isEmpty()) {
+            log.error("L'article avec l'id = {} n'existe pas.", id);
+            throw new NotFoundEntityException("L'article avec l'id = " + id + ", n'existe pas.", ErrorCodes.ARTICLE_NOT_FOUND);
+        }
+                
+        return ArticleDto.fromEntity(articleRetreived.get());
     };
+
+    @Override
+    public List<SalesLineDto> findSalesHistory(Integer articleId) {
+        // To handle forbidden access to the article
+        findById(articleId);
+
+        List<SalesLine> allSalesHistory = salesLineRepository.findAllByArticleId(articleId);
+
+        if (allSalesHistory.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        return allSalesHistory.stream()
+                .map(SalesLineDto::fromEntity)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<OrderLineClientDto> findSupplierOrdersHistory(Integer articleId) {
+        // To handle forbidden access to the article
+        findById(articleId);
+
+        List<OrderLineClient> allClientOrdersHistory = orderLineClientRepository.findAllByArticleId(articleId);
+
+        if (allClientOrdersHistory.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        return allClientOrdersHistory.stream()
+                .map(OrderLineClientDto::fromEntity)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<OrderLineSupplierDto> findClientOrdersHistory(Integer articleId) {
+        // To handle forbidden access to the article
+        findById(articleId);
+
+        // To handle forbidden access to the article
+        findById(articleId);
+
+        List<OrderLineSupplier> allSupplierOrdersHistory = orderLineSupplierRepository.findAllByArticleId(articleId);
+
+        if (allSupplierOrdersHistory.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        return allSupplierOrdersHistory.stream()
+                .map(OrderLineSupplierDto::fromEntity)
+                .collect(Collectors.toList());
+    }
 
     @Override
     public ArticleDto findByCodeArticle(String codeArticle) {
@@ -90,16 +147,25 @@ public class ArticleServiceImpl implements ArticleService {
             return null;
         }
 
-        return Optional.of(ArticleDto.fromEntity(
-            articleRepository.findArticleByCode(codeArticle)
-                )).orElseThrow(
-                        () -> new NotFoundEntityException("L'article avec le code = " + codeArticle + ", n'existe pas.", ErrorCodes.ARTICLE_NOT_FOUND)
-                    );
+        Optional<Article> articleRetreived = articleRepository.findArticleByCode(codeArticle);
+
+        if (articleRetreived.isEmpty()) {
+            log.error("L'article avec le code = {}, n'existe pas.", codeArticle);
+            throw new NotFoundEntityException("L'article avec le code = " + codeArticle + ", n'existe pas.", ErrorCodes.ARTICLE_NOT_FOUND);
+        }
+                
+        return ArticleDto.fromEntity(articleRetreived.get());
     };
 
     @Override
     public List<ArticleDto> findAll() {
-        return articleRepository.findAll().stream()
+        List<Article> allArticles = articleRepository.findAll();
+
+        if (allArticles.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        return allArticles.stream()
                 .map(ArticleDto::fromEntity)
                 .collect(Collectors.toList());
     };
@@ -107,9 +173,16 @@ public class ArticleServiceImpl implements ArticleService {
     public List<ArticleDto> findAllArticleByCompany(Integer idCompany) {
         if (idCompany == null) {
             log.error("L'identifiant est nul");
-            return null;
+            throw new InvalidOperationException("L'identifiant est nul", ErrorCodes.ARTICLE_NOT_VALID);
         }
-        return articleRepository.findAllByCompany(idCompany).stream()
+
+        List<Article> allArticlesByCompany = articleRepository.findAllByCompany(idCompany);
+
+        if (allArticlesByCompany.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        return allArticlesByCompany.stream()
                 .map(ArticleDto::fromEntity)
                 .collect(Collectors.toList());
     };
@@ -117,9 +190,16 @@ public class ArticleServiceImpl implements ArticleService {
     public List<ArticleDto> findAllArticleByCategory(Integer idCategory) {
         if (idCategory == null) {
             log.error("L'identifiant est nul");
-            return null;
+            throw new InvalidOperationException("L'identifiant est nul", ErrorCodes.ARTICLE_NOT_VALID);
         }
-        return articleRepository.findAllByCategoryId(idCategory).stream()
+
+        List<Article> allArticlesByCategory = articleRepository.findAllByCategoryId(idCategory);
+
+        if (allArticlesByCategory.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        return allArticlesByCategory.stream()
                 .map(ArticleDto::fromEntity)
                 .collect(Collectors.toList());
     };
@@ -128,10 +208,16 @@ public class ArticleServiceImpl implements ArticleService {
     public List<SalesLineDto> findAllSalesLineByArticleId(Integer idArticle) {
         if (idArticle == null) {
             log.error("L'identifiant est nul");
-            return null;
+            throw new InvalidOperationException("L'identifiant est nul", ErrorCodes.ARTICLE_NOT_VALID);
         }
 
-        return salesLineRepository.findAllByArticleId(idArticle).stream()
+        List<SalesLine> allArticlesByArticleId = salesLineRepository.findAllByArticleId(idArticle);
+
+        if (allArticlesByArticleId.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        return allArticlesByArticleId.stream()
                 .map(SalesLineDto::fromEntity)
                 .collect(Collectors.toList());
     }
@@ -140,10 +226,16 @@ public class ArticleServiceImpl implements ArticleService {
     public List<OrderLineClientDto> findAllInOrderLineClientByArticleId(Integer idArticle) {
         if (idArticle == null) {
             log.error("L'identifiant est nul");
-            return null;
+            throw new InvalidOperationException("L'identifiant est nul", ErrorCodes.ARTICLE_NOT_VALID);
         }
 
-        return orderLineClientRepository.findAllByArticleId(idArticle).stream()
+        List<OrderLineClient> allArticlesInOrderLineClientByArticleId = orderLineClientRepository.findAllByArticleId(idArticle);
+
+        if (allArticlesInOrderLineClientByArticleId.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        return allArticlesInOrderLineClientByArticleId.stream()
                 .map(OrderLineClientDto::fromEntity)
                 .collect(Collectors.toList());
     }
@@ -152,10 +244,16 @@ public class ArticleServiceImpl implements ArticleService {
     public List<OrderLineSupplierDto> findAllOrderLineSupplierByArticleId(Integer idArticle) {
         if (idArticle == null) {
             log.error("L'identifiant est nul");
-            return null;
+            throw new InvalidOperationException("L'identifiant est nul", ErrorCodes.ARTICLE_NOT_VALID);
         }
 
-        return orderLineSupplierRepository.findAllByArticleId(idArticle).stream()
+        List<OrderLineSupplier> allArticlesOrderLineSupplierByArticleId = orderLineSupplierRepository.findAllByArticleId(idArticle);
+
+        if (allArticlesOrderLineSupplierByArticleId.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        return allArticlesOrderLineSupplierByArticleId.stream()
                 .map(OrderLineSupplierDto::fromEntity)
                 .collect(Collectors.toList());
     };
@@ -163,7 +261,7 @@ public class ArticleServiceImpl implements ArticleService {
     public void delete(Integer id) {
         if (id == null) {
             log.error("L'identifiant est nul");
-            return;
+            throw new InvalidOperationException("L'identifiant est nul", ErrorCodes.ARTICLE_NOT_VALID);
         }
 
         List<SalesLine> salesLines = salesLineRepository.findAllByArticleId(id);
@@ -187,4 +285,5 @@ public class ArticleServiceImpl implements ArticleService {
 
         articleRepository.deleteById(id);
     }
+
 }

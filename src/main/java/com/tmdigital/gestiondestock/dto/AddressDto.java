@@ -9,8 +9,6 @@ import lombok.Data;
 @Builder
 public class AddressDto {
 
-    private Integer id;
-
     private String address1;
 
     private String address2;
