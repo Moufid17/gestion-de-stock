@@ -46,12 +46,18 @@
     - [x] Entree de stock
     - [x] Sortie de stock
     - [*] Correction de stock : + ou -
-    - [x] Order : 
+    - [x] Order supplier : update orderline id after any changement.
         - [x] set stock mvt according to order source.
         - [x] add order line
         - [x] update order (quantity , article )
         - [x] delete order line
         - [x] delete order
+    - [ ] Order client : 
+        - [ ] set stock mvt according to order source.
+        - [ ] add order line
+        - [ ] update order (quantity , article )
+        - [ ] delete order line
+        - [ ] delete order
 
 - [ ] User : Reset password
 - [ ] Validator : Finsih with the rest
