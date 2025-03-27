@@ -184,7 +184,7 @@ public class StockMovementServiceImpl implements StockMovementService{
             )
         );
 
-        dto.setTypeMvt(null == dto.getTypeMvt() ? typeMvt : dto.getTypeMvt());
+        if (null != typeMvt) dto.setTypeMvt(typeMvt);
 
         stockMovementRepository.save(StockMovementDto.toEntity(dto));
     }

@@ -45,14 +45,15 @@
     - [x] Consulter mvt de stock de chaque article
     - [x] Entree de stock
     - [x] Sortie de stock
-    - [*] Correction de stock : + ou -
     - [x] Order supplier : update orderline id after any changement.
+        - [x] update stock : +
         - [x] set stock mvt according to order source.
         - [x] add order line
         - [x] update order (quantity , article )
         - [x] delete order line
         - [x] delete order
     - [ ] Order client : 
+        - [ ] update stock : -
         - [ ] set stock mvt according to order source.
         - [ ] add order line
         - [ ] update order (quantity , article )
