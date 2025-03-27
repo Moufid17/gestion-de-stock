@@ -17,8 +17,8 @@ public interface StockMovementRepository extends CrudRepository<StockMovement, I
 
     List<StockMovement> findAllByArticleId(Integer idArticle);
 
-    @Query("SELECT m FROM StockMovement m WHERE m.orderId = :orderId AND m.article.id = :idArticle")
-    Optional<StockMovement> findByOrderIdAndArticleId(@Param("orderId") Integer orderId,@Param("idArticle") Integer idArticle);
+    @Query("SELECT m FROM StockMovement m WHERE m.orderId = :orderId AND m.orderlineId = :orderlineId")
+    Optional<StockMovement> findByOrderIdAndOrderlineId(@Param("orderId") Integer orderId, @Param("orderlineId") Integer orderlineId);
 
     List<StockMovement> findAllByTypeMvt(String typeMvt);
 

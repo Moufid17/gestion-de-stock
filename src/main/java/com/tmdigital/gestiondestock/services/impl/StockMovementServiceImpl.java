@@ -105,25 +105,16 @@ public class StockMovementServiceImpl implements StockMovementService{
     }
 
     @Override
-    public StockMovementDto findByOrderIdAndArticleId(Integer orderId, Integer idArticle) {
-        if (orderId == null) {
-            log.error("Trying to find stockMovement by null id");
-            throw new InvalidOperationException("The order id is required", ErrorCodes.STOCK_MOVEMENT_NOT_FOUND);
+    public StockMovementDto findByOrderIdAndOrderlineId(Integer orderId, Integer orderlineId) {
+        Optional<StockMovement> stockMvt = stockMovementRepository.findByOrderIdAndOrderlineId(orderId, orderlineId);
+
+        if (!stockMvt.isPresent()) {
+            log.error("No stockMovement found with orderId = {} and orderlineId = {}", orderId, orderlineId);
+            throw new InvalidEntityException("No stockMovement found with orderId = " + orderId + " and orderlineId = " + orderlineId, ErrorCodes.STOCK_MOVEMENT_NOT_FOUND);
         }
-
-        if (idArticle == null) {
-            log.error("Trying to find stockMovement by null idArticle");
-            throw new InvalidOperationException("The article id is required", ErrorCodes.STOCK_MOVEMENT_NOT_FOUND);
-        }
-
-        Optional<StockMovement> stockMovement = stockMovementRepository.findByOrderIdAndArticleId(orderId, idArticle);
-
-        if (!stockMovement.isPresent()) {
-            throw new InvalidEntityException("No stockMovement found with id = " + orderId, ErrorCodes.STOCK_MOVEMENT_NOT_FOUND);
-        }
-
-        return StockMovementDto.fromEntity(stockMovement.get());
-    }
+        
+        return StockMovementDto.fromEntity(stockMvt.get());
+    }  
 
     @Override
     public List<StockMovementDto> findAllByTypeMvt(String typeMvt) {
@@ -221,5 +212,5 @@ public class StockMovementServiceImpl implements StockMovementService{
         dto.setTypeMvt(null == dto.getTypeMvt() ? typeMvt : dto.getTypeMvt());
 
         stockMovementRepository.save(StockMovementDto.toEntity(dto));
-    }  
+    }
 }

@@ -51,7 +51,7 @@
         - [x] add order line
         - [x] update order (quantity , article )
         - [x] delete order line
-        - [*] delete order
+        - [x] delete order
 
 - [ ] User : Reset password
 - [ ] Validator : Finsih with the rest
