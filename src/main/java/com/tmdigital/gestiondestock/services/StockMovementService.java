@@ -21,7 +21,7 @@ public interface StockMovementService {
 
     StockMovementDto findById(Integer id);
 
-    StockMovementDto findByOrderIdAndArticleId(Integer id, Integer idArticle);
+    StockMovementDto findByOrderIdAndOrderlineId(Integer id, Integer orderlineId);
 
     List<StockMovementDto> findAllByTypeMvt(String typeMvt);
 
