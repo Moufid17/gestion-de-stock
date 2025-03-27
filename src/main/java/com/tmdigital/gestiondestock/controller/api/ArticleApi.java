@@ -3,6 +3,7 @@ package com.tmdigital.gestiondestock.controller.api;
 import java.util.List;
 
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -10,6 +11,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import com.tmdigital.gestiondestock.dto.ArticleDto;
+import com.tmdigital.gestiondestock.dto.OrderLineClientDto;
+import com.tmdigital.gestiondestock.dto.OrderLineSupplierDto;
+import com.tmdigital.gestiondestock.dto.SalesLineDto;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -42,6 +47,39 @@ public interface ArticleApi {
         }
     )
     ArticleDto get(@PathVariable Integer id);
+
+    @GetMapping(value="/sales/{articleId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Retreive a list of article sales history", description = "Allow to retreive a list of article sales history", 
+        responses = {
+            @ApiResponse(responseCode = "200", description = "Retreive successfully"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
+            @ApiResponse(responseCode = "404", description = "Article not found"),
+        }
+    )
+    ResponseEntity<List<SalesLineDto>> findSalesHistory(@PathVariable Integer articleId);
+
+    @GetMapping(value="/supplier/{articleId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Retreive a list of article supplier history", description = "Allow to retreive a list of article supplier history", 
+        responses = {
+            @ApiResponse(responseCode = "200", description = "Retreive successfully"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
+            @ApiResponse(responseCode = "404", description = "Article not found"),
+        }
+    )
+    ResponseEntity<List<OrderLineSupplierDto>> findSupplierOrderHistory(@PathVariable Integer articleId);
+
+    @GetMapping(value="/client/{articleId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Retreive a list of article supplier history", description = "Allow to retreive a list of article supplier history", 
+        responses = {
+            @ApiResponse(responseCode = "200", description = "Retreive successfully"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
+            @ApiResponse(responseCode = "404", description = "Article not found"),
+        }
+    )
+    ResponseEntity<List<OrderLineClientDto>> findClientOrderHistory(@PathVariable Integer articleId);
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Retreive all article", description = "Allow to retreive all articles in the login user company", 

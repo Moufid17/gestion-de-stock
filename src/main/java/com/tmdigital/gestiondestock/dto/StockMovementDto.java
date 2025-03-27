@@ -28,6 +28,10 @@ public class StockMovementDto {
 
     private Integer orderId;
 
+    private Integer orderlineId;
+
+    private Integer companyId;
+
     public static StockMovementDto fromEntity(StockMovement stockMovement) {
         if (stockMovement == null) {
             return null;
@@ -40,6 +44,8 @@ public class StockMovementDto {
                 .typeMvt(stockMovement.getTypeMvt())
                 .sourceMvt(stockMovement.getSourceMvt())
                 .orderId(stockMovement.getOrderId())
+                .orderlineId(stockMovement.getOrderlineId())
+                .companyId(stockMovement.getIdCompany())
                 .build();
     }
 
@@ -55,6 +61,8 @@ public class StockMovementDto {
         stockMovement.setTypeMvt(stockMovementDto.getTypeMvt());
         stockMovement.setSourceMvt(stockMovementDto.getSourceMvt());
         stockMovement.setOrderId(stockMovementDto.getOrderId());
+        stockMovement.setOrderlineId(stockMovementDto.getOrderlineId());
+        stockMovement.setIdCompany(stockMovementDto.getCompanyId());
         return stockMovement;
     }
 

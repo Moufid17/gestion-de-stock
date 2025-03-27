@@ -1,6 +1,7 @@
 package com.tmdigital.gestiondestock.services.impl;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -14,6 +15,7 @@ import org.springframework.util.StringUtils;
 import com.tmdigital.gestiondestock.dto.ArticleDto;
 import com.tmdigital.gestiondestock.dto.OrderLineSupplierDto;
 import com.tmdigital.gestiondestock.dto.OrderSupplierDto;
+import com.tmdigital.gestiondestock.dto.StockMovementDto;
 import com.tmdigital.gestiondestock.dto.SupplierDto;
 import com.tmdigital.gestiondestock.exception.ErrorCodes;
 import com.tmdigital.gestiondestock.exception.InvalidEntityException;
@@ -28,8 +30,11 @@ import com.tmdigital.gestiondestock.repository.OrderLineSupplierRepository;
 import com.tmdigital.gestiondestock.repository.OrderSupplierRepository;
 import com.tmdigital.gestiondestock.repository.SupplierRepository;
 import com.tmdigital.gestiondestock.services.OrderSupplierService;
+import com.tmdigital.gestiondestock.services.StockMovementService;
 import com.tmdigital.gestiondestock.validator.OrderLineSupplierValidator;
 import com.tmdigital.gestiondestock.validator.OrderSupplierValidator;
+import com.tmdigital.gestiondestock.model.StockMovementType;
+import com.tmdigital.gestiondestock.model.MovementSource;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -41,8 +46,10 @@ public class OrderSupplierServiceImpl implements OrderSupplierService {
     private SupplierRepository supplierRepository;
     private final ArticleRepository articleRepository;
     private final OrderLineSupplierRepository orderLineSupplierRepository;
+    private final StockMovementService stockMovementService;
 
-    public OrderSupplierServiceImpl(OrderSupplierRepository orderSupplierRepository, SupplierRepository supplierRepository, ArticleRepository articleRepository, OrderLineSupplierRepository orderLineSupplierRepository) {
+    public OrderSupplierServiceImpl(OrderSupplierRepository orderSupplierRepository, SupplierRepository supplierRepository, ArticleRepository articleRepository, OrderLineSupplierRepository orderLineSupplierRepository, StockMovementService stockMovementService) {
+        this.stockMovementService = stockMovementService;
         this.orderSupplierRepository = orderSupplierRepository;
         this.supplierRepository = supplierRepository;
         this.articleRepository = articleRepository;
@@ -70,7 +77,7 @@ public class OrderSupplierServiceImpl implements OrderSupplierService {
         }
 
         // Check if the order lines are valid
-        if (dto.getOrderLineSupplier() ==  null) {
+        if (null == dto.getOrderLineSupplier() || dto.getOrderLineSupplier().isEmpty()) {
             log.warn("Impossible d'enregister une commande avec des lignes de commandes nulles.");
             throw new InvalidEntityException("Impossible d'enregister une commande avec des lignes de commandes nulles.", ErrorCodes.ORDER_SUPPLIER_NOT_VALID, errors);
         }
@@ -94,7 +101,7 @@ public class OrderSupplierServiceImpl implements OrderSupplierService {
             throw new InvalidEntityException("Une ligne de commande n'est pas valide ou un L'article n'existe pas.", ErrorCodes.ORDER_SUPPLIER_NOT_VALID, new ArrayList<>(errorsOrderLine));
         }
 
-        if (dto.getStatus() == null) {
+        if (null == dto.getStatus()) {
             dto.setStatus(OrderStatus.IN_PROGRESS);
         }
 
@@ -111,9 +118,9 @@ public class OrderSupplierServiceImpl implements OrderSupplierService {
             if (null == orderLine.getSellPriceInclTax()) {
                 orderLineSupplier.setSellPriceInclTax(articleDto.getSellPriceInclTax());
             }
-            orderLineSupplierRepository.save(orderLineSupplier);
+            OrderLineSupplierDto newOrderLineDto = OrderLineSupplierDto.fromEntity(orderLineSupplierRepository.save(orderLineSupplier));
 
-            // [ ] Mise à jour le Mvt de stock en entrée
+            addStockMovement(newOrderLineDto, OrderSupplierDto.fromEntity(savedOrderSupplier));
 
         });
         
@@ -133,15 +140,15 @@ public class OrderSupplierServiceImpl implements OrderSupplierService {
         ArticleDto articleDto = ArticleDto.fromEntity(articleRepository.findById(dto.getArticle().getId())
             .orElseThrow(() -> new InvalidEntityException("Aucun article n'a été trouvé avec l'identifiant " + dto.getArticle().getId(), ErrorCodes.ARTICLE_NOT_FOUND)));   
 
-
         List<OrderLineSupplierDto> orderLineSupplierList = findAllOrderLine(orderId);
-        if (orderLineSupplierList == null || orderLineSupplierList.isEmpty()) {
+        if (null == orderLineSupplierList  || orderLineSupplierList.isEmpty()) {
             log.error("Aucune ligne de commande n'a été trouvée pour la commande d'identifiant {}", orderId);
             throw new InvalidEntityException("Aucune ligne de commande n'a été trouvée pour la commande d'identifiant " + orderId, ErrorCodes.ORDER_LINE_SUPPLIER_NOT_FOUND);
         }        
-                
+        
+        // [ ] Use orderlinerepository to find artilce list
         orderLineSupplierList.stream()
-            .filter(orderLine -> orderLine.getArticle().getId().equals(dto.getArticle().getId()))
+            .filter(orderLine -> orderLine.getArticle().getId().equals(articleDto.getId()))
             .findAny()
             .ifPresent(orderLine -> {
                 log.error("L'article avec l'identifiant {} est déjà dans la commande", dto.getArticle().getId());
@@ -154,7 +161,10 @@ public class OrderSupplierServiceImpl implements OrderSupplierService {
         newOrderLineSupplier.setOrderSupplier(OrderSupplierDto.toEntity(orderSupplierDto));
         newOrderLineSupplier.setIdCompany(orderSupplierDto.getIdCompany());
         newOrderLineSupplier.setSellPriceInclTax(articleDto.getSellPriceInclTax());
-        orderLineSupplierRepository.save(newOrderLineSupplier);
+        OrderLineSupplierDto newOrderLineSupplierDto = OrderLineSupplierDto.fromEntity(orderLineSupplierRepository.save(newOrderLineSupplier));
+
+        // Mise à jour le Mvt de stock en entrée
+        addStockMovement(newOrderLineSupplierDto, orderSupplierDto);
 
         orderSupplierDto.getOrderLineSupplier().add(OrderLineSupplierDto.fromEntity(newOrderLineSupplier));
         return OrderSupplierDto.fromEntity(orderSupplierRepository.save(OrderSupplierDto.toEntity(orderSupplierDto)));
@@ -163,8 +173,8 @@ public class OrderSupplierServiceImpl implements OrderSupplierService {
     @Override
     public OrderSupplierDto findById(Integer id) {
         if (id == null) {
-            log.error("L'identifiant est nul");
-            return null;
+            log.error("L'identifiant de la commande est nul");
+            throw new InvalidOperationException("Order id is required", ErrorCodes.ORDER_SUPPLIER_NOT_FOUND);
         }
 
         return orderSupplierRepository.findById(id)
@@ -197,6 +207,11 @@ public class OrderSupplierServiceImpl implements OrderSupplierService {
         if (!orderSupplier.isPresent()) {
             log.error("Aucune commande n'a été trouvée avec l'identifiant {}", orderId);
             throw new InvalidEntityException("Aucune commande n'a été trouvée avec l'identifiant " + orderId, ErrorCodes.ORDER_SUPPLIER_NOT_FOUND);
+        }
+
+        if (OrderStatus.CANCELED.equals(orderSupplier.get().getStatus()) || OrderStatus.DELIVERED.equals(orderSupplier.get().getStatus())) {
+            log.error("Impossible de mettre à jour cette commande car elle a été annulé ou elle est déjà livré : {}", orderSupplier.get().getStatus());
+            throw new InvalidOperationException("Impossible de mettre à jour cette commande car elle a été annulé ou elle est déjà livré", ErrorCodes.ORDER_SUPPLIER_ALREADY_DELIVERED);
         }
 
         List<OrderLineSupplier> orderLineSupplierList = orderSupplier.get().getOrderLineSupplier();
@@ -326,29 +341,25 @@ public class OrderSupplierServiceImpl implements OrderSupplierService {
         orderLineSupplier.setOrderSupplier(OrderSupplierDto.toEntity(orderSupplierDto));
 
         orderLineSupplierRepository.save(orderLineSupplier);
+
+        // Mise à jour le Mvt de stock en entrée
+        updateStockMovement(orderLineSupplierDto, orderSupplierDto);
     }
 
     @Override
     public void updateSupplier(Integer orderId, Integer supplierId) {
-        if (orderId == null) {
-            log.error("L'identifiant de la commande est nul");
-            throw new InvalidOperationException("L'identifiant de la commande est nul", ErrorCodes.ORDER_SUPPLIER_NOT_FOUND);
-        }
+        
+        OrderSupplierDto orderSupplierDto = findById(orderId);
+
+        checkStatus(orderSupplierDto);
 
         if (supplierId == null) {
             log.error("L'identifiant du client est nul");
-            throw new InvalidOperationException("L'identifiant du client est nul", ErrorCodes.SUPPLIER_NOT_FOUND);
-        }
-
-        OrderSupplierDto orderSupplierDto = findById(orderId);
-
-        if (orderSupplierDto.isCancaled() || orderSupplierDto.isDelivered()) {
-            log.error("Impossible de mettre à jour cette commande car elle a été annulé ou elle est déjà livré : {}", orderSupplierDto.getStatus());
-            throw new InvalidOperationException("Impossible de mettre à jour cette commande car elle a été annulé ou elle est déjà livré", ErrorCodes.ORDER_SUPPLIER_ALREADY_DELIVERED);
+            throw new InvalidOperationException("Supplier id is required", ErrorCodes.SUPPLIER_NOT_FOUND);
         }
 
         Supplier supplier = supplierRepository.findById(supplierId)
-            .orElseThrow(() -> new InvalidEntityException("Aucun client n'a été trouvé avec l'identifiant " + supplierId, ErrorCodes.SUPPLIER_NOT_FOUND));
+            .orElseThrow(() -> new InvalidEntityException("Aucun fournisseur n'a été trouvé avec l'identifiant " + supplierId, ErrorCodes.SUPPLIER_NOT_FOUND));
 
         orderSupplierDto.setSupplier(SupplierDto.fromEntity(supplier));
 
@@ -357,10 +368,7 @@ public class OrderSupplierServiceImpl implements OrderSupplierService {
 
     @Override
     public void updateArticle(Integer orderId, Integer orderLineId, Integer newArticleId) {
-        if (orderId == null) {
-            log.error("L'identifiant de la commande est nul");
-            throw new InvalidOperationException("L'identifiant de la commande est nul", ErrorCodes.ORDER_SUPPLIER_NOT_FOUND);
-        }
+        OrderSupplierDto orderSupplierDto = findById(orderId);
 
         if (orderLineId == null) {
             log.error("L'identifiant de la line de commande est nul");
@@ -372,11 +380,9 @@ public class OrderSupplierServiceImpl implements OrderSupplierService {
             throw new InvalidOperationException("L'identifiant de l'article est nul", ErrorCodes.ARTICLE_NOT_FOUND);
         }
 
-        OrderSupplierDto orderSupplierDto = findById(orderId);
-
         List<OrderLineSupplierDto> orderLineSupplierDtoList = orderSupplierDto.getOrderLineSupplier();
         
-        if (orderLineSupplierDtoList == null || orderLineSupplierDtoList.isEmpty()) {
+        if (null == orderLineSupplierDtoList) {
             log.error("Aucune ligne de commande n'a été trouvée pour la commande d'identifiant {}", orderId);
             throw new InvalidOperationException("Aucune ligne de commande n'a été trouvée pour la commande d'identifiant " + orderId, ErrorCodes.ORDER_LINE_SUPPLIER_NOT_FOUND);
         }
@@ -386,98 +392,99 @@ public class OrderSupplierServiceImpl implements OrderSupplierService {
             .findFirst()
             .orElseThrow(() -> new InvalidEntityException("Aucune ligne de commande n'a été trouvée avec l'identifiant " + orderLineId, ErrorCodes.ORDER_LINE_SUPPLIER_NOT_FOUND));
 
-        Optional<Article> article = articleRepository.findById(newArticleId);
+        if (orderLineSupplierDto.getArticle().getId().equals(newArticleId)) {
+            log.error("Le nouvel article {} est le même que l'ancien article {}", newArticleId, orderLineSupplierDto.getArticle().getId());
+            throw new InvalidOperationException("Impossible de mettre à jour la commande", ErrorCodes.ARTICLE_ALREADY_IN_USE);
+        }
 
-        if (!article.isPresent()) {
+        Optional<Article> newArticle = articleRepository.findById(newArticleId);
+
+        if (!newArticle.isPresent()) {
             log.error("Aucun article n'a été trouvé avec l'identifiant {}", newArticleId);
             throw new InvalidEntityException("Aucun article n'a été trouvé avec l'identifiant " + newArticleId, ErrorCodes.ARTICLE_NOT_FOUND);
         }
 
-        if (orderLineSupplierDto.getArticle().getId().equals(newArticleId)) {
-            log.error("Le nouvel article est le même que l'ancien article");
-            throw new InvalidOperationException("Impossible de mettre à jour la commande", ErrorCodes.ARTICLE_ALREADY_IN_USE);
-        }
-
-        orderLineSupplierDto.setArticle(ArticleDto.fromEntity(article.get()));
-        orderLineSupplierDto.setSellPriceInclTax(article.get().getSellPriceInclTax());
+        orderLineSupplierDto.setArticle(ArticleDto.fromEntity(newArticle.get()));
+        orderLineSupplierDto.setSellPriceInclTax(newArticle.get().getSellPriceInclTax());
 
         // Reset orderLineSupplierDto client with the old client (it's set in the OrderLineSupplierDto.toEntity method)
         OrderLineSupplier orderLineSupplier = OrderLineSupplierDto.toEntity(orderLineSupplierDto);
         orderLineSupplier.setOrderSupplier(OrderSupplierDto.toEntity(orderSupplierDto));
 
         orderLineSupplierRepository.save(orderLineSupplier);
+
+        // Mise à jour le Mvt de stock en entrée
+        StockMovementDto stockMovementDto = stockMovementService.findByOrderIdAndOrderlineId(orderSupplierDto.getId(), orderLineSupplier.getId());
+        
+        stockMovementDto.setArticle(orderLineSupplierDto.getArticle());
+        stockMovementService.updateIn(stockMovementDto);
     }
 
     @Override
-    public void delete(Integer id) {
-        if (id == null) {
-            log.error("L'identifiant est nul");
-            return;
-        }
-
-        Optional<OrderSupplier> orderSupplier = orderSupplierRepository.findById(id);
-
-        // check if the order exists
-        if (!orderSupplier.isPresent()) {
-            log.error("Aucune commande n'a été trouvée avec l'identifiant {}", id);
-            throw new InvalidEntityException("Aucune commande n'a été trouvée avec l'identifiant " + id, ErrorCodes.ORDER_SUPPLIER_NOT_FOUND);
-        }
+    public void delete(Integer orderId) {
+        OrderSupplierDto orderSupplierDto = findById(orderId);
         
         // check if the order is already delivered or canceled
-        if (orderSupplier.get().getStatus().equals(OrderStatus.DELIVERED) || orderSupplier.get().getStatus().equals(OrderStatus.CANCELED)) {
-            log.error("Impossible de supprimer une commande annulé ou déjà validée");
-            throw new InvalidEntityException("Impossible de supprimer une commande annulé ou déjà validée");
+        checkStatus(orderSupplierDto);
+
+        if (null != orderSupplierDto.getOrderLineSupplier()) {
+            if (!orderSupplierDto.getOrderLineSupplier().isEmpty()) {
+                log.error("Impossible de supprimer une commande avec des lignes de commandes");
+                throw new InvalidEntityException("Impossible de supprimer une commande avec des lignes de commandes", ErrorCodes.ORDER_SUPPLIER_IS_ALREADY_USED);
+            }
         }
 
-        if (!orderSupplier.get().getOrderLineSupplier().isEmpty()) {
-            log.error("Impossible de supprimer une commande avec des lignes de commandes");
-            throw new InvalidEntityException("Impossible de supprimer une commande avec des lignes de commandes", ErrorCodes.ORDER_SUPPLIER_IS_ALREADY_USED);
-        }
-
-        orderSupplierRepository.deleteById(id);
+        orderSupplierRepository.deleteById(orderId);
     }
 
     @Override
     public void deleteOrderLine(Integer orderId, Integer orderLineId) {
-        if (orderId == null) {
-            log.error("L'identifiant de la commande est nul");
-            throw new InvalidOperationException("L'identifiant de la commande est nul", ErrorCodes.ORDER_SUPPLIER_NOT_FOUND);
-        }
+        OrderSupplierDto orderSupplierDto = findById(orderId);
+
+        // check if the order is already delivered or canceled
+        checkStatus(orderSupplierDto);
 
         if (orderLineId == null) {
             log.error("L'identifiant de la ligne de commande est nul");
-            throw new InvalidOperationException("L'identifiant de la ligne de commande est nul", ErrorCodes.ORDER_LINE_SUPPLIER_NOT_FOUND);
+            throw new InvalidOperationException("order line id is required", ErrorCodes.ORDER_LINE_SUPPLIER_NOT_FOUND);
         }
 
-        // check if the order exists
-        Optional<OrderSupplier> orderSupplier = orderSupplierRepository.findById(orderId);
-        if (!orderSupplier.isPresent()) {
-            log.error("Aucune commande n'a été trouvée avec l'identifiant {}", orderId);
-            throw new InvalidEntityException("Aucune commande n'a été trouvée avec l'identifiant " + orderId, ErrorCodes.ORDER_SUPPLIER_NOT_FOUND);
-        }
+        OrderLineSupplier orderLineSupplier = orderLineSupplierRepository.findById(orderLineId)
+            .orElseThrow(() -> new InvalidEntityException("Aucune ligne de commande n'a été trouvée avec l'identifiant " + orderLineId, ErrorCodes.ORDER_LINE_SUPPLIER_NOT_FOUND));
+
+        StockMovementDto stockMovementDto = stockMovementService.findByOrderIdAndOrderlineId(orderId, orderLineSupplier.getId());
+        stockMovementService.delete(stockMovementDto.getId());
         
-        // check if the order is already delivered or canceled
-        if (OrderStatus.DELIVERED.equals(orderSupplier.get().getStatus()) || OrderStatus.CANCELED.equals(orderSupplier.get().getStatus())) {
-            log.error("Impossible de supprimer une commande annulé ou déjà livrée");
-            throw new InvalidOperationException("Impossible de supprimer une commande annulé ou déjà livrée.", ErrorCodes.ORDER_SUPPLIER_ALREADY_DELIVERED);
-        }
-
-        List<OrderLineSupplier> orderLineSuppliersList = orderSupplier.get().getOrderLineSupplier();
-        // check if the order has order lines
-        if (orderLineSuppliersList == null || orderLineSuppliersList.isEmpty()) {
-            log.error("Aucune ligne de commande n'a été trouvée pour la commande d'identifiant {}", orderId);
-            throw new InvalidOperationException("Aucune ligne de commande n'a été trouvée pour la commande d'identifiant " + orderId, ErrorCodes.ORDER_LINE_SUPPLIER_NOT_FOUND);
-        }
-
-        Optional<OrderLineSupplier> orderLineSupplier = orderLineSuppliersList.stream()
-            .filter(orderLine -> orderLine.getId().equals(orderLineId))
-            .findFirst();
-        
-        if (!orderLineSupplier.isPresent()) {
-            log.error("Aucune ligne de commande n'a été trouvée avec l'identifiant {}", orderLineId);
-            throw new InvalidEntityException("Aucune ligne de commande n'a été trouvée avec l'identifiant " + orderLineId, ErrorCodes.ORDER_LINE_SUPPLIER_NOT_FOUND);
-        }
-
         orderLineSupplierRepository.deleteById(orderLineId);
+    }
+
+    private void addStockMovement(OrderLineSupplierDto orderLineSupplierDto, OrderSupplierDto orderSupplierDto) {
+        StockMovementDto stockMovementDto = StockMovementDto.builder()
+            .article(orderLineSupplierDto.getArticle())
+            .qty(orderLineSupplierDto.getQty())
+            .dateMovement(Instant.now())
+            .typeMvt(StockMovementType.INPUT)
+            .sourceMvt(MovementSource.ORDER_SUPPLIER)
+            .orderId(orderSupplierDto.getId())
+            .orderlineId(orderLineSupplierDto.getId())
+            .companyId(orderSupplierDto.getIdCompany())
+            .build();
+
+        stockMovementService.stockIn(stockMovementDto);
+    }
+
+    private void updateStockMovement(OrderLineSupplierDto orderLineSupplierDto, OrderSupplierDto orderSupplierDto) {
+        StockMovementDto stockMovementDto = stockMovementService.findByOrderIdAndOrderlineId(orderSupplierDto.getId(), orderLineSupplierDto.getId());
+        
+        stockMovementDto.setQty(orderLineSupplierDto.getQty());
+        stockMovementDto.setArticle(orderLineSupplierDto.getArticle());
+        stockMovementService.updateIn(stockMovementDto);
+    }
+
+    private void checkStatus(OrderSupplierDto dto) {
+        if (dto.isCancaled() || dto.isDelivered()) {
+            log.error("Impossible de mettre à jour cette commande car elle a été annulé ou elle est déjà livré : {}", dto.getStatus());
+            throw new InvalidOperationException("Impossible de mettre à jour cette commande car elle a été annulé ou elle est déjà livré", ErrorCodes.ORDER_SUPPLIER_ALREADY_DELIVERED);
+        }
     }
 }
