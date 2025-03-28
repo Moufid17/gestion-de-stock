@@ -23,13 +23,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "user")
+@Table(name = "appuser")
 public class User extends AbstractEntity {
 
-    @Column(name = "firstName")
+    @Column(name = "firstname")
     private String firstName;
 
-    @Column(name = "lastName")
+    @Column(name = "lastname")
     private String lastName;
 
     @Column(name = "email")
@@ -41,7 +41,7 @@ public class User extends AbstractEntity {
     @Column(name = "photo")
     private String photo;
 
-    @Column(name = "numTel")
+    @Column(name = "phoneTel")
     private String numTel;
 
     @Embedded
@@ -50,14 +50,14 @@ public class User extends AbstractEntity {
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
         name = "users_roles", 
-        joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
-        inverseJoinColumns = @JoinColumn(table = "roles",name = "role_id", referencedColumnName = "id")
+        joinColumns = @JoinColumn(name = "userId", referencedColumnName = "id"),
+        inverseJoinColumns = @JoinColumn(table = "roles",name = "roleId", referencedColumnName = "id")
     )
     @JsonIgnore
     private List<Roles> roles;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "idcompany")
+    @JoinColumn(name = "companyId")
     @JsonIgnore
     private Company company;
 }
