@@ -2,8 +2,8 @@
 ### Features
 - [ ] Migration to postgresql
     - [x] setting up docker compose, env file, dependencies and ressources.
-    - [ ] Error :
-        - [ ] Model name "user" can be used for postgres database 
+    - [x] Error :
+        - [x] Model name "user" can't be used for postgres database  : change to "app_user"
             - 'org.postgresql.util.PSQLException: ERROR: syntax error at or near "user"'
             - 'org.postgresql.util.PSQLException: ERROR: relation "users_roles" does not exist'
 - [x] Define the entities
