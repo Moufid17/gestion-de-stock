@@ -1,4 +1,11 @@
+
 ### Features
+- [ ] Migration to postgresql
+    - [x] setting up docker compose, env file, dependencies and ressources.
+    - [ ] Error :
+        - [ ] Model name "user" can be used for postgres database 
+            - 'org.postgresql.util.PSQLException: ERROR: syntax error at or near "user"'
+            - 'org.postgresql.util.PSQLException: ERROR: relation "users_roles" does not exist'
 - [x] Define the entities
 - [x] Define the Dtos (Data Transfer Objects)
 - [x] Define dao
