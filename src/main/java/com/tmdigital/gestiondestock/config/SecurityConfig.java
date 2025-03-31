@@ -29,7 +29,7 @@ public class SecurityConfig {
         final String[] routesAllowed = {
             APP_ROOT+ "/register",
             APP_ROOT+ "/authenticate",
-            APP_ROOT+ "/companies",
+            APP_ROOT+ "/public/**",
             // // SWAGGER
             "/v3/api-docs/**",
             "/swagger-ui/**",
