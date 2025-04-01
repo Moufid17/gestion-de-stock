@@ -56,7 +56,7 @@ public class CompanyServiceImpl implements CompanyService {
             throw new InvalidEntityException("La société existe déjà.", ErrorCodes.COMPANY_ALREADY_EXIST);
         }
         
-        Optional<Roles> role = rolesRepository.findByRoleName("cmp_admin");
+        Optional<Roles> role = rolesRepository.findByRoleName("CMP_ADMIN");
         if (role.isEmpty()) {
             log.error("(save) Erreur lors de la récupération du rôle.");
             throw new InvalidOperationException("Erreur lors de la création de la société. Contacter le service assistance. Merci", ErrorCodes.COMPANY_NOT_VALID);
@@ -152,7 +152,7 @@ public class CompanyServiceImpl implements CompanyService {
                     .country(dto.getAddress().getCountry())
                     .build())
                 .roles(roles)
-                .idCompany(dto.getId())
+                .companyId(dto.getId())
             .build();
         return userDto;
     }

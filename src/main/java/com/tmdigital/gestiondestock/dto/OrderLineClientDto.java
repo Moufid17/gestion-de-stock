@@ -22,7 +22,7 @@ public class OrderLineClientDto {
     @Builder.Default
     private BigDecimal qty = BigDecimal.ZERO;
 
-    private Integer idCompany;
+    private Integer companyId;
 
     private ArticleDto article;
 
@@ -38,7 +38,7 @@ public class OrderLineClientDto {
                 .id(orderLineClient.getId())
                 .sellPriceInclTax(orderLineClient.getSellPriceInclTax())
                 .qty(orderLineClient.getQty())
-                .idCompany(orderLineClient.getIdCompany())
+                .companyId(orderLineClient.getCompanyId())
                 .article(ArticleDto.fromEntity(orderLineClient.getArticle()))
                 .build();
     }
@@ -51,7 +51,7 @@ public class OrderLineClientDto {
         orderLineClient.setId(orderLineClientDto.getId());
         orderLineClient.setSellPriceInclTax(orderLineClientDto.getSellPriceInclTax());
         orderLineClient.setQty(orderLineClientDto.getQty());
-        orderLineClient.setIdCompany(orderLineClientDto.getIdCompany());
+        orderLineClient.setCompanyId(orderLineClientDto.getCompanyId());
         orderLineClient.setArticle(ArticleDto.toEntity(orderLineClientDto.getArticle()));
         return orderLineClient;
     } 

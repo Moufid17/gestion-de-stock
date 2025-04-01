@@ -34,8 +34,8 @@ public class OrderSupplier extends AbstractEntity {
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
 
-    @Column(name = "idcompany")
-    private Integer idCompany;
+    @Column(name = "companyId")
+    private Integer companyId;
 
     @ManyToOne
     @JoinColumn(name = "id_supplier")

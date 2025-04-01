@@ -35,10 +35,10 @@ public interface UserApi {
     UserDto findById(@PathVariable Integer id);
 
     @GetMapping(value="/email/{email}", produces = MediaType.APPLICATION_JSON_VALUE)
-    UserDto findByEmail(@PathVariable("email") String email);
+    UserDto findByEmail(@PathVariable String email);
 
     @GetMapping(value = "/company/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    List<UserDto> findAllByCompany(@PathVariable("id") Integer idCompany);
+    List<UserDto> findAllByCompany(@PathVariable("id") Integer companyId);
 
     @DeleteMapping(value = "/{id}")
     void delete(@PathVariable Integer id);

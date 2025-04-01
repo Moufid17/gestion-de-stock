@@ -45,7 +45,7 @@ public class StockMovementDto {
                 .sourceMvt(stockMovement.getSourceMvt())
                 .orderId(stockMovement.getOrderId())
                 .orderlineId(stockMovement.getOrderlineId())
-                .companyId(stockMovement.getIdCompany())
+                .companyId(stockMovement.getCompanyId())
                 .build();
     }
 
@@ -62,7 +62,7 @@ public class StockMovementDto {
         stockMovement.setSourceMvt(stockMovementDto.getSourceMvt());
         stockMovement.setOrderId(stockMovementDto.getOrderId());
         stockMovement.setOrderlineId(stockMovementDto.getOrderlineId());
-        stockMovement.setIdCompany(stockMovementDto.getCompanyId());
+        stockMovement.setCompanyId(stockMovementDto.getCompanyId());
         return stockMovement;
     }
 

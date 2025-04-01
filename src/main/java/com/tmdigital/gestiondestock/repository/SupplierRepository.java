@@ -11,6 +11,6 @@ public interface SupplierRepository extends CrudRepository<Supplier, Integer> {
     @Override
     List<Supplier> findAll();
     
-    List<Supplier> findAllByIdCompany(Integer id);
+    List<Supplier> findAllByCompanyId(Integer companyId);
 
 }

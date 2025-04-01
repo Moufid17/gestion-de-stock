@@ -12,15 +12,15 @@ public class ExtendUser extends User {
 
     @Setter
     @Getter
-    private String idCompany;
+    private String companyId;
 
     public ExtendUser(String username, String password, Collection<? extends GrantedAuthority> authorities) {
         super(username, password, authorities);
     }
     
-    public ExtendUser(String username, String password, Collection<? extends GrantedAuthority> authorities, String idCompany) {
+    public ExtendUser(String username, String password, Collection<? extends GrantedAuthority> authorities, String companyId) {
         super(username, password, authorities);
-        this.idCompany = idCompany;
+        this.companyId = companyId;
     }
 
 }

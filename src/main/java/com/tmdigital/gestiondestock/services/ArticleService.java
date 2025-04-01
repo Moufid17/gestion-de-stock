@@ -23,7 +23,7 @@ public interface ArticleService {
 
     List<ArticleDto> findAll();
     
-    List<ArticleDto> findAllArticleByCompany(Integer idCompany);
+    List<ArticleDto> findAllArticleByCompany(Integer companyId);
     
     List<ArticleDto> findAllArticleByCategory(Integer idCategory);
 

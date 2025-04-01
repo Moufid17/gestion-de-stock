@@ -65,7 +65,7 @@ public class OrderSupplierServiceImpl implements OrderSupplierService {
             throw new InvalidEntityException("La commande n'est pas valide", ErrorCodes.ORDER_SUPPLIER_NOT_VALID, errors);
         }
 
-        if (null == dto.getIdCompany()) {
+        if (null == dto.getCompanyId()) {
             log.error("Impossible de créer une commande sans entreprise");
             throw new InvalidEntityException("Impossible de créer une commande sans entreprise", ErrorCodes.COMPANY_NOT_FOUND);
         }
@@ -114,7 +114,7 @@ public class OrderSupplierServiceImpl implements OrderSupplierService {
             
             OrderLineSupplier orderLineSupplier = OrderLineSupplierDto.toEntity(orderLine);
             orderLineSupplier.setOrderSupplier(savedOrderSupplier);
-            orderLineSupplier.setIdCompany(dto.getIdCompany());
+            orderLineSupplier.setCompanyId(dto.getCompanyId());
             if (null == orderLine.getSellPriceInclTax()) {
                 orderLineSupplier.setSellPriceInclTax(articleDto.getSellPriceInclTax());
             }
@@ -159,7 +159,7 @@ public class OrderSupplierServiceImpl implements OrderSupplierService {
 
         OrderLineSupplier newOrderLineSupplier = OrderLineSupplierDto.toEntity(dto);
         newOrderLineSupplier.setOrderSupplier(OrderSupplierDto.toEntity(orderSupplierDto));
-        newOrderLineSupplier.setIdCompany(orderSupplierDto.getIdCompany());
+        newOrderLineSupplier.setCompanyId(orderSupplierDto.getCompanyId());
         newOrderLineSupplier.setSellPriceInclTax(articleDto.getSellPriceInclTax());
         OrderLineSupplierDto newOrderLineSupplierDto = OrderLineSupplierDto.fromEntity(orderLineSupplierRepository.save(newOrderLineSupplier));
 
@@ -240,7 +240,7 @@ public class OrderSupplierServiceImpl implements OrderSupplierService {
             return null;
         }
 
-        return orderSupplierRepository.findAllByIdCompany(id).stream()
+        return orderSupplierRepository.findAllByCompanyId(id).stream()
                 .map(OrderSupplierDto::fromEntity)
                 .collect(Collectors.toList());
     }
@@ -467,7 +467,7 @@ public class OrderSupplierServiceImpl implements OrderSupplierService {
             .sourceMvt(MovementSource.ORDER_SUPPLIER)
             .orderId(orderSupplierDto.getId())
             .orderlineId(orderLineSupplierDto.getId())
-            .companyId(orderSupplierDto.getIdCompany())
+            .companyId(orderSupplierDto.getCompanyId())
             .build();
 
         stockMovementService.stockIn(stockMovementDto);

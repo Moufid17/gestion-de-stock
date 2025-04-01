@@ -47,7 +47,7 @@ public class UserServiceImpl implements UserService {
             throw new InvalidEntityException("L'utilisateur n'est pas valide", ErrorCodes.USER_NOT_VALID, errors);
         }
 
-        Optional<Company> company = companyRepository.findById(dto.getIdCompany());
+        Optional<Company> company = companyRepository.findById(dto.getCompanyId());
         if (!company.isPresent()) {
             throw new NotFoundEntityException("Cette société n'existe pas.", ErrorCodes.COMPANY_NOT_FOUND);
         }

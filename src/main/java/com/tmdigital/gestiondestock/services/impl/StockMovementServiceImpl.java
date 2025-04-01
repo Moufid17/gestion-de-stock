@@ -132,7 +132,7 @@ public class StockMovementServiceImpl implements StockMovementService{
 
     @Override
     public List<StockMovementDto> findAllByCompanyId(Integer id) {
-        return stockMovementRepository.findAllByIdCompany(id).stream()
+        return stockMovementRepository.findAllByCompanyId(id).stream()
             .map(StockMovementDto::fromEntity)
             .collect(Collectors.toList());
     }

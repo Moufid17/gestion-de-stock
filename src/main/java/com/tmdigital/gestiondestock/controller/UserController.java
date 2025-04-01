@@ -40,8 +40,8 @@ public class UserController implements UserApi {
     }
 
     @Override
-    public List<UserDto> findAllByCompany(Integer idCompany) {
-        return userService.findAllByCompany(idCompany);
+    public List<UserDto> findAllByCompany(Integer companyId) {
+        return userService.findAllByCompany(companyId);
     }
 
     @Override

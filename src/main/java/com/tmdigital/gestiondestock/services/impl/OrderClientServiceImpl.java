@@ -67,7 +67,7 @@ public class OrderClientServiceImpl implements OrderClientService {
         }
 
 
-        if (null == dto.getIdCompany()) {
+        if (null == dto.getCompanyId()) {
             log.error("Impossible de créer une commande sans entreprise");
             throw new InvalidEntityException("Impossible de créer une commande sans entreprise", ErrorCodes.COMPANY_NOT_FOUND);
         }
@@ -129,7 +129,7 @@ public class OrderClientServiceImpl implements OrderClientService {
 
             OrderLineClient orderLineClient = OrderLineClientDto.toEntity(orderLine);
             orderLineClient.setOrderClient(savedOrderClient);
-            orderLineClient.setIdCompany(dto.getIdCompany());
+            orderLineClient.setCompanyId(dto.getCompanyId());
             if (null == orderLine.getSellPriceInclTax()) {
                 orderLineClient.setSellPriceInclTax(articleDto.getSellPriceInclTax());
             }
@@ -143,7 +143,7 @@ public class OrderClientServiceImpl implements OrderClientService {
                 .typeMvt(StockMovementType.OUTPUT)
                 .sourceMvt(MovementSource.ORDER_CLIENT)
                 .orderId(savedOrderClient.getId())
-                .companyId(dto.getIdCompany())
+                .companyId(dto.getCompanyId())
                 .build();
 
             stockMovementService.stockOut(stockMovementDto);
@@ -184,7 +184,7 @@ public class OrderClientServiceImpl implements OrderClientService {
 
         OrderLineClient newOrderLineClient = OrderLineClientDto.toEntity(dto);
         newOrderLineClient.setOrderClient(OrderClientDto.toEntity(orderClientDto));
-        newOrderLineClient.setIdCompany(orderClientDto.getIdCompany());
+        newOrderLineClient.setCompanyId(orderClientDto.getCompanyId());
         newOrderLineClient.setSellPriceInclTax(articleDto.getSellPriceInclTax());
         orderLineClientRepository.save(newOrderLineClient);
 

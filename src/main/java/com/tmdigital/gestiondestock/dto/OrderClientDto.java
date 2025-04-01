@@ -25,7 +25,7 @@ public class OrderClientDto {
 
     private OrderStatus status;
 
-    private Integer idCompany;
+    private Integer companyId;
 
     private ClientDto client;
 
@@ -48,7 +48,7 @@ public class OrderClientDto {
                 .code(orderClient.getCode())
                 .dateCommande(orderClient.getDateCommande())
                 .status(orderClient.getStatus())
-                .idCompany(orderClient.getIdCompany())
+                .companyId(orderClient.getCompanyId())
                 .client(ClientDto.fromEntity(orderClient.getClient()))
                 .orderLineClients(orderLineClientsList)
                 .build();
@@ -71,7 +71,7 @@ public class OrderClientDto {
         orderClient.setCode(orderClientDto.getCode());
         orderClient.setDateCommande(orderClientDto.getDateCommande());
         orderClient.setStatus(orderClientDto.getStatus());
-        orderClient.setIdCompany(orderClientDto.getIdCompany());
+        orderClient.setCompanyId(orderClientDto.getCompanyId());
         orderClient.setClient(ClientDto.toEntity(orderClientDto.getClient()));
         orderClient.setOrderLineClients(orderLineClientsList);
         return orderClient;

@@ -20,7 +20,7 @@ public class OrderLineSupplierDto {
     @Builder.Default
     private BigDecimal qty = BigDecimal.ZERO;
 
-    private Integer idCompany;
+    private Integer companyId;
 
     private ArticleDto article;
 
@@ -35,7 +35,7 @@ public class OrderLineSupplierDto {
             .id(orderLineSupplier.getId())
             .sellPriceInclTax(orderLineSupplier.getSellPriceInclTax())
             .qty(orderLineSupplier.getQty())
-            .idCompany(orderLineSupplier.getIdCompany())
+            .companyId(orderLineSupplier.getCompanyId())
             .article(ArticleDto.fromEntity(orderLineSupplier.getArticle()))
             .build();
     }
@@ -48,7 +48,7 @@ public class OrderLineSupplierDto {
         orderLineSupplier.setId(orderLineSupplierDto.getId());
         orderLineSupplier.setSellPriceInclTax(orderLineSupplierDto.getSellPriceInclTax());
         orderLineSupplier.setQty(orderLineSupplierDto.getQty());
-        orderLineSupplier.setIdCompany(orderLineSupplierDto.getIdCompany());
+        orderLineSupplier.setCompanyId(orderLineSupplierDto.getCompanyId());
         orderLineSupplier.setArticle(ArticleDto.toEntity(orderLineSupplierDto.getArticle()));
         return orderLineSupplier;
     }

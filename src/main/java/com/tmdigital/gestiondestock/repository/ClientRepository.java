@@ -11,5 +11,5 @@ public interface ClientRepository extends CrudRepository<Client, Integer> {
     @Override
     List<Client> findAll();
 
-    List<Client> findAllByIdCompany(Integer idCompany);
+    List<Client> findAllByCompanyId(Integer companyId);
 }

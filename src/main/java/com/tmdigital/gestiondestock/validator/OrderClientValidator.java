@@ -23,7 +23,7 @@ public class OrderClientValidator {
             errors.add("Veuillez renseigner le code de la commande");
         }
 
-        if (orderClientDto.getIdCompany() == null ) {
+        if (orderClientDto.getCompanyId() == null ) {
             errors.add("Veuillez renseigner les données de l'auteur de la commande");
         }
 
