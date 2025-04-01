@@ -80,7 +80,7 @@ public class SalesServiceImpl implements SalesService {
 
         dto.getSalesLines().forEach(orderLine -> {
             SalesLine salesLine = SalesLineDto.toEntity(orderLine);
-            salesLine.setIdCompany(dto.getIdCompany());
+            salesLine.setCompanyId(dto.getCompanyId());
             salesLineRepository.save(salesLine);
 
             // [ ] Mise à jour le Mvt de stock en sortie
@@ -114,13 +114,13 @@ public class SalesServiceImpl implements SalesService {
     }
 
     @Override
-    public List<SalesDto> findAllByCompany(Integer idCompany) {
-        if (idCompany == null) {
+    public List<SalesDto> findAllByCompany(Integer companyId) {
+        if (companyId == null) {
             log.error("L'identifiant est nul");
             return null;
         }
 
-        return salesRepository.findAllByIdCompany(idCompany).stream()
+        return salesRepository.findAllByCompanyId(companyId).stream()
             .map(SalesDto::fromEntity)
             .collect(Collectors.toList());
     }

@@ -67,7 +67,7 @@ public class SupplierServiceImpl implements SupplierService {
             return null;
         }
 
-        return supplierRepository.findAllByIdCompany(id)
+        return supplierRepository.findAllByCompanyId(id)
                 .stream()
                 .map(SupplierDto::fromEntity)
                 .collect(Collectors.toList());

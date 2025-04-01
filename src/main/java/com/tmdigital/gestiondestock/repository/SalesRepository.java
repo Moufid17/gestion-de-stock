@@ -14,5 +14,5 @@ public interface SalesRepository extends CrudRepository<Sales, Integer> {
     @Override
     List<Sales> findAll();
 
-    List<Sales> findAllByIdCompany(Integer idCompany);
+    List<Sales> findAllByCompanyId(Integer companyId);
 }

@@ -170,13 +170,13 @@ public class ArticleServiceImpl implements ArticleService {
                 .collect(Collectors.toList());
     };
     
-    public List<ArticleDto> findAllArticleByCompany(Integer idCompany) {
-        if (idCompany == null) {
+    public List<ArticleDto> findAllArticleByCompany(Integer companyId) {
+        if (companyId == null) {
             log.error("L'identifiant est nul");
             throw new InvalidOperationException("L'identifiant est nul", ErrorCodes.ARTICLE_NOT_VALID);
         }
 
-        List<Article> allArticlesByCompany = articleRepository.findAllByCompany(idCompany);
+        List<Article> allArticlesByCompany = articleRepository.findAllByCompany(companyId);
 
         if (allArticlesByCompany.isEmpty()) {
             return new ArrayList<>();

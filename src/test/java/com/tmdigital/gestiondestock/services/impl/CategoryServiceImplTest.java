@@ -47,7 +47,7 @@ public class CategoryServiceImplTest {
             .id(1)
             .code("Test Code")
             .designation("Test Designation")
-            .idCompany(1)
+            .companyId(1)
             .build();
     }
 
@@ -63,7 +63,7 @@ public class CategoryServiceImplTest {
         assertEquals(categoryDto.getId(), savedCategory.getId());
         assertEquals(categoryDto.getCode(), savedCategory.getCode());
         assertEquals(categoryDto.getDesignation(), savedCategory.getDesignation());
-        assertEquals(categoryDto.getIdCompany(), savedCategory.getIdCompany());
+        assertEquals(categoryDto.getCompanyId(), savedCategory.getCompanyId());
         verify(categoryRepository, times(1)).save(any(Category.class));
     }
 
@@ -91,7 +91,7 @@ public class CategoryServiceImplTest {
         assertEquals(categoryDto.getId(), foundCategory.getId());
         assertEquals(categoryDto.getCode(), foundCategory.getCode());
         assertEquals(categoryDto.getDesignation(), foundCategory.getDesignation());
-        assertEquals(categoryDto.getIdCompany(), foundCategory.getIdCompany());
+        assertEquals(categoryDto.getCompanyId(), foundCategory.getCompanyId());
         verify(categoryRepository, atMostOnce()).findById(categoryDto.getId());
     }
 
@@ -128,7 +128,7 @@ public class CategoryServiceImplTest {
         assertEquals(categoryDto.getId(), foundCategory.getId());
         assertEquals(categoryDto.getCode(), foundCategory.getCode());
         assertEquals(categoryDto.getDesignation(), foundCategory.getDesignation());
-        assertEquals(categoryDto.getIdCompany(), foundCategory.getIdCompany());
+        assertEquals(categoryDto.getCompanyId(), foundCategory.getCompanyId());
         verify(categoryRepository, atMostOnce()).findById(categoryDto.getId());
     }
 

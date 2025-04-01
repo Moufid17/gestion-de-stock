@@ -23,7 +23,7 @@ public class SalesLineDto {
     
     private BigDecimal qty;
 
-    private Integer idCompany;
+    private Integer companyId;
 
     public static SalesLineDto fromEntity(SalesLine salesLine) {
         if (salesLine == null) {
@@ -33,7 +33,7 @@ public class SalesLineDto {
                 .id(salesLine.getId())
                 .sellPriceInclTax(salesLine.getSellPriceInclTax())
                 .qty(salesLine.getQty())
-                .idCompany(salesLine.getIdCompany())
+                .companyId(salesLine.getCompanyId())
                 .article(ArticleDto.fromEntity(salesLine.getArticle()))
                 .build();
     }
@@ -46,7 +46,7 @@ public class SalesLineDto {
         salesLine.setId(salesLineDto.getId());
         salesLine.setSellPriceInclTax(salesLineDto.getSellPriceInclTax());
         salesLine.setQty(salesLineDto.getQty());
-        salesLine.setIdCompany(salesLineDto.getIdCompany());
+        salesLine.setCompanyId(salesLineDto.getCompanyId());
         salesLine.setArticle(ArticleDto.toEntity(salesLineDto.getArticle()));
         return salesLine;
     }

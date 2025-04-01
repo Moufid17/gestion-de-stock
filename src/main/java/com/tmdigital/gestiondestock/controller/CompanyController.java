@@ -10,7 +10,7 @@ import com.tmdigital.gestiondestock.dto.CompanyDto;
 import com.tmdigital.gestiondestock.services.CompanyService;
 
 @RestController
-@RequestMapping("/api/v1/companies")
+@RequestMapping("/api/v1")
 public class CompanyController implements CompanyApi {
 
     private final CompanyService companyService;

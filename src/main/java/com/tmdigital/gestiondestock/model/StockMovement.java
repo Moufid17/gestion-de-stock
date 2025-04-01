@@ -47,7 +47,7 @@ public class StockMovement extends AbstractEntity {
     @Column(name = "orderlineId")
     private Integer orderlineId;
 
-    @Column(name = "idcompany")
-    private Integer idCompany;
+    @Column(name = "companyId")
+    private Integer companyId;
     
 }

@@ -67,13 +67,13 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
-    public List<ClientDto> findAllByCompany(Integer idCompany) {
-        if (idCompany == null) {
+    public List<ClientDto> findAllByCompany(Integer companyId) {
+        if (companyId == null) {
             log.error("L'identifiant est nul");
             return null;
         }
 
-        return clientRepository.findAllByIdCompany(idCompany)
+        return clientRepository.findAllByCompanyId(companyId)
             .stream()
             .map(ClientDto::fromEntity)
             .toList();

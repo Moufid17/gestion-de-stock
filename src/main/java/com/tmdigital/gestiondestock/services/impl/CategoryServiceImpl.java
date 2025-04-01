@@ -80,13 +80,13 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public List<CategoryDto> findAllByCompany(Integer idCompany) {
-        if (idCompany == null) {
+    public List<CategoryDto> findAllByCompanyId(Integer companyId) {
+        if (companyId == null) {
             log.error("L'identifiant est nul");
             return null;
         }
 
-        return categoryRepository.findAllByIdCompany(idCompany).stream()
+        return categoryRepository.findAllByCompanyId(companyId).stream()
             .map(CategoryDto::fromEntity)
             .collect(Collectors.toList());
     }

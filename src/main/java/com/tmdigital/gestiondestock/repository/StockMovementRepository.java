@@ -24,8 +24,8 @@ public interface StockMovementRepository extends CrudRepository<StockMovement, I
 
     List<StockMovement> findAllBysourceMvt(String sourceMvt);
 
-    @Query("SELECT m FROM StockMovement m WHERE m.idCompany = :idCompany")
-    List<StockMovement> findAllByIdCompany(Integer idCompany);
+    @Query("SELECT m FROM StockMovement m WHERE m.companyId = :companyId")
+    List<StockMovement> findAllByCompanyId(@Param("companyId")Integer companyId);
     
     List<StockMovement> findAll();
 

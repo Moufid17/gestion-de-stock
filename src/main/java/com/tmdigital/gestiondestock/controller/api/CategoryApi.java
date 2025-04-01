@@ -64,7 +64,7 @@ public interface CategoryApi {
         @ApiResponse(responseCode = "404", description = "Category not found"),
     }
     )
-    List<CategoryDto> findAllByCompany(@PathVariable("id") Integer idCompany);
+    List<CategoryDto> findAllByCompany(@PathVariable("id") Integer companyId);
     
     // [ ] Admin route
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)

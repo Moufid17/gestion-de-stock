@@ -1,4 +1,10 @@
 ### Features
+- [ ] Migration to postgresql
+    - [x] setting up docker compose, env file, dependencies and ressources.
+    - [x] Error :
+        - [x] Model name "user" can't be used for postgres database  : change to "app_user"
+            - 'org.postgresql.util.PSQLException: ERROR: syntax error at or near "user"'
+            - 'org.postgresql.util.PSQLException: ERROR: relation "users_roles" does not exist'
 - [x] Define the entities
 - [x] Define the Dtos (Data Transfer Objects)
 - [x] Define dao
@@ -13,22 +19,26 @@
     - [x] GET supplier orders : return "null" for existing order lines
     - [x] GET supplier orders/{id} : return "null" for existing order lines
     - [x] GET suppliers : "GET" method not allowed
+    - [ ] (Unexisting id in tis company used) GET Suppliers/{id} : com.tmdigital.gestiondestock.exception.NotFoundEntityException: Not user with this   email : **** | at com.tmdigital.gestiondestock.services.auth.ApplicationUserDetailsService.lambda$loadUserByUsername$0
+    - [ ] Global errors always return a empty array list.
 
 - [x] Client Order 
     - [x] Edit qte : 
         - [x] Error raised while find order id (OrderClientDto calls OrderLineClientDto.fromEntity while OrderLineClientDto calls OrderClientDto..fromEntity) : dependency loop error
         - [x] dependency loop error
     - [x] Edit client : java.lang.NullPointerException: Cannot invoke "java.util.List.size()" because the return value of "com.tmdigital.gestiondestock.dto.OrderClientDto.getOrderLineClients()" is null
-    - [x] Add order state updating (canceled, In progress, shipped)
+    - [ ] Add order state updating (In progress, shipped)
+        - [ ] Canceled : reset all order lines quantity to zero.
     - [x] Edit an article : Error raised while find order id (OrderClientDto calls OrderLineClientDto.fromEntity while OrderLineClientDto calls OrderClientDto..fromEntity).
     - [x] Delete an article
     - [x] Add an article
     - [x] Retreive client orders lines
     - [x] Prohibit deletion of a cmd line if it is the last one.
-- [x] Supplier order
+- [ ] Supplier order
     - [x] Edit qte
     - [x] Edit Supplier
-    - [x] Update order status (canceled, In progress, shipped)
+    - [ ] Update order status (In progress, shipped)
+        - [ ] Canceled : reset all order lines quantity to zero.
     - [x] Edit an article
     - [x] Delete an article
     - [x] Add an article

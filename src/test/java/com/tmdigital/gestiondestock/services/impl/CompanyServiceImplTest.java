@@ -97,7 +97,7 @@ class CompanyServiceImplTest {
     }
 
     @Test
-    void shouldFindByIdCompanySuccessfully() {
+    void shouldFindByCompanyIdSuccessfully() {
         // Given
         Company company = CompanyDto.toEntity(companyDto);
         //when
@@ -180,7 +180,7 @@ class CompanyServiceImplTest {
                 .state("Ile de France")
                 .country("France")
                 .build())
-            .idCompany(companyDto.getId())
+            .companyId(companyDto.getId())
         .build();
         User user = UserDto.toEntity(userDto, companyRepository, rolesRepository);
         

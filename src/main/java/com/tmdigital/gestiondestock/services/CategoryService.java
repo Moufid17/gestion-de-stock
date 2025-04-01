@@ -14,7 +14,7 @@ public interface CategoryService {
 
     List<CategoryDto> findAll();
     
-    List<CategoryDto> findAllByCompany(Integer idCompany);
+    List<CategoryDto> findAllByCompanyId(Integer companyId);
     
     void delete(Integer id);
 }
