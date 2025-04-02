@@ -1,0 +1,4 @@
+build:
+  docker:
+    web:
+      image: moufidmtr/gstock-api:v1.0
