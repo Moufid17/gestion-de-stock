@@ -21,14 +21,19 @@
     - [x] GET suppliers : "GET" method not allowed
     - [ ] (Unexisting id in tis company used) GET Suppliers/{id} : com.tmdigital.gestiondestock.exception.NotFoundEntityException: Not user with this   email : **** | at com.tmdigital.gestiondestock.services.auth.ApplicationUserDetailsService.lambda$loadUserByUsername$0
     - [ ] Global errors always return a empty array list.
+    - [ ] sign in with empty password (not null) raised error : check empty string char to handle it
+    - [ ] Custum interceptor : get all companies is not filter by company
+        - solution 1 : remove "company" from entites excluded list, so the filter will be apply for all query except request from master admin
+        - solution 2 : ...
 
 - [x] Client Order 
     - [x] Edit qte : 
         - [x] Error raised while find order id (OrderClientDto calls OrderLineClientDto.fromEntity while OrderLineClientDto calls OrderClientDto..fromEntity) : dependency loop error
         - [x] dependency loop error
     - [x] Edit client : java.lang.NullPointerException: Cannot invoke "java.util.List.size()" because the return value of "com.tmdigital.gestiondestock.dto.OrderClientDto.getOrderLineClients()" is null
-    - [ ] Add order state updating (In progress, shipped)
-        - [ ] Canceled : reset all order lines quantity to zero.
+    - [ ] Update order status
+        - [x] In progress, shipped
+        - [*] Canceled : reset all order lines quantity to zero.
     - [x] Edit an article : Error raised while find order id (OrderClientDto calls OrderLineClientDto.fromEntity while OrderLineClientDto calls OrderClientDto..fromEntity).
     - [x] Delete an article
     - [x] Add an article
@@ -37,8 +42,9 @@
 - [ ] Supplier order
     - [x] Edit qte
     - [x] Edit Supplier
-    - [ ] Update order status (In progress, shipped)
-        - [ ] Canceled : reset all order lines quantity to zero.
+    - [ ] Update order status
+        - [x] In progress, shipped
+        - [*] Canceled : reset all order lines quantity to zero.
     - [x] Edit an article
     - [x] Delete an article
     - [x] Add an article
