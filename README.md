@@ -1,5 +1,8 @@
 # Gestion de Stock
-![](https://live.staticflickr.com/65535/54414040675_7a77007a00_k.jpg)
+- [Api Documentation](https://gstock-api-ecc1b0dc7ccb.herokuapp.com/swagger-ui/index.html)
+- [Docker image deployed](https://hub.docker.com/repository/docker/moufidmtr/gstock-api/general)
+  
+[![Api Documentation](https://live.staticflickr.com/65535/54414040675_7a77007a00_k.jpg)](https://gstock-api-ecc1b0dc7ccb.herokuapp.com/swagger-ui/index.html)
 
 ### Description
 
