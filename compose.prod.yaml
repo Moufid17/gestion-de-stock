@@ -1,0 +1,15 @@
+services:
+  gstock-jdk-server-prod:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: 'gstock-api-dev-server'
+    image: gstock-api-dev:${IMAGE_VERSION}
+    ports:
+      - "${SERVER_PORT}:8080"
+    environment:
+      - POSTGRES_URL=${POSTGRES_URL}
+      - FLICKR_API_KEY=${FLICKR_API_KEY}
+      - FLICKR_API_SECRET=${FLICKR_API_SECRET}
+      - FLICKR_OAUTH_ACCESS_TOKEN=${FLICKR_OAUTH_ACCESS_TOKEN}
+      - FLICKR_OAUTH_ACCESS_TOKEN_SECRET=${FLICKR_OAUTH_ACCESS_TOKEN_SECRET}

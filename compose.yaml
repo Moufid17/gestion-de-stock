@@ -1,15 +1,14 @@
 services:
-  gstock-jdk-server:
-    image: openjdk:17-jdk-alpine
-    container_name: 'gstock-jdk-server'
-    working_dir: /app
-    command: ["java", "-jar", "/app/gestion-de-stock-0.0.1-SNAPSHOT.jar"]
+  gstock-local-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: 'gstock-api-local-server'
+    image: gstock-api-local:1.1    
     ports:
       - "8089:8080"
-    volumes:
-      - ./target/gestion-de-stock-0.0.1-SNAPSHOT.jar:/app/gestion-de-stock-0.0.1-SNAPSHOT.jar
     depends_on:
-      gstock-db-postgres :
+      gstock-local-db :
         condition: service_healthy
         restart: true
     environment:
@@ -17,10 +16,14 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_HOST=${POSTGRES_HOST}
+      - FLICKR_API_KEY=${FLICKR_API_KEY}
+      - FLICKR_API_SECRET=${FLICKR_API_SECRET}
+      - FLICKR_OAUTH_ACCESS_TOKEN=${FLICKR_OAUTH_ACCESS_TOKEN}
+      - FLICKR_OAUTH_ACCESS_TOKEN_SECRET=${FLICKR_OAUTH_ACCESS_TOKEN_SECRET}
 
-  gstock-db-postgres:
-    container_name: 'gstock-db-postgres'
-    image: 'postgres:latest'
+  gstock-local-db:
+    container_name: 'gstock-api-local-db'
+    image: 'postgres:17.4'
     environment:
       - POSTGRES_DB=${POSTGRES_DB}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
