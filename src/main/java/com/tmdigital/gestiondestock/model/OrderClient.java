@@ -35,8 +35,8 @@ public class OrderClient extends AbstractEntity {
     @Enumerated(EnumType.STRING)
     private OrderStatus status = OrderStatus.IN_PROGRESS;
 
-    @Column(name = "idcompany")
-    private Integer idCompany;
+    @Column(name = "companyId")
+    private Integer companyId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_client")

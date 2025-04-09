@@ -25,6 +25,7 @@ public class UserDto {
 
     private String email;
 
+    @JsonIgnore
     private String password;
 
     private String photo;
@@ -36,7 +37,7 @@ public class UserDto {
     @JsonIgnore
     private List<String> roles;
 
-    private Integer idCompany;
+    private Integer companyId;
 
     public static UserDto fromEntity (User user) {
         if (user == null) {
@@ -52,7 +53,7 @@ public class UserDto {
             .photo(user.getPhoto())
             .numTel(user.getNumTel())
             .address(AddressDto.fromEntity(user.getAddress()))
-            .idCompany(user.getCompany().getId())
+            .companyId(user.getCompany().getId())
             .build();
     }
 
@@ -76,9 +77,9 @@ public class UserDto {
                 .map(role -> role.get())
                 .collect(Collectors.toList()));
         } else {
-            user.setRoles(rolesRepository.findByRoleName("cmp_default").stream().collect(Collectors.toList()));
+            user.setRoles(rolesRepository.findByRoleName("CMP_DEFAULT").stream().collect(Collectors.toList()));
         }
-        Optional<Company> company = companyRepository.findById(userDto.getIdCompany());
+        Optional<Company> company = companyRepository.findById(userDto.getCompanyId());
         
         user.getRoles().stream().forEach(role -> role.getUsers().add(user));
         if (company.isPresent()) user.setCompany(company.get());

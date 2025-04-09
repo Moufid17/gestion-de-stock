@@ -14,7 +14,7 @@ public interface OrderSupplierRepository extends CrudRepository<OrderSupplier, I
     @Override
     List<OrderSupplier> findAll();
 
-    List<OrderSupplier> findAllByIdCompany(Integer id);
+    List<OrderSupplier> findAllByCompanyId(Integer id);
 
     List<OrderSupplier> findAllBySupplierId(Integer id);
 }

@@ -28,8 +28,8 @@ public class OrderLineClient extends AbstractEntity {
     @Column(name = "qty")
     private BigDecimal qty = BigDecimal.ZERO;
 
-    @Column(name = "idcompany")
-    private Integer idCompany;
+    @Column(name = "companyId")
+    private Integer companyId;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_article")

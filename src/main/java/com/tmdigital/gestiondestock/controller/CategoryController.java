@@ -35,8 +35,8 @@ public class CategoryController implements CategoryApi {
     }
 
     @Override
-    public List<CategoryDto> findAllByCompany(Integer idCompany) {
-        return categoryService.findAllByCompany(idCompany);
+    public List<CategoryDto> findAllByCompany(Integer companyId) {
+        return categoryService.findAllByCompanyId(companyId);
     }
 
     @Override

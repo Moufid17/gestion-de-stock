@@ -24,8 +24,8 @@ public class JwtUtil {
         return extractClaim(token, Claims::getSubject);
     }
 
-    public String extractIdCompany(String token) {
-        return extractClaim(token, claims -> claims.get("idCompany", String.class));
+    public String extractCompanyId(String token) {
+        return extractClaim(token, claims -> claims.get("companyId", String.class));
 
     }
 
@@ -54,7 +54,7 @@ public class JwtUtil {
 
         return Jwts.builder().claims(claims).subject(userDetails.getUsername()).issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10)) // 10 hours
-                .claim("idCompany", userDetails.getIdCompany())
+                .claim("companyId", userDetails.getCompanyId())
                 .signWith(key).compact();
     }
 

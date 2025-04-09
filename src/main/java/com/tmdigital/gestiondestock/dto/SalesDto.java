@@ -18,7 +18,7 @@ public class SalesDto {
 
     private Instant orderDate;
 
-    private Integer idCompany;
+    private Integer companyId;
 
     private String comments;
 
@@ -33,7 +33,7 @@ public class SalesDto {
             .id(sales.getId())
             .code(sales.getCode())
             .orderDate(sales.getOrderDate())
-            .idCompany(sales.getIdCompany())
+            .companyId(sales.getCompanyId())
             .comments(sales.getComments())
             .build();
     }
@@ -47,7 +47,7 @@ public class SalesDto {
         sales.setId(salesDto.getId());
         sales.setCode(salesDto.getCode());
         sales.setOrderDate(salesDto.getOrderDate());
-        sales.setIdCompany(salesDto.getIdCompany());
+        sales.setCompanyId(salesDto.getCompanyId());
         sales.setComments(salesDto.getComments());
         return sales;
     }

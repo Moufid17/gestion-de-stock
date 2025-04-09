@@ -34,13 +34,13 @@ public class ApplicationRequestFilter extends OncePerRequestFilter {
     protected void doFilterInternal(@SuppressWarnings("null") HttpServletRequest request, @SuppressWarnings("null") HttpServletResponse response, @SuppressWarnings("null") FilterChain filterChain) throws ServletException, IOException {
         
         final String authHeader = request.getHeader("Authorization");
-        String idCompany = null; 
-        
+
+        String companyId = null; 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             final String jwt = authHeader.substring(7);
-
+            
             final String username = jwtTokenProvider.extractUsername(jwt);
-            idCompany = jwtTokenProvider.extractIdCompany(jwt);
+            companyId = jwtTokenProvider.extractCompanyId(jwt);
             
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 final UserDetails userDetails = applicationUserDetailsService.loadUserByUsername(username);
@@ -53,7 +53,7 @@ public class ApplicationRequestFilter extends OncePerRequestFilter {
                 }
             }
         }
-        MDC.put("idCompany", idCompany);
+        MDC.put("companyId", companyId);
         filterChain.doFilter(request, response);
     }
     

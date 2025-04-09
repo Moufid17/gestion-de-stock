@@ -38,8 +38,8 @@ public class Client extends AbstractEntity {
     @Column(name = "photo")    
     private String photo;
 
-    @Column(name = "idcompany", nullable = false)
-    private Integer idCompany;
+    @Column(name = "companyId", nullable = false)
+    private Integer companyId;
 
     @OneToMany(mappedBy = "client")
     private List<OrderClient> ordersClient;

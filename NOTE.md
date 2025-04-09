@@ -1,3 +1,6 @@
+### Ressources :
+    [App UX workflow](https://excalidraw.com/#json=VcjqkwtH5qYGLkMrxzYJF,ZdNhzSL050cMiSZhZTl52g)
+
 ### Logique métier :
     - Save Order Client :
         

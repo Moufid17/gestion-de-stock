@@ -27,7 +27,7 @@ public class ClientDto {
     
     private String photo;
 
-    private Integer idCompany;
+    private Integer companyId;
 
     @JsonIgnore
     private List<OrderClientDto> ordersClient;
@@ -43,7 +43,7 @@ public class ClientDto {
             .phonenumber(client.getPhonenumber())
             .address(AddressDto.fromEntity(client.getAddress()))
             .photo(client.getPhoto())
-            .idCompany(client.getIdCompany())
+            .companyId(client.getCompanyId())
             .build();
     }
 
@@ -58,7 +58,7 @@ public class ClientDto {
         client.setPhonenumber(clientDto.getPhonenumber());
         client.setAddress(AddressDto.toEntity(clientDto.getAddress()));
         client.setPhoto(clientDto.getPhoto());
-        client.setIdCompany(clientDto.getIdCompany());
+        client.setCompanyId(clientDto.getCompanyId());
 
         return client;
     }

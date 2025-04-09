@@ -1,4 +1,5 @@
 # Gestion de Stock
+![](https://live.staticflickr.com/65535/54414040675_7a77007a00_k.jpg)
 
 ### Description
 

@@ -4,7 +4,6 @@ import java.time.Instant;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.tmdigital.gestiondestock.model.OrderLineClient;
 import com.tmdigital.gestiondestock.model.OrderLineSupplier;
 import com.tmdigital.gestiondestock.model.OrderStatus;
 import com.tmdigital.gestiondestock.model.OrderSupplier;
@@ -25,7 +24,7 @@ public class OrderSupplierDto {
 
     private OrderStatus status;
 
-    private Integer idCompany;
+    private Integer companyId;
 
     private SupplierDto supplier;
 
@@ -48,7 +47,7 @@ public class OrderSupplierDto {
             .code(orderSupplier.getCode())
             .dateCommande(orderSupplier.getDateCommande())
             .status(orderSupplier.getStatus())
-            .idCompany(orderSupplier.getIdCompany())
+            .companyId(orderSupplier.getCompanyId())
             .supplier(SupplierDto.fromEntity(orderSupplier.getSupplier()))
             .orderLineSupplier(orderLineSupppliersList)
             .build();
@@ -71,7 +70,7 @@ public class OrderSupplierDto {
         orderSupplier.setCode(orderSupplierDto.getCode());
         orderSupplier.setDateCommande(orderSupplierDto.getDateCommande());
         orderSupplier.setStatus(orderSupplierDto.getStatus());
-        orderSupplier.setIdCompany(orderSupplierDto.getIdCompany());
+        orderSupplier.setCompanyId(orderSupplierDto.getCompanyId());
         orderSupplier.setSupplier(SupplierDto.toEntity(orderSupplierDto.getSupplier()));
         orderSupplier.setOrderLineSupplier(orderLineSupppliersList);
         return orderSupplier;

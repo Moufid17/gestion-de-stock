@@ -20,7 +20,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @Tag(name = "Company", description = "The Company endpoint")
 public interface CompanyApi {
 
-    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value="/public/companies", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Create a company", description = "Allow to create a new company", 
         responses = {
             @ApiResponse(responseCode = "201", description = "Company created", content = @Content(mediaType = "application/json", schema = @Schema(implementation = CompanyDto.class))),
@@ -32,7 +32,7 @@ public interface CompanyApi {
     )
     CompanyDto save(@RequestBody CompanyDto dto);
 
-    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/companies/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Retrieve a company", description = "Allow to retrieve a company by its id", 
         responses = {
             @ApiResponse(responseCode = "200", description = "Retrieve a Company with success"),
@@ -43,7 +43,7 @@ public interface CompanyApi {
     )
     CompanyDto findById(@PathVariable Integer id);
 
-    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/companies", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Retrieve all Companies", description = "Allow to retrieve all Companies in the logged-in user's company", 
         responses = {
             @ApiResponse(responseCode = "200", description = "Retrieve with success", content = @Content(mediaType = "application/json", schema = @Schema(implementation = CompanyDto[].class))),
@@ -54,7 +54,7 @@ public interface CompanyApi {
     )
     List<CompanyDto> findAll();
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/companies/{id}")
     @Operation(summary = "Delete a company", description = "Allow to delete a company by its id", 
         responses = {
             @ApiResponse(responseCode = "204", description = "Delete with success"),
