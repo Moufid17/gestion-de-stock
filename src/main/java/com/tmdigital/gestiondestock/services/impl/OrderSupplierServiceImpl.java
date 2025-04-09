@@ -287,16 +287,17 @@ public class OrderSupplierServiceImpl implements OrderSupplierService {
             throw new InvalidOperationException("Le nouveau status est le même que l'ancien status", ErrorCodes.ORDER_SUPPLIER_NOT_VALID);
         }
 
-        orderSupplierDto.setStatus(newStatus);
-
-        OrderSupplierDto.fromEntity(orderSupplierRepository.save(OrderSupplierDto.toEntity(orderSupplierDto)));
-
         // Reset order lines quantity to 0 if the order is canceled 
-        if (newStatus.equals(OrderStatus.CANCELED)) {
+        if (OrderStatus.CANCELED.equals(newStatus)) {
+            log.info("(updateOrderStatus) La commande a été annulée, on remet la quantité de chaque ligne de commande à 0");
             orderSupplierDto.getOrderLineSupplier().forEach(orderLine -> {
                 updateOrderLineQte(orderId, orderLine.getId(), BigDecimal.ZERO);
             });
         }
+
+        orderSupplierDto.setStatus(newStatus);
+
+        OrderSupplierDto.fromEntity(orderSupplierRepository.save(OrderSupplierDto.toEntity(orderSupplierDto)));
     }
 
     @Override
@@ -309,11 +310,6 @@ public class OrderSupplierServiceImpl implements OrderSupplierService {
         if (orderLineId == null) {
             log.error("L'identifiant de la ligne de commande est nul");
             throw new InvalidEntityException("L'identifiant de la ligne de commande est nul", ErrorCodes.ORDER_LINE_SUPPLIER_NOT_FOUND);
-        }
-
-        if (qte == null || BigDecimal.ZERO.compareTo(qte) == 0) {
-            log.error("La quantité est nulle ou égale à zéro");
-            throw new InvalidEntityException("La quantité est nulle ou égale à zéro", ErrorCodes.ORDER_LINE_SUPPLIER_NOT_VALID);
         }
 
         OrderSupplierDto orderSupplierDto = findById(orderId);
