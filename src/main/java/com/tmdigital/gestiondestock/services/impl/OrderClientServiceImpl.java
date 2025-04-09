@@ -282,6 +282,13 @@ public class OrderClientServiceImpl implements OrderClientService {
         orderClientDto.setStatus(newStatus);
 
         OrderClientDto.fromEntity(orderClientRepository.save(OrderClientDto.toEntity(orderClientDto)));
+
+        // Reset order lines quantity to 0 if the order is canceled 
+        if (newStatus.equals(OrderStatus.CANCELED)) {
+            orderClientDto.getOrderLineClients().forEach(orderLine -> {
+                updateOrderLineQte(orderId, orderLine.getId(), BigDecimal.ZERO);
+            });
+        }
     }
 
     @Override

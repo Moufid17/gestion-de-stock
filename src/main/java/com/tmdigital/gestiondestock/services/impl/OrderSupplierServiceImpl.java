@@ -108,6 +108,7 @@ public class OrderSupplierServiceImpl implements OrderSupplierService {
         // Save the order
         OrderSupplier savedOrderSupplier = orderSupplierRepository.save(OrderSupplierDto.toEntity(dto));
 
+        // [ ] Try to use addSupplierOrderLine(...) method to save order lines
         dto.getOrderLineSupplier().forEach(orderLine -> {
             ArticleDto articleDto = ArticleDto.fromEntity(articleRepository.findById(orderLine.getArticle().getId())
                 .orElseThrow(() -> new InvalidEntityException("Aucun article n'a été trouvé avec l'identifiant " + orderLine.getArticle().getId(), ErrorCodes.ARTICLE_NOT_FOUND)));
@@ -289,6 +290,13 @@ public class OrderSupplierServiceImpl implements OrderSupplierService {
         orderSupplierDto.setStatus(newStatus);
 
         OrderSupplierDto.fromEntity(orderSupplierRepository.save(OrderSupplierDto.toEntity(orderSupplierDto)));
+
+        // Reset order lines quantity to 0 if the order is canceled 
+        if (newStatus.equals(OrderStatus.CANCELED)) {
+            orderSupplierDto.getOrderLineSupplier().forEach(orderLine -> {
+                updateOrderLineQte(orderId, orderLine.getId(), BigDecimal.ZERO);
+            });
+        }
     }
 
     @Override
