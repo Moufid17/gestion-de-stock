@@ -17,7 +17,7 @@ public class CustomInterceptor implements StatementInspector {
 
     @Override
     public String inspect(String sql) {
-        final ArrayList<String> excludedEntities = new ArrayList<>(Arrays.asList("company", "roles", "roles_users", "users_roles"));
+        final ArrayList<String> excludedEntities = new ArrayList<>(Arrays.asList( "roles", "roles_users", "users_roles"));
             
 
         if (sql.toLowerCase().startsWith("select")) {
