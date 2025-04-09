@@ -204,11 +204,6 @@ public class OrderClientServiceImpl implements OrderClientService {
             throw new InvalidEntityException("L'identifiant de la ligne de commande est nul", ErrorCodes.ORDER_LINE_CLIENT_NOT_FOUND);
         }
 
-        if (qte == null || BigDecimal.ZERO.compareTo(qte) == 0) {
-            log.error("La quantité est nulle ou égale à zéro");
-            throw new InvalidEntityException("La quantité est nulle ou égale à zéro", ErrorCodes.ORDER_LINE_CLIENT_NOT_VALID);
-        }
-
         OrderClientDto orderClientDto = findById(orderId);
 
         if (orderClientDto == null) {
@@ -279,16 +274,16 @@ public class OrderClientServiceImpl implements OrderClientService {
             throw new InvalidOperationException("Le nouveau status est le même que l'ancien status", ErrorCodes.ORDER_CLIENT_NOT_VALID);
         }
 
-        orderClientDto.setStatus(newStatus);
-
-        OrderClientDto.fromEntity(orderClientRepository.save(OrderClientDto.toEntity(orderClientDto)));
-
         // Reset order lines quantity to 0 if the order is canceled 
-        if (newStatus.equals(OrderStatus.CANCELED)) {
+        if (OrderStatus.CANCELED.equals(newStatus)) {
             orderClientDto.getOrderLineClients().forEach(orderLine -> {
                 updateOrderLineQte(orderId, orderLine.getId(), BigDecimal.ZERO);
             });
         }
+
+        orderClientDto.setStatus(newStatus);
+
+        OrderClientDto.fromEntity(orderClientRepository.save(OrderClientDto.toEntity(orderClientDto)));
     }
 
     @Override

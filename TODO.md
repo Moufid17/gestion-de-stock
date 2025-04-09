@@ -33,7 +33,7 @@
     - [x] Edit client : java.lang.NullPointerException: Cannot invoke "java.util.List.size()" because the return value of "com.tmdigital.gestiondestock.dto.OrderClientDto.getOrderLineClients()" is null
     - [ ] Update order status
         - [x] In progress, shipped
-        - [?] Canceled : reset all order lines quantity to zero.
+        - [x] Canceled : reset all order lines quantity to zero.
     - [x] Edit an article : Error raised while find order id (OrderClientDto calls OrderLineClientDto.fromEntity while OrderLineClientDto calls OrderClientDto..fromEntity).
     - [x] Delete an article
     - [x] Add an article
@@ -44,7 +44,7 @@
     - [x] Edit Supplier
     - [ ] Update order status
         - [x] In progress, shipped
-        - [?] Canceled : reset all order lines quantity to zero.
+        - [x] Canceled : reset all order lines quantity to zero.
     - [x] Edit an article
     - [x] Delete an article
     - [x] Add an article
