@@ -1,12 +1,13 @@
 services:
   gstock-local-server:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: openjdk:17-jdk-alpine
     container_name: 'gstock-api-local-server'
-    image: gstock-api-local:1.1    
+    working_dir: /app
+    command: ["java", "-jar", "/app/app.jar"]
     ports:
       - "8089:8080"
+    volumes:
+      - ./target/gestion-de-stock-0.0.1-SNAPSHOT.jar:/app/app.jar
     depends_on:
       gstock-local-db :
         condition: service_healthy

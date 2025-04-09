@@ -1,13 +1,13 @@
 install:
 	mvn clean install -DskipTests
 
-upfirst:
-	docker compose up --build -d
+build:
+	mvn clean package -DskipTests
 
 check-config:
 	docker compose --env-file .env -f compose.yaml config
 
-up :
+up : build
 	docker compose --env-file .env -f compose.yaml up -d
 
 down: 
@@ -35,5 +35,5 @@ check-config-prod:
 	docker compose --env-file .env.prod -f compose.prod.yaml config
 
 up-prod:
-	docker compose --env-file .env.prod -f compose.prod.yaml up -d
+	docker compose --env-file .env.prod -f compose.prod.yaml up --build -d
 
