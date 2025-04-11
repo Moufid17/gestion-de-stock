@@ -54,7 +54,7 @@ public class OrderClientController implements OrderClientApi {
 
     @Override
     public ResponseEntity<Void> updateArticle(Integer orderId, Integer orderLineId, Integer newArticleId) {
-        orderClientService.updateArticle(orderId, orderLineId, newArticleId);
+        orderClientService.updateOrderLineArticle(orderId, orderLineId, newArticleId);
         return ResponseEntity.noContent().build();
     }
 

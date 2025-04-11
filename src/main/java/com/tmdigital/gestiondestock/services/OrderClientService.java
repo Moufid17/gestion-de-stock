@@ -19,7 +19,7 @@ public interface OrderClientService {
 
     void updateClient(Integer orderId, Integer clientId);
 
-    void updateArticle(Integer orderId, Integer orderLineId, Integer newArticleId);
+    void updateOrderLineArticle(Integer orderId, Integer orderLineId, Integer newArticleId);
 
     OrderClientDto findById(Integer id);
 

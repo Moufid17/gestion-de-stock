@@ -8,26 +8,30 @@ import org.springframework.util.StringUtils;
 import com.tmdigital.gestiondestock.dto.OrderSupplierDto;
 
 public class OrderSupplierValidator {
-    public static List<String> validate(OrderSupplierDto OrderSupplierDto) {
+    public static List<String> validate(OrderSupplierDto orderSupplierDto) {
         List<String> errors = new ArrayList<>();
 
-        if (OrderSupplierDto == null) {
+        if (null == orderSupplierDto) {
             errors.add("Veuillez renseigner le code de la commande");
             errors.add("Veuillez renseigner la date de la commande");
             errors.add("Veuillez renseigner le fournisseur de la commande"); 
             return errors;
         }
         
-        if (!StringUtils.hasLength(OrderSupplierDto.getCode())) {
+        if (!StringUtils.hasLength(orderSupplierDto.getCode())) {
             errors.add("Veuillez renseigner le code de la commande");
         }
 
-        if (OrderSupplierDto.getDateCommande() == null) {
+        if (orderSupplierDto.getDateCommande() == null) {
             errors.add("Veuillez renseigner la date de la commande");
         }
 
-        if (OrderSupplierDto.getSupplier() == null || OrderSupplierDto.getSupplier().getId() == null) {
+        if (null == orderSupplierDto.getSupplier() || null == orderSupplierDto.getSupplier().getId()) {
             errors.add("Veuillez renseigner le fournisseur de la commande");
+        }
+
+        if (null == orderSupplierDto.getCompanyId()) {
+            errors.add("Veuillez renseigner l'identifiant de la société");
         }
 
         return errors;

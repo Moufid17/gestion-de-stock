@@ -31,7 +31,7 @@ public interface OrderSupplierService {
 
     void updateSupplier(Integer orderId, Integer supplierId);
 
-    void updateArticle(Integer orderId, Integer orderLineId, Integer newArticleId);
+    void updateOrderLineArticle(Integer orderId, Integer orderLineId, Integer newArticleId);
 
     void delete(Integer id);
 

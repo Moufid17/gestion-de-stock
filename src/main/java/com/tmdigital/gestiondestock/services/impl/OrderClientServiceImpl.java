@@ -319,7 +319,7 @@ public class OrderClientServiceImpl implements OrderClientService {
     }
 
     @Override
-    public void updateArticle(Integer orderId, Integer orderLineId, Integer newArticleId) {
+    public void updateOrderLineArticle(Integer orderId, Integer orderLineId, Integer newArticleId) {
         if (orderId == null) {
             log.error("L'identifiant de la commande est nul");
             throw new InvalidOperationException("L'identifiant de la commande est nul", ErrorCodes.ORDER_CLIENT_NOT_FOUND);
