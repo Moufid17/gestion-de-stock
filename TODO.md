@@ -1,17 +1,17 @@
 ### Features
-- [ ] Migration to postgresql
+- [x] Migration to postgresql
     - [x] setting up docker compose, env file, dependencies and ressources.
     - [x] Error :
         - [x] Model name "user" can't be used for postgres database  : change to "app_user"
             - 'org.postgresql.util.PSQLException: ERROR: syntax error at or near "user"'
             - 'org.postgresql.util.PSQLException: ERROR: relation "users_roles" does not exist'
 - [x] Define the entities
-- [x] Define the Dtos (Data Transfer Objects)
+- [x] Define Dto
 - [x] Define dao
 - [x] Define validators
 - [x] exceptions
 - [x] Picture management
-- [x] Swagger
+- [ ] Swagger
 
 - Gobal errors
     - [x] GET {articleId} : (/api/v1/articles/2) "Required path variable 'articleId' is not present."
@@ -24,14 +24,14 @@
     - [ ] sign in with empty password (not null) raised error : check empty string char to handle it
     - [ ] Custum interceptor : get all companies is not filter by company
         - [x] solution 1 : remove "company" from entites excluded list, so the filter will be apply for all query except request from master admin
-        - [] solution 2 (endpoint) : Allow access for saas admin or manager only
+        - [ ] solution 2 (endpoint) : Allow access for saas admin or manager only
 
 - [x] Client Order 
     - [x] Edit qte : 
         - [x] Error raised while find order id (OrderClientDto calls OrderLineClientDto.fromEntity while OrderLineClientDto calls OrderClientDto..fromEntity) : dependency loop error
         - [x] dependency loop error
     - [x] Edit client : java.lang.NullPointerException: Cannot invoke "java.util.List.size()" because the return value of "com.tmdigital.gestiondestock.dto.OrderClientDto.getOrderLineClients()" is null
-    - [ ] Update order status
+    - [x] Update order status
         - [x] In progress, shipped
         - [x] Canceled : reset all order lines quantity to zero.
     - [x] Edit an article : Error raised while find order id (OrderClientDto calls OrderLineClientDto.fromEntity while OrderLineClientDto calls OrderClientDto..fromEntity).
@@ -39,10 +39,10 @@
     - [x] Add an article
     - [x] Retreive client orders lines
     - [x] Prohibit deletion of a cmd line if it is the last one.
-- [ ] Supplier order
+- [x] Supplier order
     - [x] Edit qte
     - [x] Edit Supplier
-    - [ ] Update order status
+    - [x] Update order status
         - [x] In progress, shipped
         - [x] Canceled : reset all order lines quantity to zero.
     - [x] Edit an article
