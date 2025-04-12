@@ -54,6 +54,10 @@ public class ArticleValidator {
             errors.add("Veuillez renseigner la catégorie de l'article");
         }
 
+        if (null == articleDto.getCompanyId()) {
+            errors.add("Veuillez renseigner l'entreprise de l'article");
+        }
+
         return errors;
     }
 }

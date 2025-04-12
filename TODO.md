@@ -23,8 +23,9 @@
     - [ ] Global errors always return a empty array list.
     - [ ] sign in with empty password (not null) raised error : check empty string char to handle it
     - [ ] Custum interceptor : get all companies is not filter by company
-        - [x] solution 1 : remove "company" from entites excluded list, so the filter will be apply for all query except request from master admin
+        - [x] solution 1 : remove "company" from entites excluded list, so the filter will be apply for all query except request from master admin (response updated)
         - [ ] solution 2 (endpoint) : Allow access for saas admin or manager only
+    - [x] Error : it create an article with unexisting company id
 
 - [x] Client Order 
     - [x] Edit qte : 

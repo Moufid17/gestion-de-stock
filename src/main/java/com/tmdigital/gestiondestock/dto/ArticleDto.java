@@ -33,7 +33,7 @@ public class ArticleDto {
 
     private CategoryDto category;
 
-    private Integer company;
+    private Integer companyId;
 
     public static ArticleDto fromEntity(Article article) {
         if (article == null) return null;
@@ -47,7 +47,7 @@ public class ArticleDto {
             .vatRates(article.getVatRates())
             .sellPriceInclTax(article.getSellPriceInclTax())
             .photo(article.getPhoto())
-            .company(article.getCompany())
+            .companyId(article.getCompanyId())
             .category(CategoryDto.fromEntity(article.getCategory()))
             .build();
     }
@@ -64,7 +64,7 @@ public class ArticleDto {
         article.setVatRates(articleDto.getVatRates());
         article.setSellPriceInclTax(articleDto.getSellPriceInclTax());
         article.setPhoto(articleDto.getPhoto());
-        article.setCompany(articleDto.getCompany());
+        article.setCompanyId(articleDto.getCompanyId());
         article.setCategory(CategoryDto.toEntity(articleDto.getCategory()));
 
         return article;

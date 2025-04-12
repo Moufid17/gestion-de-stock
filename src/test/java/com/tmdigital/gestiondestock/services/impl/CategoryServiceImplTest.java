@@ -187,7 +187,7 @@ public class CategoryServiceImplTest {
             .sellPriceInclTax(BigDecimal.valueOf(1))
             .photo("Test Photo")
             .category(categoryDto)
-            .company(1)
+            .companyId(1)
         .build();
 
         Article article = ArticleDto.toEntity(articleDto);

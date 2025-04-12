@@ -44,11 +44,11 @@ public class Article  extends AbstractEntity {
     private String photo;
 
     @ManyToOne
-    @JoinColumn(name = "id_category")
+    @JoinColumn(name = "categoryId")
     private Category category;
 
     @Column(name = "companyId")
-    private Integer company;
+    private Integer companyId;
 
     @OneToMany(mappedBy = "article")
     private List<SalesLine> salesLine;

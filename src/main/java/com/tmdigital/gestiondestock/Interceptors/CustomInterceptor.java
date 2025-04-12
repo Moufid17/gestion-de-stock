@@ -29,7 +29,8 @@ public class CustomInterceptor implements StatementInspector {
             String companyId = MDC.get("companyId");
             if (companyId == null) return sql;         
             // Handle the case when the company id is a master company. Try to find a better way to handle this case.       
-            if ("200".equals(companyId)) return sql;               
+            if ("200".equals(companyId)) return sql; 
+            excludedEntities.add("company");             
             
             Integer indexOfFromInSql = sql.indexOf("from") + "from".length();
             String entityName = sql.substring(indexOfFromInSql+1).toLowerCase().split(" ")[0];

@@ -16,5 +16,5 @@ public interface ArticleRepository extends CrudRepository<Article, Integer> {
 
     List<Article> findAllByCategoryId(Integer idCategory);
 
-    List<Article> findAllByCompany(Integer company);
+    List<Article> findAllByCompanyId(Integer companyId);
 }

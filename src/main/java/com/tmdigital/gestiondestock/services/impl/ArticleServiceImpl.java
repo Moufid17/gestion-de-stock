@@ -16,12 +16,12 @@ import com.tmdigital.gestiondestock.exception.InvalidEntityException;
 import com.tmdigital.gestiondestock.exception.NotFoundEntityException;
 import com.tmdigital.gestiondestock.exception.InvalidOperationException;
 import com.tmdigital.gestiondestock.model.Article;
-import com.tmdigital.gestiondestock.model.Category;
 import com.tmdigital.gestiondestock.model.OrderLineClient;
 import com.tmdigital.gestiondestock.model.OrderLineSupplier;
 import com.tmdigital.gestiondestock.model.SalesLine;
 import com.tmdigital.gestiondestock.repository.ArticleRepository;
 import com.tmdigital.gestiondestock.repository.CategoryRepository;
+import com.tmdigital.gestiondestock.repository.CompanyRepository;
 import com.tmdigital.gestiondestock.repository.OrderLineClientRepository;
 import com.tmdigital.gestiondestock.repository.OrderLineSupplierRepository;
 import com.tmdigital.gestiondestock.repository.SalesLineRepository;
@@ -39,8 +39,10 @@ public class ArticleServiceImpl implements ArticleService {
     private OrderLineClientRepository orderLineClientRepository;
     private OrderLineSupplierRepository orderLineSupplierRepository;
     private CategoryRepository categoryRepository;
+    private CompanyRepository companyRepository;
 
-    public ArticleServiceImpl(ArticleRepository articleRepository, SalesLineRepository salesLineRepository, OrderLineClientRepository orderLineClientRepository, OrderLineSupplierRepository orderLineSupplierRepository, CategoryRepository categoryRepository) {
+    public ArticleServiceImpl(ArticleRepository articleRepository, SalesLineRepository salesLineRepository, OrderLineClientRepository orderLineClientRepository, OrderLineSupplierRepository orderLineSupplierRepository, CategoryRepository categoryRepository, CompanyRepository companyRepository) {
+        this.companyRepository = companyRepository;
         this.articleRepository = articleRepository;
         this.salesLineRepository = salesLineRepository;
         this.orderLineClientRepository = orderLineClientRepository;
@@ -50,7 +52,6 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Override
     public ArticleDto save(ArticleDto dto) {
-        
         List<String> errors = ArticleValidator.validate(dto);
         if (!errors.isEmpty()) {
             log.error("L'objet n'est pas valide {}", dto);
@@ -58,11 +59,21 @@ public class ArticleServiceImpl implements ArticleService {
         }
 
         // CHECK IF THE CATEGORY EXISTS
-        Optional<Category> category = categoryRepository.findById(dto.getCategory().getId());
-
-        if (!category.isPresent()) {
+        if (categoryRepository.findById(dto.getCategory().getId()).isEmpty()) {
             log.warn("La category avec l'ID {} n'existe pas.", dto.getCategory().getId());
-            throw new InvalidEntityException("La category avec l'ID " + dto.getCategory().getId() + " n'existe pas.", ErrorCodes.CATEGORY_NOT_FOUND);
+            throw new InvalidEntityException("La categorie " + dto.getCategory().getId() + " n'existe pas.", ErrorCodes.CATEGORY_NOT_FOUND);
+        }
+
+        // CHECK IF THE COMPANY EXISTS
+        if (companyRepository.findById(dto.getCompanyId()).isEmpty()) {
+            log.warn("La company avec l'ID {} n'existe pas.", dto.getCompanyId());
+            throw new InvalidEntityException("La société " + dto.getCompanyId() + " n'existe pas.", ErrorCodes.COMPANY_NOT_FOUND);
+        }
+        
+        // CHECK CODE DUPLICATE
+        if (articleRepository.findArticleByCode(dto.getCode()).isPresent()) {
+            log.warn("L'article avec le code {} existe déjà.", dto.getCode());
+            throw new InvalidEntityException("L'article avec le code " + dto.getCode() + " existe déjà.", ErrorCodes.ARTICLE_ALREADY_IN_USE);
         }
 
         return ArticleDto.fromEntity(
@@ -83,7 +94,8 @@ public class ArticleServiceImpl implements ArticleService {
 
         if (articleRetreived.isEmpty()) {
             log.error("L'article avec l'id = {} n'existe pas.", id);
-            throw new NotFoundEntityException("L'article avec l'id = " + id + ", n'existe pas.", ErrorCodes.ARTICLE_NOT_FOUND);
+            return null;
+            // throw new NotFoundEntityException("L'article avec l'id = " + id + ", n'existe pas.", ErrorCodes.ARTICLE_NOT_FOUND);
         }
                 
         return ArticleDto.fromEntity(articleRetreived.get());
@@ -176,7 +188,7 @@ public class ArticleServiceImpl implements ArticleService {
             throw new InvalidOperationException("L'identifiant est nul", ErrorCodes.ARTICLE_NOT_VALID);
         }
 
-        List<Article> allArticlesByCompany = articleRepository.findAllByCompany(companyId);
+        List<Article> allArticlesByCompany = articleRepository.findAllByCompanyId(companyId);
 
         if (allArticlesByCompany.isEmpty()) {
             return new ArrayList<>();
