@@ -8,6 +8,8 @@ import com.tmdigital.gestiondestock.model.OrderLineClient;
 
 public interface OrderLineClientRepository extends CrudRepository<OrderLineClient, Integer> {
 
+    OrderLineClient findByOrderClientIdAndArticleId(Integer orderClientId, Integer articleId);
+
     List<OrderLineClient> findAllByOrderClientId(Integer idOrderClient);
     
     List<OrderLineClient> findAllByArticleId(Integer idOrderClient);

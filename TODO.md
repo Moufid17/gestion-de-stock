@@ -71,8 +71,8 @@
         - [x] delete order
     - [ ] Order client : 
         - [ ] update stock : -
-        - [ ] set stock mvt according to order source.
-        - [ ] add order line
+        - [x] set stock mvt according to order source.
+        - [*] add order line
         - [ ] update order (quantity , article )
         - [ ] delete order line
         - [ ] delete order
