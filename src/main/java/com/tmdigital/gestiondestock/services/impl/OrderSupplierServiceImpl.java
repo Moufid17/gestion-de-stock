@@ -68,13 +68,22 @@ public class OrderSupplierServiceImpl implements OrderSupplierService {
             throw new InvalidEntityException("La commande n'est pas valide", ErrorCodes.ORDER_SUPPLIER_NOT_VALID, errors);
         }
 
-        // Check if the order lines are valid
+        // check if order is already delivered or canceled
+        if (null != dto.getId()) checkStatus(dto);
+
+        // Check supplier
+        Optional<Supplier> supplier = supplierRepository.findById(dto.getSupplier().getId());
+        if (supplier.isEmpty()) {
+            log.warn("L'identifiant {}  n'est pas valide", dto.getSupplier().getId());
+            throw new InvalidEntityException("Le fournisseur n'existe pas", ErrorCodes.SUPPLIER_NOT_FOUND);
+        }
+
+        // Check order lines
         if (null == dto.getOrderLineSupplier() || dto.getOrderLineSupplier().isEmpty()) {
             log.warn("Impossible d'enregister une commande avec des lignes de commandes nulles.");
             throw new InvalidEntityException("Impossible d'enregister une commande avec des lignes de commandes nulles.", ErrorCodes.ORDER_SUPPLIER_NOT_VALID, errors);
         }
 
-        // Check if the order lines are valid
         Set<String> errorsOrderLine = new HashSet<>();
             
         dto.getOrderLineSupplier().forEach(orderLine -> {
@@ -86,25 +95,16 @@ public class OrderSupplierServiceImpl implements OrderSupplierService {
             throw new InvalidEntityException("Une ligne de commande n'est pas valide ou un L'article n'existe pas.", ErrorCodes.ORDER_SUPPLIER_NOT_VALID, new ArrayList<>(errorsOrderLine));
         }
 
-        // check if the order is already delivered or canceled
-        if (null != dto.getId()) checkStatus(dto);
-
-        // Check if the supplier exists
-        Optional<Supplier> supplier = supplierRepository.findById(dto.getSupplier().getId());
-        if (supplier.isEmpty()) {
-            log.warn("L'identifiant {}  n'est pas valide", dto.getSupplier().getId());
-            throw new InvalidEntityException("Le fournisseur n'existe pas", ErrorCodes.SUPPLIER_NOT_FOUND);
-        }
-
         if (null == dto.getStatus()) dto.setStatus(OrderStatus.IN_PROGRESS);
 
         // Save the order
         OrderSupplier savedOrderSupplier = orderSupplierRepository.save(OrderSupplierDto.toEntity(dto));
 
         // Add the order lines to the order
-        dto.getOrderLineSupplier().forEach(orderLine -> {
-            addOrderLine(savedOrderSupplier.getId(), orderLine);
-        });
+        List<OrderLineSupplier> orderLineSupplierList = dto.getOrderLineSupplier().stream()
+            .map(orderline -> addOrderLine(savedOrderSupplier.getId(), orderline).getValue())
+            .collect(Collectors.toList());
+        savedOrderSupplier.setOrderLineSupplier(orderLineSupplierList);
         
         return OrderSupplierDto.fromEntity(savedOrderSupplier);
     }
@@ -141,9 +141,9 @@ public class OrderSupplierServiceImpl implements OrderSupplierService {
 
     @Override
     public OrderSupplierDto findByCode(String code) {
-        if (!StringUtils.hasLength(code)) {
-            log.error("L'identifiant est nul");
-            return null;
+        if (null == code || !StringUtils.hasLength(code)) {
+            log.error("Le code de la commande est nul");
+            throw new InvalidOperationException("Order code is required", ErrorCodes.ORDER_SUPPLIER_NOT_FOUND);
         }
 
         Optional<OrderSupplier> orderSupplierRetreived = orderSupplierRepository.findByCode(code);
@@ -197,7 +197,7 @@ public class OrderSupplierServiceImpl implements OrderSupplierService {
         List<OrderLineSupplier> orderLineSupplierList = OrderSupplierDto.toEntity(orderSupplierDto).getOrderLineSupplier();
 
         // check if the order has order lines
-        if (orderLineSupplierList == null || orderLineSupplierList.isEmpty()) {
+        if (null == orderLineSupplierList || orderLineSupplierList.isEmpty()) {
             log.info("Aucune ligne de commande n'a été trouvée pour la commande d'identifiant {}", orderId);
             return new ArrayList<>();
         }
@@ -404,7 +404,7 @@ public class OrderSupplierServiceImpl implements OrderSupplierService {
         }
     }
 
-    private SimpleEntry<OrderSupplierDto ,OrderLineSupplier> addOrderLine (Integer orderId, OrderLineSupplierDto dto) {
+    private SimpleEntry<OrderSupplierDto ,OrderLineSupplier> addOrderLine(Integer orderId, OrderLineSupplierDto dto) {
         OrderSupplierDto orderSupplierDto = findById(orderId);
 
         List<String> errors = OrderLineSupplierValidator.validate(dto);
