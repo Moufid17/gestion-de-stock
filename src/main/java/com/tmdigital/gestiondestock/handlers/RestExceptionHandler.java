@@ -40,6 +40,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
                 .errorCode(ex.getErrorCode())
                 .httpCode(badRequest.value())
                 .message(ex.getMessage())
+                .errors(ex.getErrors())
                 .build();
 
         return new ResponseEntity<>(errorDto, badRequest);
