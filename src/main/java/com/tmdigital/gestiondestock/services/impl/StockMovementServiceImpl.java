@@ -13,6 +13,7 @@ import com.tmdigital.gestiondestock.exception.ErrorCodes;
 import com.tmdigital.gestiondestock.exception.InvalidEntityException;
 import com.tmdigital.gestiondestock.exception.InvalidOperationException;
 import com.tmdigital.gestiondestock.model.Article;
+import com.tmdigital.gestiondestock.model.MovementSource;
 import com.tmdigital.gestiondestock.model.StockMovementType;
 import com.tmdigital.gestiondestock.model.StockMovement;
 import com.tmdigital.gestiondestock.repository.ArticleRepository;
@@ -35,26 +36,22 @@ public class StockMovementServiceImpl implements StockMovementService{
     }
 
     @Override
-    public BigDecimal realStockArticle(Integer idArticle) {
+    public BigDecimal realStockArticle(Integer articleId) {
 
-        if (idArticle == null) {
+        if (null == articleId) {
             log.error("(realStockArticle) Article ID is null");
             throw new InvalidOperationException("Article ID is required", ErrorCodes.ARTICLE_NOT_FOUND);
         }
 
-        Optional<Article> article = articlRepository.findById(idArticle);
-        if (!article.isPresent()) {
-            log.error("Article with id {} was not found in the DB", idArticle);
-            throw new InvalidOperationException("Article with id " + idArticle + " was not found in the DB", ErrorCodes.ARTICLE_NOT_FOUND);
+        if (articlRepository.findById(articleId).isEmpty()) {
+            log.error("Article with id {} was not found in the DB", articleId);
+            throw new InvalidOperationException("Article with id " + articleId + " was not found in the DB", ErrorCodes.ARTICLE_NOT_FOUND);
         }
 
-        List<StockMovement> stockMovements = stockMovementRepository.findAllByArticleId(idArticle);
-        
-        if (stockMovements == null || stockMovements.isEmpty()) {
-            return BigDecimal.ZERO;
-        }
+        List<StockMovement> stockMovements = stockMovementRepository.findAllDeliveredByArticleId(articleId);
+        if (null == stockMovements  || stockMovements.isEmpty()) return BigDecimal.ZERO;
 
-        return stockMovementRepository.stockReel(idArticle);
+        return stockMovementRepository.stockReel(articleId);
     }
 
     @Override
@@ -108,13 +105,25 @@ public class StockMovementServiceImpl implements StockMovementService{
     public StockMovementDto findByOrderIdAndOrderlineId(Integer orderId, Integer orderlineId) {
         Optional<StockMovement> stockMvt = stockMovementRepository.findByOrderIdAndOrderlineId(orderId, orderlineId);
 
-        if (!stockMvt.isPresent()) {
+        if (stockMvt.isEmpty()) {
             log.error("No stockMovement found with orderId = {} and orderlineId = {}", orderId, orderlineId);
             throw new InvalidEntityException("No stockMovement found with orderId = " + orderId + " and orderlineId = " + orderlineId, ErrorCodes.STOCK_MOVEMENT_NOT_FOUND);
         }
         
         return StockMovementDto.fromEntity(stockMvt.get());
-    }  
+    } 
+
+    @Override
+    public StockMovementDto findByOrderIdAndOrderlineIdAndSourceType(Integer orderId, Integer orderlineId, MovementSource sourceType) {
+        if (orderId == null || orderlineId == null || sourceType == null) {
+            log.error("Trying to find stockMovement by null orderId, orderlineId or sourceType");
+            throw new InvalidOperationException("The order id, orderline id and source type are required", ErrorCodes.STOCK_MOVEMENT_NOT_FOUND);
+        }
+        return stockMovementRepository.findByOrderIdAndOrderlineIdAndSourceType(orderId, orderlineId, sourceType)
+            .map(StockMovementDto::fromEntity)
+            .orElseThrow(() -> new InvalidEntityException("No stockMovement found with orderId = " + orderId + " and orderlineId = " + orderlineId + " and sourceType = " + sourceType, ErrorCodes.STOCK_MOVEMENT_NOT_FOUND));
+
+    }
 
     @Override
     public List<StockMovementDto> findAllByTypeMvt(String typeMvt) {

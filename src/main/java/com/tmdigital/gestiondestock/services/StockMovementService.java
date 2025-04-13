@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import com.tmdigital.gestiondestock.dto.StockMovementDto;
+import com.tmdigital.gestiondestock.model.MovementSource;
 
 public interface StockMovementService {
 
@@ -22,6 +23,8 @@ public interface StockMovementService {
     StockMovementDto findById(Integer id);
 
     StockMovementDto findByOrderIdAndOrderlineId(Integer id, Integer orderlineId);
+
+    StockMovementDto findByOrderIdAndOrderlineIdAndSourceType(Integer orderId, Integer orderlineId, MovementSource sourceType);
 
     List<StockMovementDto> findAllByTypeMvt(String typeMvt);
 

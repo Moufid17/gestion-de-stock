@@ -234,6 +234,9 @@ public class OrderSupplierServiceImpl implements OrderSupplierService {
         // [ ] Check if order lines qty is more than 0 before update the status from CANCELED to another status.
         orderSupplierDto.setStatus(newStatus);
 
+        // Mise à jour le Mvt de stock en entrée
+        orderSupplierDto.getOrderLineSupplier().forEach(orderline -> updateStockMovement(orderline, orderSupplierDto));
+
         OrderSupplierDto.fromEntity(orderSupplierRepository.save(OrderSupplierDto.toEntity(orderSupplierDto)));
     }
 
@@ -331,9 +334,10 @@ public class OrderSupplierServiceImpl implements OrderSupplierService {
         orderLineSupplierRepository.save(orderLineSupplier);
 
         // Mise à jour le Mvt de stock en entrée
-        StockMovementDto stockMovementDto = stockMovementService.findByOrderIdAndOrderlineId(orderSupplierDto.getId(), orderLineSupplier.getId());
-        stockMovementDto.setArticle(orderLineSupplierDto.getArticle());
-        stockMovementService.updateIn(stockMovementDto);
+        // StockMovementDto stockMovementDto = stockMovementService.findByOrderIdAndOrderlineId(orderSupplierDto.getId(), orderLineSupplier.getId());
+        // stockMovementDto.setArticle(orderLineSupplierDto.getArticle());
+        // stockMovementService.updateIn(stockMovementDto);
+        updateStockMovement(orderLineSupplierDto, orderSupplierDto);
     }
 
     @Override
@@ -378,6 +382,7 @@ public class OrderSupplierServiceImpl implements OrderSupplierService {
         StockMovementDto stockMovementDto = StockMovementDto.builder()
             .article(orderLineSupplierDto.getArticle())
             .qty(orderLineSupplierDto.getQty())
+            .orderStatus(orderSupplierDto.getStatus())
             .dateMovement(Instant.now())
             .typeMvt(StockMovementType.INPUT)
             .sourceMvt(MovementSource.ORDER_SUPPLIER)
@@ -390,10 +395,11 @@ public class OrderSupplierServiceImpl implements OrderSupplierService {
     }
 
     private void updateStockMovement(OrderLineSupplierDto orderLineSupplierDto, OrderSupplierDto orderSupplierDto) {
-        StockMovementDto stockMovementDto = stockMovementService.findByOrderIdAndOrderlineId(orderSupplierDto.getId(), orderLineSupplierDto.getId());
+        StockMovementDto stockMovementDto = stockMovementService.findByOrderIdAndOrderlineIdAndSourceType(orderSupplierDto.getId(), orderLineSupplierDto.getId(), MovementSource.ORDER_SUPPLIER);
         
-        stockMovementDto.setQty(orderLineSupplierDto.getQty());
-        stockMovementDto.setArticle(orderLineSupplierDto.getArticle());
+        if (stockMovementDto.getQty() != orderLineSupplierDto.getQty()) stockMovementDto.setQty(orderLineSupplierDto.getQty());
+        if (stockMovementDto.getArticle().getId() != orderLineSupplierDto.getArticle().getId()) stockMovementDto.setArticle(orderLineSupplierDto.getArticle());
+        if (stockMovementDto.getOrderStatus() != orderSupplierDto.getStatus()) stockMovementDto.setOrderStatus(orderSupplierDto.getStatus());
         stockMovementService.updateIn(stockMovementDto);
     }
 

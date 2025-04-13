@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.time.Instant;
 
 import com.tmdigital.gestiondestock.model.MovementSource;
+import com.tmdigital.gestiondestock.model.OrderStatus;
 import com.tmdigital.gestiondestock.model.StockMovement;
 import com.tmdigital.gestiondestock.model.StockMovementType;
 
@@ -19,7 +20,9 @@ public class StockMovementDto {
     private ArticleDto article;
 
     private BigDecimal qty;
-    
+
+    private OrderStatus orderStatus;
+
     private Instant dateMovement;
 
     private StockMovementType typeMvt;
@@ -40,6 +43,7 @@ public class StockMovementDto {
                 .id(stockMovement.getId())
                 .article(ArticleDto.fromEntity(stockMovement.getArticle()))
                 .qty(stockMovement.getQty())
+                .orderStatus(stockMovement.getOrderStatus())
                 .dateMovement(stockMovement.getDateMovement())
                 .typeMvt(stockMovement.getTypeMvt())
                 .sourceMvt(stockMovement.getSourceMvt())
@@ -57,6 +61,7 @@ public class StockMovementDto {
         stockMovement.setId(stockMovementDto.getId());
         stockMovement.setArticle(ArticleDto.toEntity(stockMovementDto.getArticle()));
         stockMovement.setQty(stockMovementDto.getQty());
+        stockMovement.setOrderStatus(stockMovementDto.getOrderStatus());
         stockMovement.setDateMovement(stockMovementDto.getDateMovement());
         stockMovement.setTypeMvt(stockMovementDto.getTypeMvt());
         stockMovement.setSourceMvt(stockMovementDto.getSourceMvt());

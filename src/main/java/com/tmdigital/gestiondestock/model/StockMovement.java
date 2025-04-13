@@ -29,6 +29,10 @@ public class StockMovement extends AbstractEntity {
 
     @Column(name = "qty")
     private BigDecimal qty;
+
+    @Column(name = "orderstatus")
+    @Enumerated(EnumType.STRING)
+    private OrderStatus orderStatus;
     
     @Column(name = "date_movement")
     private Instant dateMovement = Instant.now();
