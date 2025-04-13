@@ -70,8 +70,7 @@ public class OrderClientServiceImpl implements OrderClientService {
         if (null != dto.getId()) checkStatus(dto);
 
         // Check client
-        Optional<Client> client = clientRepository.findById(dto.getClient().getId());
-        if (!client.isPresent()) {
+        if (clientRepository.findById(dto.getClient().getId()).isEmpty()) {
             log.warn("L'identifiant {}  n'est pas valide", dto.getClient().getId());
             throw new InvalidEntityException("Le client n'existe pas", ErrorCodes.CLIENT_NOT_FOUND);
         }
@@ -89,19 +88,15 @@ public class OrderClientServiceImpl implements OrderClientService {
         });
 
         if (!errorsOrderLine.isEmpty()) {
-            log.warn("Une ligne de commande n'est pas valide ou un L'article n'existe pas.");
-            throw new InvalidEntityException("Une ligne de commande n'est pas valide ou un L'article n'existe pas.", ErrorCodes.ORDER_CLIENT_NOT_VALID, new ArrayList<>(errorsOrderLine));
+            log.warn("Une ligne de commande n'est pas valide.");
+            throw new InvalidEntityException("Une ligne de commande n'est pas valide.", ErrorCodes.ORDER_CLIENT_NOT_VALID, new ArrayList<>(errorsOrderLine));
         }
 
-        // Check if the company have a stock for each article
+        // Check a stock availability for each article
         dto.getOrderLineClients().forEach(orderLine -> {
-            ArticleDto articleDto = ArticleDto.fromEntity(articleRepository.findById(orderLine.getArticle().getId())
-                .orElseThrow(() -> new InvalidEntityException("Aucun article n'a été trouvé avec l'identifiant " + orderLine.getArticle().getId(), ErrorCodes.ARTICLE_NOT_FOUND)));
-
-            BigDecimal stock = stockMovementService.realStockArticle(articleDto.getId());
-            if (null == stock || stock.compareTo(orderLine.getQty()) < 0) {
-                log.error("La quantité en stock de l'article {} est insuffisante", articleDto.getId());
-                throw new InvalidOperationException("La quantité en stock de l'article " + articleDto.getId() + " est insuffisante", ErrorCodes.STOCK_INSUFFICIENT);
+            if (!isAvalaibleStock(orderLine)) {
+                log.error("La quantité en stock de l'article {} est insuffisante", orderLine.getId());
+                throw new InvalidOperationException("La quantité en stock de l'article " + orderLine.getId() + " est insuffisante", ErrorCodes.STOCK_INSUFFICIENT);
             }
         });
 
@@ -121,39 +116,14 @@ public class OrderClientServiceImpl implements OrderClientService {
 
     @Override
     public OrderClientDto addClientOrderLine(Integer orderId, OrderLineClientDto dto) {
-        List<String> errors = OrderLineClientValidator.validate(dto);
-        
-        if (!errors.isEmpty()) {
-            log.error("L'objet n'est pas valide {}", dto);
-            throw new InvalidEntityException("La ligne de commande n'est pas valide", ErrorCodes.ORDER_LINE_CLIENT_NOT_VALID, errors);
-        }
+        SimpleEntry<OrderClientDto, OrderLineClient> orderLineClient = addOrderLine(orderId, dto);
 
-        ArticleDto articleDto = ArticleDto.fromEntity(articleRepository.findById(dto.getArticle().getId())
-            .orElseThrow(() -> new InvalidEntityException("Aucun article n'a été trouvé avec l'identifiant " + dto.getArticle().getId(), ErrorCodes.ARTICLE_NOT_FOUND)));
+        OrderClientDto orderClientDto = orderLineClient.getKey();
+        OrderLineClient orderline = orderLineClient.getValue();
 
-        List<OrderLineClientDto> orderLineClientList = findAllOrderLine(orderId);
-        if (orderLineClientList == null || orderLineClientList.isEmpty()) {
-            log.error("Aucune ligne de commande n'a été trouvée pour la commande d'identifiant {}", orderId);
-            throw new InvalidEntityException("Aucune ligne de commande n'a été trouvée pour la commande d'identifiant " + orderId, ErrorCodes.ORDER_LINE_CLIENT_NOT_FOUND);
-        }        
-                
-        orderLineClientList.stream()
-            .filter(orderLine -> orderLine.getArticle().getId().equals(dto.getArticle().getId()))
-            .findAny()
-            .ifPresent(orderLine -> {
-                log.error("L'article avec l'identifiant {} est déjà dans la commande", dto.getArticle().getId());
-                throw new InvalidOperationException("L'article avec l'identifiant " + dto.getArticle().getId() + " est déjà dans la commande", ErrorCodes.ARTICLE_ALREADY_IN_USE);
-            });
+        if (null == orderClientDto.getOrderLineClients()) orderClientDto.setOrderLineClients(new ArrayList<>()); 
 
-        OrderClientDto orderClientDto = findById(orderId);
-
-        OrderLineClient newOrderLineClient = OrderLineClientDto.toEntity(dto);
-        newOrderLineClient.setOrderClient(OrderClientDto.toEntity(orderClientDto));
-        newOrderLineClient.setCompanyId(orderClientDto.getCompanyId());
-        newOrderLineClient.setSellPriceInclTax(articleDto.getSellPriceInclTax());
-        orderLineClientRepository.save(newOrderLineClient);
-
-        orderClientDto.getOrderLineClients().add(OrderLineClientDto.fromEntity(newOrderLineClient));
+        orderClientDto.getOrderLineClients().add(OrderLineClientDto.fromEntity(orderline));
         return OrderClientDto.fromEntity(orderClientRepository.save(OrderClientDto.toEntity(orderClientDto)));
     }
 
@@ -348,12 +318,9 @@ public class OrderClientServiceImpl implements OrderClientService {
             throw new InvalidOperationException("Order id is required", ErrorCodes.ORDER_CLIENT_NOT_FOUND);
         }
 
-        Optional<OrderClient> orderClient = orderClientRepository.findById(id);
-        if (orderClient.isEmpty()) {
-            log.error("Aucune commande n'a été trouvée avec l'identifiant {}", id);
-            return null;
-        }
-        return OrderClientDto.fromEntity(orderClient.get());
+        return orderClientRepository.findById(id)
+            .map(OrderClientDto::fromEntity)
+            .orElseThrow(() -> new InvalidEntityException("Aucune commande n'a été trouvée avec l'identifiant " + id, ErrorCodes.ORDER_CLIENT_NOT_FOUND));
     }
 
     @Override
@@ -363,14 +330,9 @@ public class OrderClientServiceImpl implements OrderClientService {
             throw new InvalidOperationException("Order code is required", ErrorCodes.ORDER_CLIENT_NOT_FOUND);
         }
 
-        Optional<OrderClient> orderClient = orderClientRepository.findByCode(code);
-
-        if (orderClient.isEmpty()) {
-            log.error("Aucune commande n'a été trouvée avec le code {}", code);
-            return null;
-        }
-
-        return OrderClientDto.fromEntity(orderClient.get());
+        return orderClientRepository.findByCode(code)
+            .map(OrderClientDto::fromEntity)
+            .orElseThrow(() -> new InvalidEntityException("Aucune commande n'a été trouvée avec le code " + code, ErrorCodes.ORDER_CLIENT_NOT_FOUND));
     }
 
     @Override
@@ -516,10 +478,23 @@ public class OrderClientServiceImpl implements OrderClientService {
         }
     }
 
+    private boolean isAvalaibleStock(OrderLineClientDto dto) {
+        if (null == dto || null == dto.getArticle() || null == dto.getQty()) {
+            log.error("L'article ou la quantité est nulle");
+            return false;
+        }
+        articleRepository.findById(dto.getArticle().getId())
+            .orElseThrow(() -> new InvalidEntityException("Aucun article n'a été trouvé avec l'identifiant " + dto.getArticle().getId(), ErrorCodes.ARTICLE_NOT_FOUND));
+        
+        BigDecimal stock = stockMovementService.realStockArticle(dto.getArticle().getId());
+        return null != stock && stock.compareTo(dto.getQty()) >= 0;
+    }
+
     private void addStockMovement(OrderClientDto dto, OrderLineClientDto orderLine) {
         StockMovementDto stockMovementDto = StockMovementDto.builder()
             .article(orderLine.getArticle())
             .qty(orderLine.getQty())
+            .orderStatus(dto.getStatus())
             .dateMovement(Instant.now())
             .typeMvt(StockMovementType.OUTPUT)
             .sourceMvt(MovementSource.ORDER_CLIENT)
@@ -542,6 +517,12 @@ public class OrderClientServiceImpl implements OrderClientService {
 
         ArticleDto articleDto = ArticleDto.fromEntity(articleRepository.findById(dto.getArticle().getId())
             .orElseThrow(() -> new InvalidEntityException("Aucun article n'a été trouvé avec l'identifiant " + dto.getArticle().getId(), ErrorCodes.ARTICLE_NOT_FOUND)));
+
+        // check stock availability
+        if (!isAvalaibleStock(dto)) {
+            log.error("La quantité en stock de l'article {} est insuffisante", articleDto.getId());
+            throw new InvalidOperationException("La quantité en stock de l'article " + articleDto.getId() + " est insuffisante", ErrorCodes.STOCK_INSUFFICIENT);
+        };
 
         OrderLineClientDto orderLineClientDto = OrderLineClientDto.fromEntity(orderLineClientRepository.findByOrderClientIdAndArticleId(orderId, articleDto.getId()));
         if (null != orderLineClientDto) {
