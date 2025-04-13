@@ -6,6 +6,9 @@ target/
 .env.*
 .env
 
+# Ps
+G*.md
+
 # Maven
 log/
 logs/

@@ -25,6 +25,9 @@ bash:
 logs:
 	docker compose logs gstock-local-server -f
 
+logs-error:
+	docker compose logs -f gstock-local-server | grep "Caused by:"
+
 testall:
 	mvn test
 
