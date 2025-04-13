@@ -6,7 +6,7 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 
 public class PasswordUtils {
     private static final String ALLOWED_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()-_=+{}[]<>?|";
-    private static final int PASSWORD_LENGTH = 12;
+    private static final int PASSWORD_LENGTH = 18;
     private static final SecureRandom RANDOM = new SecureRandom();
     private static final int ALLOWED_CHARS_LENGTH = ALLOWED_CHARS.length();
 
